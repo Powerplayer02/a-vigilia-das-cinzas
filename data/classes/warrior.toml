@@ -1,0 +1,17 @@
+version = 1
+id = "warrior"
+weapon = "axe"
+gear = ["armor"]
+spells = []
+[stats]
+vigor = 12
+endurance = 11
+strength = 12
+dexterity = 8
+intelligence = 6
+faith = 6
+luck = 5
+[items]
+axe = 1
+armor = 1
+shard = 3

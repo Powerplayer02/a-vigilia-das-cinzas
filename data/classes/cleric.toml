@@ -1,0 +1,19 @@
+version = 1
+id = "cleric"
+weapon = "mace"
+gear = ["robe", "shield"]
+spells = ["mending_light"]
+[stats]
+vigor = 10
+endurance = 9
+strength = 10
+dexterity = 5
+intelligence = 6
+faith = 15
+luck = 5
+[items]
+mace = 1
+robe = 1
+shield = 1
+mending_light = 1
+shard = 3

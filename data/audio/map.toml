@@ -1,0 +1,82 @@
+[swing_light]
+clips = ["swing_light"]
+gain = 0.7
+priority = 1
+[swing_heavy]
+clips = ["swing_heavy"]
+gain = 0.8
+priority = 1
+[hit_flesh]
+clips = ["hit_flesh"]
+priority = 1
+[hit_block]
+clips = ["hit_block"]
+priority = 1
+[parry]
+clips = ["parry", "parry_spark", "ui_ping"]
+gain = 0.7
+priority = 2
+[riposte]
+clips = ["riposte"]
+priority = 2
+[backstab]
+clips = ["backstab"]
+priority = 2
+[roll]
+clips = ["roll"]
+gain = 0.65
+priority = 1
+[death_player]
+clips = ["death_player"]
+priority = 2
+[death_enemy]
+clips = ["death_enemy"]
+priority = 2
+[level_up]
+clips = ["level_up"]
+gain = 0.65
+priority = 2
+[soul_collect]
+clips = ["soul_collect"]
+gain = 0.55
+priority = 1
+[bonfire_rest]
+clips = ["bonfire_rest"]
+gain = 0.7
+priority = 1
+[footstep_light]
+clips = ["footstep_light"]
+gain = 0.35
+priority = 0
+[footstep_heavy]
+clips = ["footstep_heavy"]
+gain = 0.4
+priority = 0
+[boss_roar]
+clips = ["boss_roar"]
+gain = 0.8
+priority = 2
+[fog_wall_enter]
+clips = ["fog_wall_enter"]
+gain = 0.8
+priority = 3
+[boss_death]
+clips = ["boss_death"]
+gain = 0.8
+priority = 3
+[drink]
+clips = ["drink"]
+gain = 0.4
+priority = 1
+[cast_arcane]
+clips = ["ui_ping"]
+gain = 0.5
+priority = 1
+[cast_heal]
+clips = ["bonfire_rest"]
+gain = 0.45
+priority = 1
+[healing]
+clips = ["soul_collect"]
+gain = 0.4
+priority = 1

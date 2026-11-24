@@ -1,0 +1,7 @@
+# Engine OpenGL e integração Bullet.
+panda3d>=1.10.16,<1.11
+pygame>=2.6.1,<3
+numpy>=2.1,<3
+# Validação do núcleo e das fronteiras de importação.
+pytest>=8,<10
+# SQLite, JSON e TOML usam a biblioteca padrão do Python.

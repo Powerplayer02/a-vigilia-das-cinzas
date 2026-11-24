@@ -1,0 +1,10 @@
+{
+  "real_v1_db": null,
+  "real_v2_db": null,
+  "status": "pending historical builds or authentic captures",
+  "synthetic_sources": [
+    "tests/test_multislot.py:legacy_database",
+    "tests/save_fixtures.py:version_two_database"
+  ],
+  "policy": "Capture via an actual old executable, record build/hash/schema, preserve original and WAL consistently, migrate a copy, add to CI after provenance and payload checks. Never relabel a synthetic database as real."
+}

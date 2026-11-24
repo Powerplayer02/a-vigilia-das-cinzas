@@ -1,0 +1,18 @@
+version = 1
+id = "knight"
+weapon = "longsword"
+gear = ["armor", "shield"]
+spells = []
+[stats]
+vigor = 13
+endurance = 12
+strength = 10
+dexterity = 8
+intelligence = 5
+faith = 8
+luck = 4
+[items]
+longsword = 1
+armor = 1
+shield = 1
+shard = 3

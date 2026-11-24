@@ -1,0 +1,17 @@
+version = 1
+id = "assassin"
+weapon = "katana"
+gear = ["leather_armor"]
+spells = []
+[stats]
+vigor = 8
+endurance = 9
+strength = 8
+dexterity = 14
+intelligence = 7
+faith = 5
+luck = 9
+[items]
+katana = 1
+leather_armor = 1
+shard = 3

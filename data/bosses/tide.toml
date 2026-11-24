@@ -1,0 +1,85 @@
+id = "abbess_of_the_tide"
+name = "Abadessa das Marés"
+arena = "tide_sanctum"
+max_hp = 3800
+poise = 160
+souls = 3600
+intro_steps = 180
+death_steps = 240
+transition_steps = 90
+phase2_threshold = 0.55
+aggression_phase1 = 0.35
+aggression_phase2 = 0.60
+punish_cooldown = 180
+grab_cooldown = 240
+aoe_cooldown = 300
+guard_trigger_steps = 15
+close_trigger_steps = 30
+reposition_steps = 120
+
+bounds = [108, 17, 132, 38]
+music_prefix = "tide_boss"
+reward_item = "tide_signet"
+
+[[moves]]
+id = "tide_strike"
+windup = 42
+active = 12
+recovery = 54
+reach = 3.2
+arc = 1.5707963267948966
+strike = 32.0
+magic = 12.0
+poise = 60.0
+cancel_from = 60
+
+[[moves]]
+id = "tide_sweep"
+windup = 30
+active = 9
+recovery = 36
+reach = 4.0
+arc = 3.141592653589793
+slash = 25.0
+magic = 9.0
+poise = 30.0
+
+[[moves]]
+id = "tide_bolt"
+windup = 48
+active = 6
+recovery = 18
+reach = 14.0
+arc = 0.3
+magic = 30.0
+ranged = true
+poise = 45.0
+
+[[moves]]
+id = "tide_grasp"
+windup = 42
+active = 6
+recovery = 78
+reach = 2.5
+arc = 0.6
+magic = 60.0
+strike = 25.0
+poise = 0.0
+blockable = false
+parryable = false
+knockdown_steps = 60
+
+[[moves]]
+id = "tide_nova"
+windup = 66
+active = 30
+recovery = 90
+reach = 6.0
+arc = 0.0
+magic = 36.0
+poise = 20.0
+hitbox_kind = "center_sphere"
+sphere_radius_start = 2.0
+sphere_radius_end = 6.0
+block_damage_fraction = 0.5
+parryable = false

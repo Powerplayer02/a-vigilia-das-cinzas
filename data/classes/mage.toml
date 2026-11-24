@@ -1,0 +1,18 @@
+version = 1
+id = "mage"
+weapon = "staff"
+gear = ["robe"]
+spells = ["ember_shard"]
+[stats]
+vigor = 7
+endurance = 8
+strength = 8
+dexterity = 8
+intelligence = 16
+faith = 6
+luck = 7
+[items]
+staff = 1
+robe = 1
+ember_shard = 1
+shard = 3

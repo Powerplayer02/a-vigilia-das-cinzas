@@ -1,0 +1,63 @@
+[window]
+width = 1280
+height = 720
+vsync = true
+fullscreen = false
+
+[graphics]
+shadow_quality = "medium"
+draw_distance = 100.0
+
+[camera]
+# Radianos por pixel de deslocamento do mouse
+mouse_sensitivity = 0.003
+
+[bindings]
+# Use os nomes de botão do Panda3D. Combinações como "shift-r" funcionam.
+move_forward = "w"
+move_back = "s"
+move_left = "a"
+move_right = "d"
+run = "shift"
+roll = "space"
+lock_on = "q"
+pause = "escape"
+light = "mouse1"
+heavy = "mouse3"
+block = "control"
+parry = "r"
+cast = "e"
+swap_weapon = "1"
+reset_arena = "f5"
+target_left = "z"
+target_right = "x"
+interact = "f"
+save = "f8"
+load = "f9"
+reload_boss = "f7"
+open_inventory = "i"
+open_status = "c"
+open_level_up = "l"
+travel = "f6"
+upgrade = "u"
+level_vigor = "2"
+level_endurance = "3"
+level_strength = "4"
+level_dexterity = "5"
+level_intelligence = "6"
+level_faith = "7"
+level_luck = "8"
+
+[gamepad]
+run = "lstick"
+roll = "face_a"
+lock_on = "rstick"
+pause = "start"
+light = "rshoulder"
+heavy = "right_trigger"
+block = "lshoulder"
+parry = "face_b"
+cast = "left_trigger"
+swap_weapon = "face_y"
+reset_arena = "back"
+interact = "face_x"
