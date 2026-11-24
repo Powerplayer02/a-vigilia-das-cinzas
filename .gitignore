@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+saves/*
+data/settings.toml
+artifacts/
+*.log
+.env
+.env.*
+!.env.example
