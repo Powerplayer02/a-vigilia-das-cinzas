@@ -9,7 +9,7 @@ Estado em 24/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
 | Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Em publicação; resultado ainda não certificado |
+| CI remoto Linux/macOS/Windows | Aprovado: 306 testes em cada plataforma, [execução #1](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835) |
 | Três desfechos a partir de saves anteriores ao chefe final | Pendente: QA 5.4 ramificou um snapshot pós-vitória |
 | Campanha manual com números de produção | Pendente e bloqueia release |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
@@ -37,3 +37,13 @@ balanceamento. Não foram realizados três playthroughs manuais completos.
 O plano antigo de mini-chefes e novas expansões foi substituído pelo
 fechamento de release. Sentinela Oca e Viúva das Cinzas ficam fora da 1.0.
 Nenhuma tag ou release 1.0 deve ser criada enquanto os bloqueios persistirem.
+
+## Evidência do CI
+
+Primeira publicação: commit `3205226e685077e31474bf1fef233069703a266a`.
+O GitHub Actions executou os 306 testes em Linux (5,72 s), macOS ARM64
+(6,28 s) e Windows (22,91 s), todos aprovados. Houve dois avisos sobre
+propriedades personalizadas no relatório JUnit xunit2; a configuração passa
+a usar xunit1 para conservar essas propriedades de migração.
+Esses tempos são do pytest, sem incluir preparação e instalação.
+O resumo verificável está em [docs/qa/ci-2026-11-24.json](docs/qa/ci-2026-11-24.json).

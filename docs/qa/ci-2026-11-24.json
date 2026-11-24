@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-24",
+  "repository": "Powerplayer02/a-vigilia-das-cinzas",
+  "visibility": "private",
+  "commit": "3205226e685077e31474bf1fef233069703a266a",
+  "run_id": 45512808835,
+  "url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835",
+  "scope": "Domain, architecture and contract tests; no native window/audio/GPU certification",
+  "jobs": [
+    {
+      "platform": "macOS",
+      "job_id": 138864560016,
+      "conclusion": "success",
+      "result": "306 passed, 2 warnings in 6.28s",
+      "url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835/job/138864560016"
+    },
+    {
+      "platform": "Linux",
+      "job_id": 138864560547,
+      "conclusion": "success",
+      "result": "306 passed, 2 warnings in 5.72s",
+      "url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835/job/138864560547"
+    },
+    {
+      "platform": "Windows",
+      "job_id": 138864560619,
+      "conclusion": "success",
+      "result": "306 passed, 2 warnings in 22.91s",
+      "url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835/job/138864560619"
+    }
+  ]
+}

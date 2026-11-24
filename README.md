@@ -637,6 +637,8 @@ Os bloqueios menores de log conhecidos eram 75–110 ms no `stderr.write` síncr
 
 O repositório privado é [Powerplayer02/a-vigilia-das-cinzas](https://github.com/Powerplayer02/a-vigilia-das-cinzas). O **GitHub Actions** configura Python 3.13 em Ubuntu, Windows e macOS, com SDL de áudio em modo dummy e `pytest tests/ -m "not integration"`, sem abrir janela ou criar contexto OpenGL. Os testes incluem o contrato de arquitetura. Isso valida regras e contratos nas três plataformas; a janela, o áudio e o desempenho gráfico exigem QA nativo separado. Os resultados remotos são registrados em [RELEASE_STATUS.md](RELEASE_STATUS.md).
 
+Na [primeira execução remota](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835), **306 testes passaram em cada um dos três sistemas**.
+
 **Gamepad é experimental e está fora dos recursos validados da 1.0**, por decisão do usuário, sem controle físico disponível. O adaptador e os testes simulados permanecem no código. Eles não certificam detecção, botões, deadzone ou hot-plug de um aparelho real.
 
 **Etapas 4 e 5.1–5.4 aceitas pelo usuário.** O pico histórico de aproximadamente 0,5 s permanece não confirmado e monitorado por build. O escopo mais recente substitui o plano de mini-chefes/lore na 5.5: agora ela fecha os testes de desfechos, o save, o CI e o balanceamento. Sentinela Oca, Viúva das Cinzas e expansões adicionais ficam fora da 1.0. A campanha manual integral com números de produção ainda bloqueia o lançamento.
