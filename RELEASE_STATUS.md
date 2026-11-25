@@ -9,7 +9,7 @@ Estado em 25/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
 | Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Aprovado: 306 testes em cada plataforma, [execução #1](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835) |
+| CI remoto Linux/macOS/Windows | Aprovado: 354 testes em cada plataforma, [pacote de fechamento](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45708506880) |
 | Três desfechos a partir de saves anteriores ao chefe final | Aprovado: três fixtures versionadas, combate/epílogo/pós-créditos; repetido com Bullet/UI nativos |
 | Campanha manual com números de produção | Pendente e bloqueia release |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
@@ -50,6 +50,10 @@ propriedades personalizadas no relatório JUnit xunit2; a configuração passa
 a usar xunit1 para conservar essas propriedades de migração.
 Esses tempos são do pytest, sem incluir preparação e instalação.
 O resumo verificável está em [docs/qa/ci-2026-11-24.json](docs/qa/ci-2026-11-24.json).
+
+O pacote de 25/11/2026 preservou esses 306 testes e acrescentou 48.
+**354 passaram em cada plataforma** no commit `ae294d58bc4563349f669820a90a48cb559af118`.
+Evidência em [docs/qa/ci-2026-11-25.json](docs/qa/ci-2026-11-25.json).
 
 ## Movimento Ágil — primeira etapa
 
