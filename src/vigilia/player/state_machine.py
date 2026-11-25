@@ -134,11 +134,20 @@ class CombatController:
                 victim, direction, kind = critical
                 move = self.moveset.riposte if kind == AttackKind.RIPOSTE else self.moveset.backstab
                 if fighter.start(move, victim):
+                    if self.movement is not None:
+                        self.movement.cancel()
                     self._face(direction)
                 return
             running = Action.RUN in held.actions and (held.move_x or held.move_y)
-            move = self.moveset.slide if self.movement is not None and self.movement.sliding else (
-                self.moveset.running if running else self.moveset.light[0])
+            move = self.moveset.running if running else self.moveset.light[0]
+            if self.movement is not None:
+                kind = self.movement.momentum_attack
+                if kind == AttackKind.DASH_ATTACK:
+                    move = self.moveset.dash_attack
+                elif kind == AttackKind.SLIDING:
+                    move = self.moveset.slide_attack
+                elif not running and (held.move_x or held.move_y):
+                    move = self.moveset.walking_attack
             if fighter.start(move):
                 self._face(facing)
             return

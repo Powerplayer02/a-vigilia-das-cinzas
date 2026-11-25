@@ -59,7 +59,7 @@ def decode(version: int, timing_version: int, player_json: str, world_json: str)
             motion[field] = Vec3(**motion[field])
         if motion.get("advanced") is not None:
             advanced = motion["advanced"].copy()
-            for field in ("direction", "air_velocity", "wall_normal"):
+            for field in ("direction", "air_velocity", "wall_normal", "momentum_velocity", "last_horizontal"):
                 if field in advanced:
                     advanced[field] = Vec3(**advanced[field])
             if "used_walls" in advanced:
@@ -199,7 +199,17 @@ def validate(snapshot: SaveSnapshot) -> None:
                  and (a.mode != "wall_cling" or .99 < a.wall_normal.flat().length() < 1.01)
                  and all(len(wall) == 4 and _finite(*wall) for wall in a.used_walls)
                  and all(isinstance(key, str) and key for key in a.used_surfaces)
-                 and len(set(a.used_surfaces)) == len(a.used_surfaces),
+                 and len(set(a.used_surfaces)) == len(a.used_surfaces)
+                 and _vector(a.momentum_velocity) and _vector(a.last_horizontal)
+                 and abs(a.momentum_velocity.z) < 1e-6 and abs(a.last_horizontal.z) < 1e-6
+                 and a.momentum_velocity.length() <= 30 and a.last_horizontal.length() <= 30
+                 and _integer(a.momentum_remaining) and a.momentum_remaining <= 24
+                 and a.momentum_source in ('', 'dash', 'slide')
+                 and bool(a.momentum_remaining) == bool(a.momentum_source)
+                 and (a.momentum_remaining or a.momentum_velocity.length() == 0)
+                 and (a.mode not in ('wall_cling', 'slam', 'slam_recovery') or not a.momentum_remaining)
+                 and _integer(a.coyote_age, -1) and a.coyote_age <= 6
+                 and _integer(a.jump_buffer_age, -1) and a.jump_buffer_age <= 6,
                  "Movimento ágil inválido.")
     _require(motion.state in ("idle", "walking", "running", "rolling", "backstep", "hit_react", "death", "knockdown")
              or (player.agile_movement and motion.state in ("dashing", "sliding", "airborne",
@@ -217,7 +227,8 @@ def validate(snapshot: SaveSnapshot) -> None:
     active_keys = {"player"} | {actor.key for actor in world.actors} | {boss.id for boss in world.bosses}
     _validate_fighter(player.fighter, active_keys)
     _require(player.agile_movement or player.fighter.attack is None
-             or player.fighter.attack.definition.kind != AttackKind.SLIDING, "Deslize sem modo ágil.")
+             or player.fighter.attack.definition.kind not in (AttackKind.SLIDING, AttackKind.DASH_ATTACK,
+                 AttackKind.WALKING_ATTACK), "Ataque ágil sem modo ágil.")
     for area in areas:
         local_keys = {"player"} | {actor.key for actor in area.actors} | {boss.id for boss in area.bosses}
         for actor in area.actors:
@@ -274,10 +285,10 @@ def _validate_fighter(fighter: FighterSnapshot, keys: set[str]) -> None:
         _require(definition.kind in AttackKind and _integer(definition.windup) and
                  _integer(definition.active, 1) and _integer(definition.recovery), "Definição de ataque inválida.")
         definitions = {item.kind: item for item in WEAPONS[fighter.weapon_id].attacks}
-        if definition.kind == AttackKind.SLIDING:
+        if definition.kind in (AttackKind.SLIDING, AttackKind.DASH_ATTACK, AttackKind.WALKING_ATTACK):
             _require(any(item.kind == AttackKind.LIGHT_1 for item in WEAPONS[fighter.weapon_id].attacks),
                      "Deslize incompatível com a arma.")
-            definitions[AttackKind.SLIDING] = WEAPONS[fighter.weapon_id].attack(AttackKind.SLIDING)
+            definitions[definition.kind] = WEAPONS[fighter.weapon_id].attack(definition.kind)
         definitions.update({spell.attack.kind: spell.attack for spell in SPELLS.values()
                             if spell.can_cast(fighter.stats, fighter.weapon_id)})
         if definition.kind in (spell.attack.kind for spell in SPELLS.values()):

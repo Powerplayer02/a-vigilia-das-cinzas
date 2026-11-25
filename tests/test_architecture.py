@@ -28,6 +28,15 @@ def test_advanced_movement_has_no_combat_or_native_imports():
     assert not any(name.startswith('vigilia.combat') or name.split('.')[0] in NATIVE for name in imports)
 
 
+def test_player_does_not_add_combat_imports_for_momentum():
+    allowed = {'controller.py': {'vigilia.combat.fighter'},
+        'state_machine.py': {'vigilia.combat.attack', 'vigilia.combat.damage', 'vigilia.combat.fighter'}}
+    for source in (SRC/'player').glob('*.py'):
+        imports={name for node in ast.walk(ast.parse(source.read_text(encoding='utf8')))
+            for name in _imports(node,'vigilia.player') if name.startswith('vigilia.combat')}
+        assert imports==allowed.get(source.name,set())
+
+
 def test_ai_has_no_import_permission_for_world_save_or_ui() -> None:
     assert ALLOWED["ai"].isdisjoint({"world", "save", "ui"})
 

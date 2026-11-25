@@ -1382,7 +1382,8 @@ class Game:
             if hasattr(self, "_renderer"):
                 self._renderer.set_player_crouched(False)
                 self._renderer.set_player_air_state("")
-            if self._fighter.attack is not None and self._fighter.attack.definition.kind == AttackKind.SLIDING:
+            if self._fighter.attack is not None and self._fighter.attack.definition.kind in (
+                    AttackKind.SLIDING, AttackKind.DASH_ATTACK, AttackKind.WALKING_ATTACK):
                 self._fighter.attack = None
             if self._player.state in (PlayerState.DASHING, PlayerState.SLIDING, PlayerState.AIRBORNE,
                     PlayerState.WALL_CLING, PlayerState.SLAMMING, PlayerState.SLAM_RECOVERY):

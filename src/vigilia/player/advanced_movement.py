@@ -1,4 +1,4 @@
-"""Optional dash/slide domain. No engine, rendering or audio imports."""
+"""Optional agile movement domain. No engine, rendering or audio imports."""
 from dataclasses import dataclass
 import math
 
@@ -8,7 +8,8 @@ from vigilia.core.mathx import Vec3
 from vigilia.core.protocols import IAgileBody, IPhysicsWorld
 from vigilia.core.timing import (FIXED_DT, DASH_STEPS, DASH_IFRAME_STEPS,
     DASH_RECHARGE_STEPS, SLIDE_STEPS, SLIDE_JUMP_BOOST_STEPS,
-    WALL_CLING_STEPS, WALL_JUMP_HEIGHT_MULTIPLIER, SLAM_SPEED, SLAM_RECOVERY_STEPS)
+    WALL_CLING_STEPS, WALL_JUMP_HEIGHT_MULTIPLIER, SLAM_SPEED, SLAM_RECOVERY_STEPS,
+    MOMENTUM_STEPS, COYOTE_STEPS, JUMP_BUFFER_STEPS)
 from vigilia.core.types import Action
 from vigilia.model.snapshots import AdvancedMotionSnapshot
 from vigilia.model.items import WEAPONS
@@ -45,6 +46,9 @@ class AdvancedMovement:
         self.wall_normal, self.used_walls = Vec3(), set()
         self.damage_interrupt = False
         self.used_surfaces = set()
+        self.momentum_velocity, self.last_horizontal = Vec3(), Vec3()
+        self.momentum_remaining, self.momentum_source = 0, ''
+        self.coyote_age, self.jump_buffer_age = -1, -1
 
     @property
     def dashing(self):
@@ -54,9 +58,19 @@ class AdvancedMovement:
     def sliding(self):
         return self.mode == 'slide'
 
+    @property
+    def momentum_attack(self):
+        if self.dashing or (self.momentum_remaining and self.momentum_source == 'dash'):
+            return AttackKind.DASH_ATTACK
+        if self.sliding or (self.momentum_remaining and self.momentum_source == 'slide'):
+            return AttackKind.SLIDING
+        return None
+
     def before_combat(self, pressed):
         if self.dashing and pressed in (Action.LIGHT, Action.HEAVY, Action.PARRY, Action.CAST):
+            velocity = self.last_horizontal
             self.cancel()
+            self._carry(velocity, 'dash')
         return self.dashing or self.mode in ('wall_cling', 'slam', 'slam_recovery')
 
     def cancel(self):
@@ -65,6 +79,27 @@ class AdvancedMovement:
         self.mode, self.age = '', 0
         self.air_velocity, self.air_steps = Vec3(), 0
         self.body.set_crouched(False)
+        self._clear_momentum()
+        self.coyote_age, self.jump_buffer_age = -1, -1
+
+    def _clear_momentum(self):
+        self.momentum_velocity, self.last_horizontal = Vec3(), Vec3()
+        self.momentum_remaining, self.momentum_source = 0, ''
+
+    def _carry(self, velocity, source):
+        self.momentum_velocity = velocity.flat()
+        self.momentum_remaining = MOMENTUM_STEPS if velocity.flat().length() > .001 else 0
+        self.momentum_source = source if self.momentum_remaining else ''
+
+    def apply_momentum(self, desired):
+        if not self.momentum_remaining:
+            return desired
+        weight = self.momentum_remaining / MOMENTUM_STEPS
+        result = self.momentum_velocity * weight + desired.flat() * (1 - weight)
+        self.momentum_remaining -= 1
+        if not self.momentum_remaining:
+            self.momentum_source, self.momentum_velocity = '', Vec3()
+        return result + Vec3(0, 0, desired.z)
 
     def on_damage(self):
         if self.mode == 'wall_cling':
@@ -87,13 +122,13 @@ class AdvancedMovement:
         angle = round(angle / (math.pi / 4)) * (math.pi / 4)
         return (forward * math.cos(angle) + right * math.sin(angle)).flat().normalized()
 
-    def step(self, held, edge, forward, right, fighter, position, *, busy=False):
+    def step(self, held, edge, forward, right, fighter, position, *, busy=False, dodging=False):
         if self.charges < 2:
             self.recharge += 1
             if self.recharge == DASH_RECHARGE_STEPS:
                 self.charges += 1
                 self.recharge = 0
-        if not fighter.alive or fighter.stagger_steps:
+        if not fighter.alive or fighter.stagger_steps or dodging:
             self.cancel()
             return None
         if self.damage_interrupt:
@@ -102,13 +137,22 @@ class AdvancedMovement:
         pressed = edge.action if edge is not None and edge.pressed else None
         locked_air = self.mode in ('wall_cling', 'slam', 'slam_recovery')
         grounded = False if locked_air or (self.vertical_control and self.vertical_speed > 0) else self.body.grounded()
+        if grounded:
+            self.coyote_age = 0
+        elif self.coyote_age >= 0:
+            self.coyote_age = self.coyote_age + 1 if self.coyote_age < COYOTE_STEPS else -1
+        if pressed == Action.JUMP:
+            self.jump_buffer_age = 0
+        elif self.jump_buffer_age >= 0:
+            self.jump_buffer_age = self.jump_buffer_age + 1 if self.jump_buffer_age < JUMP_BUFFER_STEPS else -1
         if grounded and self.mode not in ('wall_cling', 'slam', 'slam_recovery') and self.vertical_speed <= 0:
             self.used_walls.clear()
             self.used_surfaces.clear()
             if self.vertical_control:
                 self._release_vertical()
                 self.air_velocity, self.air_steps = Vec3(), 0
-        if pressed == Action.ROLL and not busy and self.mode not in ('wall_cling', 'slam', 'slam_recovery'):
+        if (pressed == Action.ROLL and not busy and fighter.stamina >= 24
+                and self.mode not in ('wall_cling', 'slam', 'slam_recovery')):
             self.cancel()
             return None
         if self.body.crouched and not self.sliding:
@@ -127,6 +171,7 @@ class AdvancedMovement:
         elif pressed == Action.SLIDE and not self.mode and not busy and self.body.grounded():
             if Action.RUN in held.actions and math.hypot(held.move_x, held.move_y) > .001 and fighter.spend(SLIDE_STAMINA):
                 self.body.set_crouched(True)
+                self._clear_momentum()
                 self.mode, self.age = 'slide', 0
                 self.direction = (forward * held.move_y + right * held.move_x).flat().normalized()
                 self.emit(SlideStartedEvent(self.entity_id, position))
@@ -137,6 +182,8 @@ class AdvancedMovement:
             self._own_vertical()
             self.mode, self.age, self.air_steps = 'slam', 0, 0
             self.air_velocity, self.vertical_speed = Vec3(), -SLAM_SPEED
+            self._clear_momentum()
+            self.coyote_age, self.jump_buffer_age = -1, -1
             self.emit(SlamStartedEvent(self.entity_id, position))
         if self.mode == 'slam':
             fighter.blocking = False
@@ -152,8 +199,11 @@ class AdvancedMovement:
             if pressed == Action.JUMP and not busy and fighter.spend(JUMP_STAMINA):
                 self.mode, self.age = '', 0
                 self.vertical_speed = 7 * math.sqrt(WALL_JUMP_HEIGHT_MULTIPLIER)
+                self.vertical_speed -= 20 * FIXED_DT
                 self.air_velocity = self.wall_normal * RUN_SPEED
+                self.coyote_age, self.jump_buffer_age = -1, -1
                 self.emit(WallJumpStartedEvent(self.entity_id, position))
+                return MotionResult(self.air_velocity + Vec3(0, 0, self.vertical_speed), 'airborne')
             else:
                 self.age += 1
                 if self.age >= WALL_CLING_STEPS:
@@ -162,37 +212,54 @@ class AdvancedMovement:
         movement = self.direction if self.dashing else (forward * held.move_y + right * held.move_x).flat()
         if movement.length() < .001 and (self.air_steps or self.vertical_control):
             movement = self.air_velocity.flat()
+        if movement.length() < .001 and self.momentum_remaining:
+            movement = self.momentum_velocity
         if not grounded and self.mode not in ('slide',) and self._try_wall(position, movement):
             fighter.blocking = False
             return MotionResult(Vec3(), 'wall_cling')
-        if pressed == Action.JUMP and not busy and self.mode in ('', 'slide') and grounded:
+        if (self.jump_buffer_age >= 0 and not busy and self.mode in ('', 'slide')
+                and (grounded or self.coyote_age >= 0)):
             was_slide, age, direction = self.sliding, self.age, self.direction
-            if fighter.stamina >= JUMP_STAMINA and self.body.set_crouched(False) and self.body.jump(7):
+            if (fighter.stamina >= JUMP_STAMINA and self.body.set_crouched(False)
+                    and (not grounded or self.body.jump(7))):
                 fighter.spend(JUMP_STAMINA)
                 self.mode, self.age = '', 0
+                self._own_vertical()
+                self.vertical_speed = 7.
+                self.coyote_age, self.jump_buffer_age = -1, -1
+                self.air_velocity, self.air_steps = Vec3(), 0
                 if was_slide:
-                    self.air_velocity = direction * (SLIDE_SPEED * (1 - age / SLIDE_STEPS) * 1.2)
-                    self.air_steps = SLIDE_JUMP_BOOST_STEPS
+                    self._carry(direction * (SLIDE_SPEED * (1 - age / SLIDE_STEPS) * 1.2), 'slide')
+                horizontal = self.apply_momentum(self._air_input(held, forward, right, fighter, busy))
+                return MotionResult(horizontal + Vec3(0, 0, self.vertical_speed), 'airborne')
         if self.dashing:
             age = self.age
             weight = 1 if age < 9 else (12 - age) / 4
             velocity = self.direction * (DASH_DISTANCE / (10.5 * FIXED_DT) * weight)
+            self.last_horizontal = velocity
             if age % 2 == 0:
                 self.emit(DashTrailEvent(position))
             self.age += 1
             if self.age == DASH_STEPS:
                 self.mode, self.age = '', 0
+                self._carry(velocity, 'dash')
             fighter.blocking = False
             return MotionResult(velocity, 'dashing', age < DASH_IFRAME_STEPS)
         if self.sliding:
             if Action.SLIDE not in held.actions:
+                velocity = self.last_horizontal
+                coyote, buffered = self.coyote_age, self.jump_buffer_age
                 self.cancel()
+                self.coyote_age, self.jump_buffer_age = coyote, buffered
+                self._carry(velocity, 'slide')
                 return None
             velocity = self.direction * (SLIDE_SPEED * (1 - self.age / SLIDE_STEPS))
+            self.last_horizontal = velocity
             self.age += 1
             if self.age == SLIDE_STEPS:
                 self.mode, self.age = '', 0
                 self.body.set_crouched(False)
+                self._carry(velocity, 'slide')
             fighter.blocking = False
             return MotionResult(velocity, 'sliding')
         if self.air_steps:
@@ -200,10 +267,21 @@ class AdvancedMovement:
             return MotionResult(self.air_velocity, 'airborne')
         if self.vertical_control:
             self.vertical_speed = max(-SLAM_SPEED, self.vertical_speed - 20 * FIXED_DT)
-            return MotionResult(self.air_velocity + Vec3(0, 0, self.vertical_speed), 'airborne')
+            horizontal = self.air_velocity if self.air_velocity.length() else self._air_input(held, forward, right, fighter, busy)
+            return MotionResult(self.apply_momentum(horizontal) + Vec3(0, 0, self.vertical_speed), 'airborne')
         if self.body.crouched:
             return MotionResult((forward * held.move_y + right * held.move_x) * 1.55, 'sliding')
         return None
+
+    @staticmethod
+    def _air_input(held, forward, right, fighter, busy):
+        if busy:
+            return Vec3()
+        move = (forward * held.move_y + right * held.move_x).flat()
+        if fighter.blocking:
+            return move * (3.1 * .4)
+        running = Action.RUN in held.actions and move.length() > .001 and fighter.spend(14 * FIXED_DT)
+        return move * (RUN_SPEED if running else 3.1)
 
     def _own_vertical(self):
         if not self.vertical_control:
@@ -235,6 +313,8 @@ class AdvancedMovement:
             self.used_surfaces.add(hit.surface_id)
         self.mode, self.age, self.wall_normal = 'wall_cling', 1, normal
         self.air_velocity, self.air_steps, self.vertical_speed = Vec3(), 0, 0.
+        self._clear_momentum()
+        self.coyote_age, self.jump_buffer_age = -1, -1
         self.emit(WallClingStartedEvent(self.entity_id, position, normal))
         return True
 
@@ -262,7 +342,9 @@ class AdvancedMovement:
         return AdvancedMotionSnapshot(self.mode, self.age, self.charges, self.recharge,
             self.direction, self.body.crouched, self.air_velocity, self.air_steps,
             self.vertical_control, self.vertical_speed, self.wall_normal, tuple(sorted(self.used_walls)),
-            self.damage_interrupt, tuple(sorted(self.used_surfaces)))
+            self.damage_interrupt, tuple(sorted(self.used_surfaces)), self.momentum_velocity,
+            self.momentum_remaining, self.momentum_source, self.last_horizontal,
+            self.coyote_age, self.jump_buffer_age)
 
     def from_snapshot(self, data):
         self._kills.clear()
@@ -273,6 +355,14 @@ class AdvancedMovement:
         self.used_walls = set(data.used_walls)
         self.damage_interrupt = data.damage_interrupt
         self.used_surfaces = set(data.used_surfaces)
+        self.momentum_velocity, self.momentum_remaining = data.momentum_velocity, data.momentum_remaining
+        self.momentum_source, self.last_horizontal = data.momentum_source, data.last_horizontal
+        self.coyote_age, self.jump_buffer_age = data.coyote_age, data.jump_buffer_age
+        if self.mode == 'dash' and self.age and not self.last_horizontal.length():
+            age = self.age - 1
+            self.last_horizontal = self.direction * (DASH_DISTANCE / (10.5 * FIXED_DT) * (1 if age < 9 else (12-age)/4))
+        elif self.mode == 'slide' and self.age and not self.last_horizontal.length():
+            self.last_horizontal = self.direction * (SLIDE_SPEED * (1-(self.age-1)/SLIDE_STEPS))
         if data.vertical_control:
             self._own_vertical()
         else:

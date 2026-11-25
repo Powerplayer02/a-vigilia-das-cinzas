@@ -1,0 +1,25 @@
+{
+  "build_id": "6b7f72854807d0ce",
+  "native_game": true,
+  "dash_tail_distance_m": 1.339283,
+  "momentum_roundtrip": true,
+  "dash_attack_inherits_speed": true,
+  "roll_clears_momentum": true,
+  "sixth_step_coyote_after_reload": true,
+  "buffered_landing_jump": true,
+  "jump_snapshot": true,
+  "mode_off_restores_gravity": true,
+  "manual_balance_certified": false,
+  "qa_seeds": [
+    "Temporary ledge and teleports",
+    "Training attack timer disabled"
+  ],
+  "diagnostics": {
+    "build_id": "6b7f72854807d0ce",
+    "quarantined": false,
+    "spikes": [],
+    "capture_errors": [],
+    "trigger_count": 0
+  },
+  "archive_sha256": "bd438e6581fdb574c6b0da479be32e9014b831271679501f0025c1a0066ed124"
+}

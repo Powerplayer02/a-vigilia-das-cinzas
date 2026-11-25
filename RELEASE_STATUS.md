@@ -4,7 +4,7 @@ Estado em 25/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
 
 | Verificação | Estado |
 | --- | --- |
-| Testes locais de regras e contratos | 391 passaram no Windows, Python 3.13; os 354 anteriores preservados |
+| Testes locais de regras e contratos | 438 passaram no Windows, Python 3.13; os 391 anteriores preservados |
 | Fechar a janela sem salvar | Corrigido e verificado por Alt+F4 real: zero commits no fechamento |
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
@@ -61,7 +61,7 @@ Solicitado depois do recorte de fechamento: Dash + Slide, OFF por padrão,
 save por personagem e testes com physics fake e Bullet sem janela. O loop
 fixo permaneceu idêntico. HP, dano, resistências e IA de chefes não mudaram.
 Wall jump/Slam foram aprovados e entregues na etapa 2. Momentum geral,
-coyote time e jump buffer continuam aguardando confirmação para a etapa 3.
+coyote time e jump buffer foram aprovados e entregues na etapa 3.
 
 A matriz manual OFF/ON dos chefes ainda não foi jogada. O modo continua
 experimental; nenhuma avaliação de trivialização foi fabricada. O template
@@ -105,3 +105,35 @@ Intervalos brutos em `docs/qa/frame-time-limited-2026-11-25.json`.
 Balance OFF continua como próximo QA. Balance ON/OFF dos chefes vem depois
 do OFF, sem misturar tuning de tabelas e mobilidade. A campanha manual ainda
 não foi realizada e segue bloqueando o lançamento.
+
+## Etapa 3 — momentum, coyote e buffer
+
+Opção A implementada: `dash_attack` e `slide_attack` são entradas próprias
+no moveset, com fatores no pacote de dano/poise; a fórmula de dano e sua
+assinatura continuam idênticas. Nenhum import de combate foi acrescentado
+em `player/`. Cling zera impulso horizontal; roll usa seu perfil original,
+sem restaurar momentum ao sair. Críticos mantêm a pose estacionária anterior.
+
+Momentum dura 24 passos, coyote e buffer aceitam seis passos. A suíte tem
+**438 testes**, incluindo **47 novos**, com os limites 1/24/25/30 para ataque,
+6/7 para salto, janelas simultâneas, compatibilidade com save anterior e
+snapshot sem reiniciar timers e descarte de impulso expirado de saves antigos.
+O percurso nativo `6b7f72854807d0ce` repetiu
+coyote no sexto passo após reload, salto enfileirado na aterrissagem e
+cancelamento por roll: sem pico acima de 200 ms, erro de captura ou quarentena.
+Dash/slide, wall jump/Slam e os três desfechos também passaram novamente.
+
+O protocolo agora mede capped e uncapped. No chefe final fase 3 com 20
+inimigos e 500 partículas, 60 s: **252,80 FPS sem cap**, mediana/p95
+**3,3827 / 6,6347 ms**; checkpoint repetido **240,63 FPS**, **3,4218 / 7,2286 ms**.
+Resultado dentro da faixa histórica de 214–260 FPS; diferença de mediana
+**−0,0391 ms**. Com cap de 60 Hz: **16,6646 / 16,7629 ms**, aprovado.
+Capped verifica a meta; não demonstra overhead zero. Um par de execuções
+uncapped não demonstra equivalência causal. Evidência versionada em
+`docs/qa/stage3-frame-time-2026-11-25.json` e `docs/qa/stage3-native-2026-11-25.json`.
+
+A etapa 3 foi executada antes da campanha manual OFF. A pendência não foi
+substituída por smoke tests: tentativas, dificuldade percebida e calibração
+de stamina ainda não foram medidas em partida. Nenhum HP/dano/resistência
+de chefe foi ajustado. Balance OFF precede a comparação ON/OFF e continua
+bloqueando a certificação do lançamento.

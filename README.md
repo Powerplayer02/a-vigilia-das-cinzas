@@ -2,8 +2,8 @@
 
 Jogo 3D em Python com Panda3D e Bullet: cinco áreas, cinco classes, três chefes, três desfechos e persistência por personagem. Inclui combate, magia, progressão, menus, mapa, áudio e recursos procedurais. A **5.4 foi aceita funcionalmente**; a **5.5 trata do fechamento de release**, sem adicionar conteúdo. A versão 1.0 tem como alvo teclado e mouse. O estado das verificações e os bloqueios restantes estão em [RELEASE_STATUS.md](RELEASE_STATUS.md). A campanha está no [GDD](GDD.md) e os contratos na [arquitetura](ARCHITECTURE.md).
 
-O pacote seguinte acrescenta a matriz pré-chefe dos três finais e as **etapas 1 e 2
-experimentais de Movimento Ágil: Dash, Slide, Wall jump e Slam**, por solicitação do usuário.
+O pacote seguinte acrescenta a matriz pré-chefe dos três finais e as **etapas 1 a 3
+experimentais de Movimento Ágil: Dash, Slide, Wall jump, Slam, momentum e tolerâncias do salto**, por solicitação do usuário.
 O modo vem OFF e é salvo por personagem. Não altera HP/dano dos chefes.
 
 ## Executar
@@ -64,8 +64,9 @@ O perfil experimental de gamepad usa direcional direito/baixo/cima para
 dash/slide/pulo e direcional esquerdo para Slam, remapeáveis; nos menus,
 o direcional continua navegando.
 Isso tem testes simulados, **sem validação de controle físico**. A 1.0
-continua tendo teclado e mouse como alvo. Momentum geral, coyote time e
-jump buffer ficam para a etapa 3. Ver [design e limites](docs/movement_ultrakill.md).
+continua tendo teclado e mouse como alvo. Momentum decai em 24 passos;
+coyote e buffer de salto aceitam seis passos. Cling zera o impulso, e roll
+usa seu próprio movimento. Ver [design e limites](docs/movement_ultrakill.md).
 
 ## Verificações do pacote de fechamento
 
@@ -84,12 +85,16 @@ save no meio do dash, cápsula, salto de slide e troca ON/OFF por personagem.
 `tools/verify_vertical_movement.py` testa cling, wall jump, Slam, lock-on e
 save/reload com Bullet e gravador ativo. `test_slam.py` cobre o evento de
 impacto sem atacante e múltiplos alvos, sem depender de janela.
+`tools/verify_momentum.py` testa a herança de velocidade, o cancelamento por
+roll e o coyote no sexto passo após save/load. Ataques de dash/slide são
+entradas próprias no moveset; a fórmula de dano permanece intacta.
 
 O [template de playthrough](data/balance_templates/playthrough.md) está
 versionado. Os registros locais em `artifacts/balance/` estão marcados como
 não jogados. A comparação OFF agora usa [frame time em ms, 60 s e cap de 60 Hz](docs/qa/frame-time-limited-2026-11-25.json).
 O [experimento anterior em FPS](docs/qa/agile-off-performance.json) permanece
-como histórico, com suas limitações.
+preservado como histórico, com suas limitações. A etapa 3 também mede
+[capped e uncapped com o chefe final na fase 3](docs/qa/stage3-frame-time-2026-11-25.json).
 
 Edite `data/config.toml` para trocar teclas, botões, resolução, VSync e sensibilidade. A seção `[bindings]` aceita combinações como `roll = "shift-r"`. A opção `--config caminho.toml` permite carregar outro perfil ao iniciar. Use `--enemies 20` para executar a arena com vinte agentes.
 

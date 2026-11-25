@@ -63,10 +63,20 @@ class WeaponSpec:
                       scaling.intelligence.coefficient, scaling.faith.coefficient, upgrade, self.id)
 
     def attack(self, kind: Kind) -> AttackDefinition:
-        if kind == Kind.SLIDING:
-            from vigilia.core.timing import SLIDE_ATTACK_WINDUP, SLIDE_ATTACK_ACTIVE, SLIDE_ATTACK_RECOVERY
-            return replace(self.attack(Kind.LIGHT_1), kind=kind, windup=SLIDE_ATTACK_WINDUP,
-                active=SLIDE_ATTACK_ACTIVE, recovery=SLIDE_ATTACK_RECOVERY, stamina=18, cancel_from=None)
+        if kind in (Kind.SLIDING, Kind.DASH_ATTACK, Kind.WALKING_ATTACK):
+            from vigilia.core.timing import (SLIDE_ATTACK_WINDUP, SLIDE_ATTACK_ACTIVE,
+                SLIDE_ATTACK_RECOVERY, DASH_ATTACK_WINDUP, DASH_ATTACK_ACTIVE, DASH_ATTACK_RECOVERY)
+            light = self.attack(Kind.LIGHT_1)
+            power = {Kind.SLIDING: 1.6, Kind.DASH_ATTACK: 2., Kind.WALKING_ATTACK: 1.1}[kind]
+            packet = DamagePacket(**{name: getattr(light.packet, name) * power for name in
+                ('physical_slash', 'physical_strike', 'physical_pierce', 'fire', 'magic', 'holy', 'poise')})
+            if kind == Kind.WALKING_ATTACK:
+                return replace(light, kind=kind, packet=packet, cancel_from=None)
+            windup, active, recovery, stamina = ((SLIDE_ATTACK_WINDUP, SLIDE_ATTACK_ACTIVE,
+                SLIDE_ATTACK_RECOVERY, 18) if kind == Kind.SLIDING else
+                (DASH_ATTACK_WINDUP, DASH_ATTACK_ACTIVE, DASH_ATTACK_RECOVERY, 24))
+            return replace(light, kind=kind, packet=packet, windup=windup, active=active,
+                recovery=recovery, stamina=stamina, cancel_from=None)
         return next(attack for attack in self.attacks if attack.kind == kind)
 
 

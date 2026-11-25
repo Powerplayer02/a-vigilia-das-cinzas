@@ -1,4 +1,4 @@
-# Movimento Ágil — etapas 1 e 2 experimentais
+# Movimento Ágil — etapas 1 a 3 experimentais
 
 Desligado por padrão em `[movement] ultrakill_style = false`. A opção fica
 em Opções → Controles. O personagem guarda seu próprio modo e os timers;
@@ -15,8 +15,9 @@ Desligar sob um teto baixo exige primeiro sair do obstáculo.
 | Kill creditado ao jogador | Imediato | +1 carga, sem duplicação; ao encher, zera o timer |
 | Rastro | 15 (0,25 s visuais) | Pool de 16 silhuetas translúcidas preparado ao ativar |
 | Slide | Até 36 (0,60 s) | Corrida + movimento, 14 stamina, velocidade inicial 5,8 × 1,4 m/s |
-| Ataque de slide | 9 / 5 / 20 | Windup / ativo / recovery, 18 stamina, pacote do leve da arma |
-| Salto de slide | Impulso vertical de 7 m/s | 12 stamina, horizontal atual × 1,2 por até 24 passos |
+| Ataque de slide | 9 / 5 / 20 | Windup / ativo / recovery, 18 stamina, pacote do leve × 1,6 |
+| Ataque de dash | 8 / 6 / 24 | 24 stamina, pacote do leve × 2,0 |
+| Salto de slide | Impulso vertical de 7 m/s | 12 stamina, horizontal atual × 1,2 e decaimento de 24 passos |
 
 O dash desacelera nos últimos três passos, com pesos 0,75 / 0,50 / 0,25.
 A velocidade inicial é normalizada para que a soma dos 12 deslocamentos
@@ -30,15 +31,15 @@ interromper normalmente. O dash não limpa stagger nem revive o personagem.
 
 Slide exige chão e corrida. Soltar, dar dash ou pular o encerra. Ataque leve
 durante slide usa `SLIDING`, separado do running attack. Não há i-frames.
-Seu deslocamento desacelera linearmente. O salto básico só existe no modo
-experimental; não inclui wall jump, coyote time ou jump buffer nesta etapa.
+Seu deslocamento desacelera linearmente. O salto básico e suas tolerâncias
+só existem no modo experimental.
 
 ## Colisão e arquitetura
 
 O domínio é `player/advanced_movement.py`, com vetores puros, interfaces de
 `core/protocols.py`, timers inteiros e eventos. Nenhuma chamada de áudio ou
 Panda3D entra nesse módulo. Input mantém remapeamento de teclado e gamepad;
-com OFF, as três ações novas são filtradas antes de entrar na fila.
+com OFF, dash, slide, jump e Slam são filtrados antes de entrar na fila.
 
 A cápsula baixa tem exatamente metade da altura e preserva os pés. O
 adaptador Bullet reutiliza dois controladores e verifica espaço antes de
@@ -97,6 +98,55 @@ um controlador físico ativo. Timers, superfícies usadas, modo vertical e
 interrupção pendente são persistidos; carregar a recuperação não repete dano.
 O corpo de `Game._fixed_step` continua idêntico.
 
+## Etapa 3 — momentum e tolerâncias do salto
+
+Sair de dash/slide preserva a **última velocidade horizontal**, e cancelar
+dash com ataque preserva a velocidade daquele passo. Durante os 24 passos
+seguintes, sem input, ela decai linearmente até zero. Com direcional, a
+mesma interpolação converge para a velocidade normal de andar/correr;
+não soma velocidades nem renova a janela. Corrida mantém seu custo normal.
+Após um dash completo, o trecho adicional sem input mede cerca de **1,339 m**.
+O salto de slide recebe o impulso de 20% e também passa por essa curva.
+
+O ataque leve escolhe uma definição própria no moveset: `dash_attack`
+(`DASH_ATTACK`) ou `slide_attack` (`SLIDING`, nome preservado para saves).
+Os pacotes de dano e poise já contêm os fatores **2,0** e **1,6** do leve,
+respectivamente. `walking_attack` usa **1,1**, preservando a ordem dash >
+slide > corrida > andar > parado nas cinco armas. Corrida usa a definição
+que já existia. Caminhar com OFF continua usando o leve original.
+
+A seleção ocorre no input: passos **1 e 24** após o dash recebem a variante;
+nos passos **25 e 30**, ela expirou. O pacote selecionado permanece estável
+durante windup/ativo/recovery. A janela não foi alongada sem uma avaliação
+de uso; decidir se 24 passos são suficientes para o jogador pertence ao
+balanceamento ON. Encostar em inimigo sem ataque ativo não causa dano:
+a opção A usa os contatos normais de hitbox/hurtbox, sem dano passivo por toque.
+
+Cling zera o momentum horizontal. O wall jump parte só de seus impulsos
+próprios, sem adicionar a velocidade anterior do dash. Roll substitui o
+impulso pelo perfil original da esquiva e não o restaura ao terminar.
+Riposte/backstab conservam a pose estacionária anterior. Stagger, morte,
+Slam e desativar o modo também limpam a herança.
+
+**Coyote time:** permite pular nos seis passos após sair de uma plataforma.
+**Jump buffer:** guarda a borda de B no passo do input e nos seis passos
+seguintes, acionando ao aterrissar. As duas janelas são consumidas juntas
+quando um salto acontece; manter B pressionado não produz novo salto.
+Não criam salto aéreo ao nascer no ar, não dispensam stamina e não ignoram
+espaço para levantar a cápsula. Roll limpa o input pendente.
+
+O motor vertical controlado também atende o salto básico/coyote: a física
+continua resolvendo colisões, e a velocidade vertical fica disponível ao
+save. Momentum, origem, último impulso e idades das duas janelas são
+persistidos sem reiniciar os timers. Os campos novos têm defaults neutros
+para saves das etapas anteriores, incluindo ataques de slide em andamento.
+
+`damage.py` e sua assinatura permanecem idênticos. A suíte protege seu hash,
+os imports preexistentes de combate em `player/` e o hash de `_fixed_step`.
+`test_momentum.py` cobre as variantes e suas interações; `test_coyote_buffer.py`
+cobre os limites 6/7, as janelas simultâneas e colisão Bullet real.
+`tools/verify_momentum.py` repete o fluxo no Game, com save/load e gravador.
+
 ## Protocolo de desempenho
 
 A régua anterior de ±5% de FPS foi substituída: **60 s**, warmup de 5 s,
@@ -111,12 +161,36 @@ O intervalo inclui a espera do limitador. Dados e intervalos brutos em
 Reproduzir com `tools/benchmark.py --seconds 60 --warmup-seconds 5 --fps-cap 60 --particles 500 --profile --output caminho.json`.
 O checkpoint usa os mesmos instrumentos, sem alterar seu código de gameplay.
 
+Na etapa 3, o protocolo acrescenta **uncapped no pior cenário solicitado**:
+Custódio na fase 3, 20 inimigos, 500 partículas, 60 s após 5 s de warmup.
+
+| Build OFF | FPS medido | Mediana / p95 em ms |
+| --- | --- | --- |
+| Checkpoint pré-Ultrakill repetido | 240,63 | 3,4218 / 7,2286 |
+| Etapa 2 | 240,12 | 3,4843 / 7,0055 |
+| Etapa 3 | 252,80 | 3,3827 / 6,6347 |
+| Etapa 3 com cap de 60 Hz | 60,01 | 16,6646 / 16,7629 |
+
+A mediana uncapped variou **−0,0391 ms**, e os FPS **+5,06%** contra o
+checkpoint repetido. A amostra está na faixa histórica de 214–260 FPS.
+Todas foram válidas, sem minimização. O cap confirma a meta de 60 Hz na
+cena testada; não prova custo zero abaixo dela. O ensaio sem cap observa
+o headroom nesta máquina, sem estabelecer equivalência causal a partir
+de uma execução por versão. O candidato anterior à correção do salto legado
+marcou 235,01 FPS e também foi preservado. A correção está no caminho ON;
+não há evidência para atribuir a variação do OFF a ela.
+As cenas capped das etapas 1/2 eram comuns;
+a nova execução capped também inclui o chefe final.
+
+Resumo e intervalos brutos em [stage3-frame-time-2026-11-25.json](qa/stage3-frame-time-2026-11-25.json).
+Reproduzir com `tools/benchmark.py --seconds 60 --warmup-seconds 5 --final-boss --enemies 20 --particles 500 --profile --output caminho.json`,
+adicionando `--fps-cap 60` para o teste capped. Não usar os ensaios com
+flight recorder como baseline de FPS.
+
 ## Limites e próximas etapas
 
-Momentum geral, coyote time e jump buffer continuam na etapa 3 e exigem
-confirmação. O impulso específico do salto de slide não equivale ao sistema
-geral de momentum. A integração básica com lock-on e save foi testada; isso
-não certifica o balanceamento dos encontros.
+As três etapas foram implementadas. A integração com lock-on e save foi
+testada; isso não certifica o balanceamento dos encontros.
 
 Chefes ainda não foram balanceados com ON/OFF. As tabelas de HP, dano e
 resistência foram preservadas. Testes de inputs simulados não certificam

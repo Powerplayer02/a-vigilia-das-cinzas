@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-25",
+  "baseline_commit": "3e8649e67b486d4f1b7f8f5c8d32f4641deb8c74",
+  "final_build_id": "6b7f72854807d0ce",
+  "protocol": {
+    "seconds": 60,
+    "warmup_seconds": 5,
+    "uncapped": true,
+    "capped_hz": 60,
+    "vsync": false,
+    "percentile": "nearest rank",
+    "workload": "Custodian phase 3 + 20 common enemies + 500 particles; 1280x720 medium shadows; lightweight timing, no cProfile",
+    "hardware": "NVIDIA GeForce GTX 1660 Ti; Windows; Python 3.13.14; Panda3D 1.10.16"
+  },
+  "trials": [
+    {
+      "label": "pre-ultrakill-uncapped",
+      "build_id": "ed29914219981ef8",
+      "seconds": 60.005,
+      "frames": 14439,
+      "fps": 240.63,
+      "one_percent_low_fps": 94.4,
+      "median_ms": 3.4218,
+      "p95_ms": 7.2286,
+      "p99_ms": 8.8639,
+      "valid": true,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "raw_sha256": "2c0f264b04f845eaa0893500abd8432216baed19fa2fb51ea413238417a83290",
+      "local_raw_file": "artifacts/5.5/stage3/frame-time/pre-ultrakill-uncapped.json",
+      "candidate_before_legacy_fix": false
+    },
+    {
+      "label": "stage2-off-uncapped",
+      "build_id": "d8f1c0ad3c23d5af",
+      "seconds": 60.004,
+      "frames": 14408,
+      "fps": 240.12,
+      "one_percent_low_fps": 98.76,
+      "median_ms": 3.48425,
+      "p95_ms": 7.0055,
+      "p99_ms": 8.5723,
+      "valid": true,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "raw_sha256": "43fcd881233ea984f22ce33a982a0d18c89deb424049c15ba4bccae6286fadbd",
+      "local_raw_file": "artifacts/5.5/stage3/frame-time/stage2-off-uncapped.json",
+      "candidate_before_legacy_fix": false
+    },
+    {
+      "label": "stage3-off-uncapped",
+      "build_id": "aaef4d26185caa91",
+      "seconds": 60.006,
+      "frames": 14102,
+      "fps": 235.01,
+      "one_percent_low_fps": 92.98,
+      "median_ms": 3.54795,
+      "p95_ms": 7.1265,
+      "p99_ms": 8.7977,
+      "valid": true,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "raw_sha256": "a6dca2cf1f8e391d29e18d877bdb814fd53385de30bdbfd063f1b30c701f7be4",
+      "local_raw_file": "artifacts/5.5/stage3/frame-time/stage3-off-uncapped.json",
+      "candidate_before_legacy_fix": true
+    },
+    {
+      "label": "stage3-off-capped",
+      "build_id": "aaef4d26185caa91",
+      "seconds": 60.014,
+      "frames": 3601,
+      "fps": 60.0,
+      "one_percent_low_fps": 58.41,
+      "median_ms": 16.6641,
+      "p95_ms": 16.7364,
+      "p99_ms": 16.8126,
+      "valid": true,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "raw_sha256": "39b593e2b632b3a522cc3e9bb6cfd83d1f5d4da6a5dba2b44bb8999f5af9f234",
+      "local_raw_file": "artifacts/5.5/stage3/frame-time/stage3-off-capped.json",
+      "candidate_before_legacy_fix": true
+    },
+    {
+      "label": "final-off-uncapped",
+      "build_id": "6b7f72854807d0ce",
+      "seconds": 60.003,
+      "frames": 15169,
+      "fps": 252.8,
+      "one_percent_low_fps": 107.49,
+      "median_ms": 3.3827,
+      "p95_ms": 6.6347,
+      "p99_ms": 7.9393,
+      "valid": true,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "raw_sha256": "740c01bc9688b2f7dae703ad7376bbf82220fb3e47c167877dd4911f87d00213",
+      "local_raw_file": "artifacts/5.5/stage3/frame-time/final-off-uncapped.json",
+      "candidate_before_legacy_fix": false
+    },
+    {
+      "label": "final-off-capped",
+      "build_id": "6b7f72854807d0ce",
+      "seconds": 60.005,
+      "frames": 3601,
+      "fps": 60.01,
+      "one_percent_low_fps": 59.14,
+      "median_ms": 16.6646,
+      "p95_ms": 16.7629,
+      "p99_ms": 16.7896,
+      "valid": true,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "raw_sha256": "34a4b2b4326520754a04e4fabea4239baa5fa89f75470db2c684b67b68afd80e",
+      "local_raw_file": "artifacts/5.5/stage3/frame-time/final-off-capped.json",
+      "candidate_before_legacy_fix": false
+    }
+  ],
+  "comparisons": {
+    "uncapped_median_delta_ms": -0.0391,
+    "uncapped_fps_change_pct": 5.058,
+    "historical_fps_range": [
+      214,
+      260
+    ],
+    "within_historical_range": true,
+    "capped_median_ms": 16.6646,
+    "capped_p95_ms": 16.7629,
+    "capped_limit_ms": 17.6665,
+    "capped_passed": true
+  },
+  "raw_intervals_file": "docs/qa/stage3-frame-intervals-2026-11-25.json",
+  "raw_intervals_sha256": "9498ff7a7a8ab2eab20533c68409a03c5d6fdddf0a66f4d7f4a31693a78a2d79",
+  "scope": "Capped measures the 60 Hz target, not hidden CPU overhead. Uncapped is one valid run per build on the same machine; it shows observed headroom, not causal equivalence or cross-GPU certification. These QA seeds do not certify balance."
+}

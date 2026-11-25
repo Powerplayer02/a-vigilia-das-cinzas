@@ -59,6 +59,12 @@ class AdvancedMotionSnapshot:
     used_walls: tuple[tuple[float, float, float, float], ...] = ()
     damage_interrupt: bool = False
     used_surfaces: tuple[str, ...] = ()
+    momentum_velocity: Vec3 = field(default_factory=Vec3)
+    momentum_remaining: int = 0
+    momentum_source: str = ''
+    last_horizontal: Vec3 = field(default_factory=Vec3)
+    coyote_age: int = -1
+    jump_buffer_age: int = -1
 
 
 @dataclass(frozen=True, slots=True)

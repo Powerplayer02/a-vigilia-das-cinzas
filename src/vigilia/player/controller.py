@@ -59,7 +59,7 @@ class PlayerController:
         """Calcula a intenção do passo a partir do estado e de uma borda."""
         move = forward * held.move_y + right * held.move_x
         advanced = self.advanced.step(held, edge, forward, right, fighter,
-            self.transform.position, busy=busy) if self.advanced is not None and fighter is not None else None
+            self.transform.position, busy=busy, dodging=self.dodging) if self.advanced is not None and fighter is not None else None
         if fighter is not None:
             fighter.invulnerable = False
             if not fighter.alive or fighter.stagger_steps:
@@ -122,6 +122,10 @@ class PlayerController:
             if move.length() > 0.001:
                 self.state = PlayerState.RUNNING if running else PlayerState.WALKING
 
+        if self.advanced is not None and self.state not in (PlayerState.ROLLING, PlayerState.BACKSTEP):
+            self.velocity = self.advanced.apply_momentum(self.velocity)
+            if self.velocity.flat().length() > .001 and self.state == PlayerState.IDLE:
+                self.state = PlayerState.WALKING
         facing = forward if locked else self.velocity
         if self.state == PlayerState.ROLLING:
             facing = self._dodge_direction
