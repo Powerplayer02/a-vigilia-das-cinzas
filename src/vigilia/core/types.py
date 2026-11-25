@@ -1,6 +1,6 @@
 """Tipos compartilhados entre a simulação e os adaptadores."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum, auto
 
 from vigilia.core.mathx import Vec3
@@ -34,6 +34,7 @@ class Action(StrEnum):
     DASH = auto()
     SLIDE = auto()
     JUMP = auto()
+    SLAM = auto()
     LOCK_ON = auto()
     PAUSE = auto()
     LIGHT = auto()
@@ -107,6 +108,8 @@ class RayHit:
     point: Vec3
     normal: Vec3
     distance: float
+    surface_id: str | None = field(default=None, compare=False)
+    support_offset: float | None = field(default=None, compare=False)
 
 
 @dataclass(frozen=True, slots=True)

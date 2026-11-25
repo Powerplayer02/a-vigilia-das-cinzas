@@ -2,8 +2,8 @@
 
 Jogo 3D em Python com Panda3D e Bullet: cinco áreas, cinco classes, três chefes, três desfechos e persistência por personagem. Inclui combate, magia, progressão, menus, mapa, áudio e recursos procedurais. A **5.4 foi aceita funcionalmente**; a **5.5 trata do fechamento de release**, sem adicionar conteúdo. A versão 1.0 tem como alvo teclado e mouse. O estado das verificações e os bloqueios restantes estão em [RELEASE_STATUS.md](RELEASE_STATUS.md). A campanha está no [GDD](GDD.md) e os contratos na [arquitetura](ARCHITECTURE.md).
 
-O pacote seguinte acrescenta a matriz pré-chefe dos três finais e a **etapa 1
-experimental de Movimento Ágil: Dash + Slide**, por solicitação do usuário.
+O pacote seguinte acrescenta a matriz pré-chefe dos três finais e as **etapas 1 e 2
+experimentais de Movimento Ágil: Dash, Slide, Wall jump e Slam**, por solicitação do usuário.
 O modo vem OFF e é salvo por personagem. Não altera HP/dano dos chefes.
 
 ## Executar
@@ -52,16 +52,20 @@ Q escolhe o alvo visível mais alinhado em um cone total de 60°, com distância
 
 Ative em **Opções → Controles → Movimento Ágil** para o personagem atual.
 Alt dá dash; Shift + movimento + V inicia slide; B pula e pode cancelar o
-slide. As três ações aceitam remapeamento. O dash tem duas cargas, recarga
+slide. Todas as ações aceitam remapeamento. O dash tem duas cargas, recarga
 de 1,2 s por carga, seis passos de i-frames e não gasta stamina. Slide custa
 stamina e mantém vulnerabilidade; clique esquerdo usa seu ataque próprio.
+No ar, direcional contra uma parede inicia cling por até 0,4 s; B salta
+para longe. A mesma parede só fica disponível novamente após tocar o chão.
+**G no ar dá Slam**, com área de 2,5 m e recuperação vulnerável de oito passos.
 O modo guarda cargas/timers e volta a OFF ao carregar um save OFF.
 
 O perfil experimental de gamepad usa direcional direito/baixo/cima para
-dash/slide/pulo, remapeáveis; nos menus, o direcional continua navegando.
+dash/slide/pulo e direcional esquerdo para Slam, remapeáveis; nos menus,
+o direcional continua navegando.
 Isso tem testes simulados, **sem validação de controle físico**. A 1.0
-continua tendo teclado e mouse como alvo. Wall jump, slam e momentum geral
-ainda não fazem parte desta etapa. Ver [design e limites](docs/movement_ultrakill.md).
+continua tendo teclado e mouse como alvo. Momentum geral, coyote time e
+jump buffer ficam para a etapa 3. Ver [design e limites](docs/movement_ultrakill.md).
 
 ## Verificações do pacote de fechamento
 
@@ -77,10 +81,15 @@ processo limpo. O golpe final usa HP=1 e teleporte declarado: verifica o
 fluxo, sem certificar balanceamento. `tools/verify_agile.py` cobre lock-on,
 save no meio do dash, cápsula, salto de slide e troca ON/OFF por personagem.
 
+`tools/verify_vertical_movement.py` testa cling, wall jump, Slam, lock-on e
+save/reload com Bullet e gravador ativo. `test_slam.py` cobre o evento de
+impacto sem atacante e múltiplos alvos, sem depender de janela.
+
 O [template de playthrough](data/balance_templates/playthrough.md) está
 versionado. Os registros locais em `artifacts/balance/` estão marcados como
-não jogados; não há tempos ou mortes inventados. O experimento OFF tem
-[medições e limitações](docs/qa/agile-off-performance.json).
+não jogados. A comparação OFF agora usa [frame time em ms, 60 s e cap de 60 Hz](docs/qa/frame-time-limited-2026-11-25.json).
+O [experimento anterior em FPS](docs/qa/agile-off-performance.json) permanece
+como histórico, com suas limitações.
 
 Edite `data/config.toml` para trocar teclas, botões, resolução, VSync e sensibilidade. A seção `[bindings]` aceita combinações como `roll = "shift-r"`. A opção `--config caminho.toml` permite carregar outro perfil ao iniciar. Use `--enemies 20` para executar a arena com vinte agentes.
 

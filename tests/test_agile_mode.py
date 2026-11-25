@@ -15,8 +15,8 @@ from vigilia.save.service import SaveService
 
 def test_off_ignores_new_keys_and_gamepad_without_delaying_light_attack():
     source=InputManager()
-    source.key('alt',True);source.key('v',True);source.key('b',True)
-    source.poll_gamepad(frozenset({'dpad_right','dpad_down','dpad_up'}),0,0)
+    source.key('alt',True);source.key('v',True);source.key('b',True);source.key('g',True)
+    source.poll_gamepad(frozenset({'dpad_right','dpad_down','dpad_up','dpad_left'}),0,0)
     assert source.next_edge() is None
     source.key('mouse1',True)
     assert source.next_edge()==InputEdge(Action.LIGHT,True)
@@ -31,6 +31,8 @@ def test_on_supports_remapped_keys_pad_and_menu_suppression():
     assert source.next_edge() is None
     source.key('t',False);source.poll_gamepad(frozenset({'dpad_right'}),0,0)
     assert source.next_edge()==InputEdge(Action.DASH,True)
+    source.rebind(Action.SLAM,'j');source.key('j',True)
+    assert source.next_edge()==InputEdge(Action.SLAM,True)
 
 
 def test_config_defaults_off_and_rejects_non_boolean(tmp_path):

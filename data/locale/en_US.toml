@@ -3,6 +3,7 @@
 "control.dash" = "Directional dash"
 "control.slide" = "Slide"
 "control.jump" = "Jump (agile mode)"
+"control.slam" = "Slam (aerial impact)"
 "movement.charges" = "Dash: {count}/2"
 "movement.blocked" = "No room to stand. Move out from under the obstacle."
 "game.subtitle" = "The ember still remembers your name."

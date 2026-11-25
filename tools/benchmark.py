@@ -272,6 +272,7 @@ def main() -> None:
     parser.add_argument("--ready-file", type=Path)
     parser.add_argument("--particles", type=int, choices=(0, 500), default=0)
     parser.add_argument("--fps-cap", type=int, default=0)
+    parser.add_argument("--warmup-seconds", type=float, default=2.)
     parser.add_argument("--split-flip", action="store_true", help="GraphicsEngine: render sem auto-flip e flip_frame medido à parte")
     parser.add_argument("--hitch-directory", type=Path, help="Diagnóstico com overhead: salva cProfile apenas de frames >16ms")
     parser.add_argument("--spike-directory", type=Path, help="cProfile binário: frame >200ms e 30 anteriores; I/O após medição")
@@ -432,7 +433,7 @@ def main() -> None:
                         boss_moves[kind] = boss_moves.get(kind, 0) + 1
                 if profile is not None:
                     profile.end_frame()
-                if now - started >= 2 and not measuring:
+                if now - started >= args.warmup_seconds and not measuring:
                     if app.mainWinMinimized:
                         app.win.request_properties(restore_window)
                         if now - started > 15:
@@ -491,6 +492,8 @@ def main() -> None:
                         "resolution": [app.win.get_x_size(), app.win.get_y_size()],
                         "vsync": config.vsync,
                         "fps_cap": args.fps_cap,
+                        "warmup_seconds": args.warmup_seconds,
+                        "agile_movement_enabled": getattr(game._player, "advanced", None) is not None,
                         "audio_enabled": game._audio.enabled,
                         "logging_handlers": [type(handler).__name__ for handler in logging.getLogger().handlers],
                         "diagnostic_minimization_injected": args.diagnostic_minimize_at is not None,
@@ -510,8 +513,11 @@ def main() -> None:
                         "fps": round(len(samples) / sum(samples), 2),
                         "one_percent_low_fps": round(1 / statistics.mean(worst), 2),
                         "max_frame_ms": round(max(samples) * 1000, 3),
-                        "p99_frame_ms": round(frame_times[int(.99 * (len(frame_times) - 1))] * 1000, 3),
-                        "p95_frame_ms": round(frame_times[int(.95 * (len(frame_times) - 1))] * 1000, 3),
+                        "median_frame_ms": round(statistics.median(samples) * 1000, 6),
+                        "p99_frame_ms": round(frame_times[math.ceil(.99 * len(frame_times)) - 1] * 1000, 6),
+                        "p95_frame_ms": round(frame_times[math.ceil(.95 * len(frame_times)) - 1] * 1000, 6),
+                        "percentile_method": "nearest rank",
+                        "frame_times_ms": [round(value * 1000, 6) for value in samples],
                         "ai_steps": game.ai.tick_count,
                         "ai_tick_mean_ms": round(game.ai.tick_seconds / max(1, game.ai.tick_count) * 1000, 4),
                         "path_queries_live": game.ai.path_count,

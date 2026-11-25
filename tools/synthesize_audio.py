@@ -21,7 +21,8 @@ def write(path, signal):
 
 def generate_agile(output):
     rng = np.random.default_rng(551)
-    for name, duration, frequency in (("dash", .2, 540), ("slide", .6, 100)):
+    for name, duration, frequency in (("dash", .2, 540), ("slide", .6, 100),
+                                      ("slam", .45, 65), ("wall_jump", .16, 720)):
         t = np.arange(round(duration * HZ)) / HZ
         noise = np.convolve(rng.normal(0, 1, len(t)), np.ones(16)/16, mode="same")
         signal = (.22*np.sin(2*np.pi*(frequency*t-180*t*t)) + .6*noise)

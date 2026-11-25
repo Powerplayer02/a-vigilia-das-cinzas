@@ -59,8 +59,13 @@ def decode(version: int, timing_version: int, player_json: str, world_json: str)
             motion[field] = Vec3(**motion[field])
         if motion.get("advanced") is not None:
             advanced = motion["advanced"].copy()
-            for field in ("direction", "air_velocity"):
-                advanced[field] = Vec3(**advanced[field])
+            for field in ("direction", "air_velocity", "wall_normal"):
+                if field in advanced:
+                    advanced[field] = Vec3(**advanced[field])
+            if "used_walls" in advanced:
+                advanced["used_walls"] = tuple(tuple(wall) for wall in advanced["used_walls"])
+            if "used_surfaces" in advanced:
+                advanced["used_surfaces"] = tuple(advanced["used_surfaces"])
             motion["advanced"] = AdvancedMotionSnapshot(**advanced)
         player["motion"] = MotionSnapshot(**motion)
         player["fighter"] = _fighter(player["fighter"])
@@ -179,14 +184,26 @@ def validate(snapshot: SaveSnapshot) -> None:
              "Modo de movimento divergente.")
     if motion.advanced is not None:
         a = motion.advanced
-        _require(a.mode in ("", "dash", "slide") and _integer(a.age) and
-                 a.age < (12 if a.mode == "dash" else 36) and
+        limits = {"": 1, "dash": 12, "slide": 36, "wall_cling": 24, "slam": 1, "slam_recovery": 8}
+        _require(a.mode in limits and _integer(a.age) and
+                 a.age < limits.get(a.mode, 0) and
                  _integer(a.charges) and a.charges <= 2 and _integer(a.recharge) and a.recharge < 72
                  and (a.charges < 2 or a.recharge == 0) and type(a.crouched) is bool
                  and _vector(a.direction) and _vector(a.air_velocity)
-                 and _integer(a.air_steps) and a.air_steps <= 24, "Movimento ágil inválido.")
+                 and _integer(a.air_steps) and a.air_steps <= 24
+                 and type(a.vertical_control) is bool and type(a.damage_interrupt) is bool
+                 and _finite(a.vertical_speed) and -18 <= a.vertical_speed <= 8
+                 and (a.vertical_control or a.vertical_speed == 0)
+                 and (a.mode not in ("wall_cling", "slam", "slam_recovery") or a.vertical_control)
+                 and not (a.vertical_control and a.crouched) and _vector(a.wall_normal)
+                 and (a.mode != "wall_cling" or .99 < a.wall_normal.flat().length() < 1.01)
+                 and all(len(wall) == 4 and _finite(*wall) for wall in a.used_walls)
+                 and all(isinstance(key, str) and key for key in a.used_surfaces)
+                 and len(set(a.used_surfaces)) == len(a.used_surfaces),
+                 "Movimento ágil inválido.")
     _require(motion.state in ("idle", "walking", "running", "rolling", "backstep", "hit_react", "death", "knockdown")
-             or (player.agile_movement and motion.state in ("dashing", "sliding", "airborne")),
+             or (player.agile_movement and motion.state in ("dashing", "sliding", "airborne",
+                 "wall_cling", "slamming", "slam_recovery")),
              "Estado de locomoção inválido.")
     _require(_vector(motion.position) and _vector(motion.velocity) and _vector(motion.dodge_direction)
              and _finite(motion.yaw, motion.dodge_speed, motion.dodge_progress), "Pose inválida.")

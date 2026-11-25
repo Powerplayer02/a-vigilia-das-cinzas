@@ -14,6 +14,11 @@ class AgileBodyFake(PhysicsFake):
         super().__init__()
         self.crouched, self.on_ground, self.blocked = False, True, False
         self.jump_speed = 0
+        self.vertical_override = False
+        self.floor_offset = .85
+
+    def override_vertical(self, enabled):
+        self.vertical_override = enabled
 
     def set_crouched(self, enabled):
         if not enabled and self.blocked:
@@ -23,6 +28,9 @@ class AgileBodyFake(PhysicsFake):
 
     def grounded(self):
         return self.on_ground
+
+    def ground_hit(self, distance):
+        return None
 
     def jump(self, speed):
         if not self.on_ground:

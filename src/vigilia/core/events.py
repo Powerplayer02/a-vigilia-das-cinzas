@@ -138,3 +138,33 @@ class DashTrailEvent(Event):
 class SlideStartedEvent(Event):
     entity_id: int
     position: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class WallClingStartedEvent(Event):
+    entity_id: int
+    position: Vec3
+    normal: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class WallJumpStartedEvent(Event):
+    entity_id: int
+    position: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class SlamStartedEvent(Event):
+    entity_id: int
+    position: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class SlamImpactEvent(Event):
+    position: Vec3
+    radius: float
+    damage: float
+    poise: float
+    source: int | None = None
+    team: int | None = None
+    damage_parts: tuple[tuple[str, float], ...] = ()

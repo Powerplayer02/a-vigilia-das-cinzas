@@ -53,6 +53,12 @@ class AdvancedMotionSnapshot:
     crouched: bool
     air_velocity: Vec3
     air_steps: int
+    vertical_control: bool = False
+    vertical_speed: float = 0.
+    wall_normal: Vec3 = field(default_factory=Vec3)
+    used_walls: tuple[tuple[float, float, float, float], ...] = ()
+    damage_interrupt: bool = False
+    used_surfaces: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

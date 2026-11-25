@@ -13,6 +13,7 @@ from vigilia.core.events import (
     BossArenaEnteredEvent, BossDefeatedEvent, MusicChangeRequestedEvent, AppStateChangedEvent,
     SfxRequestedEvent, SoulCollectedEvent, LevelUpEvent, ItemUseStartedEvent,
     SettingsChangedEvent, EndingChosenEvent, DashStartedEvent, DashTrailEvent, SlideStartedEvent,
+    WallJumpStartedEvent, SlamImpactEvent,
 )
 from vigilia.core.mathx import Transform, Vec3, lerp_angle
 from vigilia.core.timing import (
@@ -180,6 +181,8 @@ class Game:
         self._bus.subscribe(DashStartedEvent, lambda event: self._sfx("dash", event.position))
         self._bus.subscribe(SlideStartedEvent, lambda event: self._sfx("slide", event.position))
         self._bus.subscribe(DashTrailEvent, lambda event: self._renderer.dash_trail(event.position))
+        self._bus.subscribe(WallJumpStartedEvent, lambda event: self._sfx("wall_jump", event.position))
+        self._bus.subscribe(SlamImpactEvent, self._on_slam_effect)
         self._bus.subscribe(BonfireRestedEvent, self._on_bonfire_rested)
         self._bus.subscribe(SaveRequestedEvent, self._on_save_requested)
         self._bus.subscribe(LevelUpRequestedEvent, self._on_level_up)
@@ -425,6 +428,8 @@ class Game:
 
     def change_area(self, area_id, entry=None, *, stash=True, restore=True, stress_enemies=None):
         """Descarrega a cena anterior; mantém só seus contratos serializados."""
+        if self._player.advanced is not None:
+            self._player.advanced.cancel()
         if area_id != "patio_da_vigilia" and area_id not in self._regions:
             raise ValueError("Área indisponível.")
         if stash:
@@ -742,8 +747,11 @@ class Game:
         logger.info(message)
 
     def _on_damage(self, event: DamageDealt) -> None:
-        if event.source == self._entity.id and event.remaining_hp == 0 and self._player.advanced is not None:
-            self._player.advanced.on_kill(event.target)
+        movement = getattr(getattr(self, '_player', None), 'advanced', None)
+        if event.target == self._entity.id and event.amount > 0 and movement is not None:
+            movement.on_damage()
+        if event.source == self._entity.id and event.remaining_hp == 0 and movement is not None:
+            movement.on_kill(event.target)
         position = self._position(event.target) + Vec3(0, 0, .7)
         self._sfx(event.critical or ("hit_block" if event.blocked else "hit_flesh"), position)
         self._emit("sparks" if event.blocked else "embers" if event.damage_type == "fire" else
@@ -841,6 +849,8 @@ class Game:
         self._deaths.reset_health(self._world)
         self._deaths.tick(self._world)
         self.world_state.dead_common.clear()
+        if self._player.advanced is not None:
+            self._player.advanced.cancel()
         self._player = PlayerController(self._player.body, self._transform)
         self._bind_presentation_sources()
         if hasattr(self, "_polish"):
@@ -861,6 +871,7 @@ class Game:
     def _draw_combat(self) -> None:
         if self._player.advanced is not None:
             self._renderer.set_player_crouched(self._player.body.crouched)
+            self._renderer.set_player_air_state(self._player.state.value)
         if hasattr(self._renderer, "hazard"):
             self._renderer.hazard(self.boss.hazard_position if self.boss else Vec3(),
                 bool(self.boss and self.boss.hazard_visible), bool(self.boss and 90 <= self.boss.hazard_step % 360 < 150))
@@ -1334,6 +1345,10 @@ class Game:
     def _sfx(self, kind, position=None):
         self._bus.publish(SfxRequestedEvent(kind, position))
 
+    def _on_slam_effect(self, event):
+        self._sfx("slam", event.position)
+        self._renderer.slam_wave(event.position, event.radius)
+
     def _emit(self, preset, position):
         if hasattr(self, "_particles"):
             self._particles.spawn(preset, position)
@@ -1366,13 +1381,16 @@ class Game:
             current.cancel()
             if hasattr(self, "_renderer"):
                 self._renderer.set_player_crouched(False)
+                self._renderer.set_player_air_state("")
             if self._fighter.attack is not None and self._fighter.attack.definition.kind == AttackKind.SLIDING:
                 self._fighter.attack = None
-            if self._player.state in (PlayerState.DASHING, PlayerState.SLIDING, PlayerState.AIRBORNE):
+            if self._player.state in (PlayerState.DASHING, PlayerState.SLIDING, PlayerState.AIRBORNE,
+                    PlayerState.WALL_CLING, PlayerState.SLAMMING, PlayerState.SLAM_RECOVERY):
                 self._player.state, self._player.velocity = PlayerState.IDLE, Vec3()
                 self._fighter.invulnerable = False
         if enabled and current is None:
-            current = AdvancedMovement(self._player.body, emit=self._bus.publish, entity_id=self._entity.id)
+            current = AdvancedMovement(self._player.body, emit=self._bus.publish, entity_id=self._entity.id,
+                physics=self._physics)
             if hasattr(self, "_renderer"):
                 self._renderer.prepare_agile_visuals()
         self._player.advanced = current if enabled else None

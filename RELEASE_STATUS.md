@@ -4,7 +4,7 @@ Estado em 25/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
 
 | Verificação | Estado |
 | --- | --- |
-| Testes locais de regras e contratos | 354 passaram no Windows, Python 3.13; os 306 anteriores preservados |
+| Testes locais de regras e contratos | 391 passaram no Windows, Python 3.13; os 354 anteriores preservados |
 | Fechar a janela sem salvar | Corrigido e verificado por Alt+F4 real: zero commits no fechamento |
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
@@ -60,7 +60,8 @@ Evidência em [docs/qa/ci-2026-11-25.json](docs/qa/ci-2026-11-25.json).
 Solicitado depois do recorte de fechamento: Dash + Slide, OFF por padrão,
 save por personagem e testes com physics fake e Bullet sem janela. O loop
 fixo permaneceu idêntico. HP, dano, resistências e IA de chefes não mudaram.
-Wall jump/slam e o restante aguardam confirmação entre etapas.
+Wall jump/Slam foram aprovados e entregues na etapa 2. Momentum geral,
+coyote time e jump buffer continuam aguardando confirmação para a etapa 3.
 
 A matriz manual OFF/ON dos chefes ainda não foi jogada. O modo continua
 experimental; nenhuma avaliação de trivialização foi fabricada. O template
@@ -76,3 +77,28 @@ abaixo de 55 nas duas versões. Não foi estabelecida uma melhora causal.
 A build final `0edc4fe38b5082dd` também passou por 10 s de carga com o
 flight recorder ativo: sem pico acima de 200 ms, sem erro de captura e sem
 quarentena. Esses FPS instrumentados não entram no baseline de desempenho.
+
+## Etapa 2 e régua corrigida
+
+Wall cling por 24 passos, salto para longe da parede e Slam de 18 m/s,
+área de 2,5 m e recuperação de oito passos. O Slam publica evento puro;
+o combate resolve sua fila de áreas depois da física, compartilhando o
+resolvedor existente. O controle de movimento não ganhou import de combate.
+
+As 354 regressões foram preservadas; 37 testes novos cobrem parede,
+motor vertical, persistência, vulnerabilidade, AoE mockado e arquitetura.
+O percurso nativo repetiu save/load no cling, na descida e após o impacto,
+com lock-on preservado e sem dano repetido, incluindo queda diretamente
+sobre o manequim e colisão na borda da cápsula. Build `d8f1c0ad3c23d5af`,
+gravador ativo: sem picos acima de 200 ms, sem erro e sem quarentena.
+
+A exigência de ±5% de FPS foi retirada pelo usuário. A régua vigente usa
+60 s, clock limitado a 60 Hz, mediana e p95 em ms; OFF deve ficar até
++1,0 ms da mediana pré-Ultrakill. Checkpoint: **16,6665 / 16,7601 ms**;
+etapa 1 OFF: **16,6646 / 16,7232 ms**; etapa 2 OFF: **16,6651 / 16,7184 ms**
+(mediana / p95). Diferença final da mediana: **−0,0014 ms**, aprovada.
+Intervalos brutos em `docs/qa/frame-time-limited-2026-11-25.json`.
+
+Balance OFF continua como próximo QA. Balance ON/OFF dos chefes vem depois
+do OFF, sem misturar tuning de tabelas e mobilidade. A campanha manual ainda
+não foi realizada e segue bloqueando o lançamento.

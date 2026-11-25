@@ -40,6 +40,12 @@ class CharacterBody:
     _standing: tuple | None = None
     _low: tuple | None = None
     _stand_query: NodePath | None = None
+    vertical_override: bool = False
+    _air: tuple | None = None
+
+    @property
+    def floor_offset(self):
+        return self.height / 2 - .04
 
     def set_velocity(self, velocity: Vec3) -> None:
         """Define a velocidade em coordenadas mundiais."""
@@ -56,7 +62,64 @@ class CharacterBody:
         self.path.set_pos(to_point(position - Vec3(0, 0, self.height / 4) if self.crouched else position))
 
     def grounded(self) -> bool:
+        if self.vertical_override:
+            return self.ground_hit(.06) is not None
         return self.node.is_on_ground()
+
+    def ground_hit(self, distance: float) -> RayHit | None:
+        """Find walkable support, including actors and the capsule's rounded edge."""
+        point, closest, closest_drop = self.position(), None, float('inf')
+        # Eight rim probes cover ledges where the center ray misses the floor.
+        probes = [(0., 0.)] + [(self.radius * .7 * math.cos(i * math.pi / 4),
+            self.radius * .7 * math.sin(i * math.pi / 4)) for i in range(8)]
+        for x, y in probes:
+            offset = self.floor_offset - self.radius + math.sqrt(self.radius ** 2 - x*x - y*y)
+            start = point + Vec3(x, y, 0)
+            result = self.world.ray_test_all(to_point(start),
+                to_point(start - Vec3(0, 0, offset + distance)), _WORLD | _CHARACTERS)
+            for hit in result.get_hits():
+                if hit.get_node() == self.node or hit.get_hit_normal().z <= .5:
+                    continue
+                surface = _from_panda(hit.get_hit_pos())
+                drop = point.z - offset - surface.z
+                if drop < closest_drop:
+                    closest_drop = drop
+                    closest = RayHit(surface, _from_panda(hit.get_hit_normal()),
+                        (start - surface).length(), support_offset=offset)
+        return closest
+
+    def override_vertical(self, enabled: bool) -> None:
+        """Use a gravity-free cached motor for cling/slam; reset native fall state on exit."""
+        if enabled == self.vertical_override:
+            return
+        anchor = self.position()
+        if enabled:
+            if self.crouched and not self.set_crouched(False):
+                raise ValueError('movement.blocked')
+            if self._standing is None:
+                self._standing = self.node, self.path
+            if self._air is None:
+                node = BulletCharacterControllerNode(self._standing[0].get_shape(), .27, 'player-air')
+                node.set_gravity(0)
+                path = self.path.get_parent().attach_new_node(node)
+                path.set_collide_mask(_CHARACTERS)
+                self._air = node, path
+            node, path = self._air
+        else:
+            # Panda 1.10 exposes no setter/reset for the native vertical velocity.
+            # Reuse the shape; reset the controller only at this state transition.
+            node = BulletCharacterControllerNode(self._standing[0].get_shape(), .27, 'player')
+            node.set_gravity(20)
+            path = self.path.get_parent().attach_new_node(node)
+            path.set_collide_mask(_CHARACTERS)
+        path.set_pos(to_point(anchor))
+        if self.active:
+            self.world.remove_character(self.node)
+            self.world.attach_character(node)
+        if not enabled:
+            self._standing[1].remove_node()
+            self._standing = node, path
+        self.node, self.path, self.vertical_override = node, path, enabled
 
     def jump(self, speed: float) -> bool:
         if not self.node.can_jump():
@@ -68,11 +131,14 @@ class CharacterBody:
 
     def set_crouched(self, enabled: bool) -> bool:
         """Swap cached controllers, preserving feet and rejecting blocked standing space."""
+        if enabled and self.vertical_override:
+            return False
         if self.crouched == enabled:
             return True
         anchor = self.position()
-        if self._standing is None:
-            self._standing = self.node, self.path
+        if self._low is None:
+            if self._standing is None:
+                self._standing = self.node, self.path
             shape = BulletCapsuleShape(self.radius, self.height / 2 - 2 * self.radius, ZUp)
             node = BulletCharacterControllerNode(shape, .135, 'player-slide')
             node.set_gravity(20)
@@ -134,6 +200,7 @@ class BulletPhysicsAdapter:
                        camera_collision: bool = True) -> "StaticBody":
         """Registra uma caixa estática com o mesmo tamanho da geometria visual."""
         node = BulletRigidBodyNode(name)
+        node.set_python_tag('vigilia_surface', f'{name}@{center.x:.4f},{center.y:.4f},{center.z:.4f}')
         node.add_shape(BulletBoxShape(LVector3f(size.x / 2, size.y / 2, size.z / 2)))
         path = self._root.attach_new_node(node)
         path.set_pos(to_point(center))
@@ -176,8 +243,10 @@ class BulletPhysicsAdapter:
         """Consulta a primeira superfície entre dois pontos."""
         result = self._world.ray_test_closest(to_point(origin), to_point(end), _WORLD)
         if result.has_hit():
+            node = result.get_node()
+            surface = node.get_python_tag('vigilia_surface') or node.get_name()
             return RayHit(_from_panda(result.get_hit_pos()), _from_panda(result.get_hit_normal()),
-                          result.get_hit_fraction() * (end - origin).length())
+                          result.get_hit_fraction() * (end - origin).length(), surface)
         return None
 
     def sweep_sphere(self, origin: Vec3, end: Vec3, radius: float) -> RayHit | None:

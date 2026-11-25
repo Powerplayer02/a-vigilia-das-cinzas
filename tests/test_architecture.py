@@ -21,6 +21,13 @@ ALLOWED = {
 NATIVE = {"panda3d", "direct", "pygame", "numpy"}
 
 
+def test_advanced_movement_has_no_combat_or_native_imports():
+    source = SRC / 'player/advanced_movement.py'
+    imports = [name for node in ast.walk(ast.parse(source.read_text(encoding='utf8')))
+               for name in _imports(node, 'vigilia.player')]
+    assert not any(name.startswith('vigilia.combat') or name.split('.')[0] in NATIVE for name in imports)
+
+
 def test_ai_has_no_import_permission_for_world_save_or_ui() -> None:
     assert ALLOWED["ai"].isdisjoint({"world", "save", "ui"})
 

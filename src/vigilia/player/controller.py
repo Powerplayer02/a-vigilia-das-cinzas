@@ -25,6 +25,9 @@ class PlayerState(StrEnum):
     DASHING = auto()
     SLIDING = auto()
     AIRBORNE = auto()
+    WALL_CLING = auto()
+    SLAMMING = auto()
+    SLAM_RECOVERY = auto()
 
 
 class PlayerController:

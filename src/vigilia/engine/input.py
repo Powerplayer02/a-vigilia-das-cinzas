@@ -158,7 +158,7 @@ class InputManager:
                 if keys.issuperset(chord.replace("ctrl", "control").split("-"))
             ) | frozenset(action for action, button in self._gamepad.items() if button in buttons)
             if not self._agile_enabled:
-                actions -= {Action.DASH, Action.SLIDE, Action.JUMP}
+                actions -= {Action.DASH, Action.SLIDE, Action.JUMP, Action.SLAM}
         else:
             actions = frozenset(action for action, bindings in MENU_KEYS.items()
                 if any(keys.issuperset(chord.split("-")) for chord in bindings))

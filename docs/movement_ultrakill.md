@@ -1,4 +1,4 @@
-# Movimento Ágil — etapa 1 experimental
+# Movimento Ágil — etapas 1 e 2 experimentais
 
 Desligado por padrão em `[movement] ultrakill_style = false`. A opção fica
 em Opções → Controles. O personagem guarda seu próprio modo e os timers;
@@ -55,12 +55,68 @@ SFX próprios e rastro recebem eventos. O modo OFF não cria o controlador,
 pool visual, rastro ou cápsula alternativa. O relógio de render controla
 somente a apresentação; combate e recargas usam o passo fixo.
 
+## Etapa 2 — wall jump e Slam
+
+No ar, direcional contra uma parede inicia cling ao detectar uma superfície
+frontal a até 0,5 m, com normal oposta ao movimento. Dura até **24 passos**,
+sem velocidade vertical/horizontal. **B** lança para longe da parede, custa
+12 stamina e usa impulso vertical `7 × sqrt(1,3)` m/s: altura teórica 30%
+maior que o salto básico. Dash só pode sair paralelo ou para longe da parede.
+Receber dano cancela cling. A mesma superfície não pode ser agarrada outra
+vez antes do chão; a identidade estável do colisor evita burlar a regra por
+variação de normal. Fakes sem identidade usam a chave de plano geométrico.
+
+**G no ar** inicia Slam, por 18 stamina. O corpo desce a **18 m/s**, sem
+i-frames. Consultas preveem o apoio dentro do próximo passo, incluindo
+personagens e bordas sob a parte arredondada da cápsula. O corpo limita o
+deslocamento físico e emite **um** `SlamImpactEvent`, inclusive ao cair sobre
+um alvo cujo colisor não participa dos raycasts de câmera/cenário.
+O impacto cobre raio horizontal de **2,5 m**, com filtro de altura e linha
+de visão, 40% do pacote elemental/físico do ataque leve antes da mitigação
+e **60 de poise damage**. Recuperação de **8 passos**, também vulnerável.
+Ondas e som vêm do evento. No gamepad experimental, Slam usa direcional
+esquerdo; nos menus, continua sendo navegação. Tudo aceita remapeamento.
+
+`player/advanced_movement.py` não importa combate nem engine. Publica dados
+puros. O `CombatSystem` assina o evento, enfileira e resolve depois da física.
+O autor é opcional: fornece facção, scaling e crédito quando existe; o teste
+sem atacante/sem hitboxes também resolve. A fila de áreas é compartilhada
+com as zonas de fogo. Dano, resistências, poise, morte e eventos usam `_hit`
+e `resolve_damage`, em vez de uma segunda fórmula de dano. Aliados e autor
+são filtrados quando a facção é conhecida. Ataques sem autor podem ser neutros.
+
+O estilhaço mágico atual é raycast; globos dos chefes usam `CENTER_SPHERE`.
+Eles já usam o mesmo resolvedor de dano. Não foi criada uma magia AoE nova.
+`test_architecture.py` proíbe import de combate e bibliotecas nativas no
+controlador avançado; `test_slam.py` valida impacto mockado com múltiplos alvos.
+
+O adaptador usa motor vertical sem gravidade durante cling/Slam e o voo do
+wall jump. Restaura o controlador normal e a gravidade ao aterrissar, cancelar,
+trocar de área ou respawnar. O mesmo corpo lógico permanece no ECS, com apenas
+um controlador físico ativo. Timers, superfícies usadas, modo vertical e
+interrupção pendente são persistidos; carregar a recuperação não repete dano.
+O corpo de `Game._fixed_step` continua idêntico.
+
+## Protocolo de desempenho
+
+A régua anterior de ±5% de FPS foi substituída: **60 s**, warmup de 5 s,
+clock limitado a 60 Hz, frame time em ms, mediana e p95. A mediana OFF deve
+ficar até **+1,0 ms** do checkpoint pré-Ultrakill. Foram medidos 16,6665 ms
+no checkpoint, 16,6646 ms na etapa 1 OFF e 16,6651 ms na etapa 2 OFF; p95
+respectivos de 16,7601 / 16,7232 / 16,7184 ms. Essas amostras foram válidas;
+a medição anterior à correção de apoio também foi preservada no relatório.
+O intervalo inclui a espera do limitador. Dados e intervalos brutos em
+[frame-time-limited-2026-11-25.json](qa/frame-time-limited-2026-11-25.json).
+
+Reproduzir com `tools/benchmark.py --seconds 60 --warmup-seconds 5 --fps-cap 60 --particles 500 --profile --output caminho.json`.
+O checkpoint usa os mesmos instrumentos, sem alterar seu código de gameplay.
+
 ## Limites e próximas etapas
 
-Wall cling/wall jump (24 passos de cling), slam (18 m/s, recovery de 8),
-momentum geral (24 passos), coyote time e jump buffer (6 passos cada) ficam
-nas etapas seguintes e exigem confirmação. O impulso específico do salto
-de slide não equivale à implementação do sistema geral de momentum.
+Momentum geral, coyote time e jump buffer continuam na etapa 3 e exigem
+confirmação. O impulso específico do salto de slide não equivale ao sistema
+geral de momentum. A integração básica com lock-on e save foi testada; isso
+não certifica o balanceamento dos encontros.
 
 Chefes ainda não foram balanceados com ON/OFF. As tabelas de HP, dano e
 resistência foram preservadas. Testes de inputs simulados não certificam

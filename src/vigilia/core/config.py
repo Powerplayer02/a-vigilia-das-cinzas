@@ -18,6 +18,7 @@ DEFAULT_KEYMAP = {
     Action.DASH: "alt",
     Action.SLIDE: "v",
     Action.JUMP: "b",
+    Action.SLAM: "g",
     Action.LOCK_ON: "q",
     Action.PAUSE: "escape",
     Action.LIGHT: "mouse1",
@@ -62,6 +63,7 @@ DEFAULT_PADMAP = {
     Action.DASH: "dpad_right",
     Action.SLIDE: "dpad_down",
     Action.JUMP: "dpad_up",
+    Action.SLAM: "dpad_left",
 }
 
 

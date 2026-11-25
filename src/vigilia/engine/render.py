@@ -487,6 +487,28 @@ class ArenaRenderer:
                 node.set_depth_write(False)
                 node.hide()
                 self._dash_trails.append([node, 0.])
+        if not hasattr(self, "_slam_ring"):
+            line = LineSegs('slam-wave')
+            line.set_thickness(3)
+            line.set_color(1, .7, .3, .9)
+            for index in range(49):
+                angle = index * math.tau / 48
+                point = (math.cos(angle), math.sin(angle), 0)
+                line.move_to(*point) if index == 0 else line.draw_to(*point)
+            self._slam_ring = self.root.attach_new_node(line.create())
+            self._slam_ring.set_shader_off()
+            self._slam_ring.set_light_off()
+            self._slam_ring.set_transparency(TransparencyAttrib.M_alpha)
+            self._slam_ring.set_depth_write(False)
+            self._slam_ring.hide()
+            self._slam_expiry, self._slam_radius = 0., 0.
+
+    def slam_wave(self, position, radius):
+        self.prepare_agile_visuals()
+        self._slam_ring.set_pos(to_point(position + Vec3(0, 0, .04)))
+        self._slam_expiry, self._slam_radius = self._elapsed + .3, radius
+        self._slam_ring.show()
+
     def dash_trail(self, position):
         self.prepare_agile_visuals()
         slot = min(self._dash_trails, key=lambda item: item[1])
@@ -496,6 +518,9 @@ class ArenaRenderer:
 
     def set_player_crouched(self, enabled):
         self._player_crouched = enabled
+
+    def set_player_air_state(self, state):
+        self._player_air_state = state
 
     def draw(self, camera: CameraPose, player: Vec3, yaw: float, speed: float,
              dodge: float, rolling: bool, locked: int | None, paused: bool, dt: float) -> None:
@@ -513,11 +538,19 @@ class ArenaRenderer:
         for index, limb in enumerate(self._limbs):
             limb.set_p(gait * (1 if index in (0, 3) else -1) if not dodge else 0)
         self._rig.set_p(-360 * dodge if rolling else 17 * math.sin(math.pi * dodge))
+        if getattr(self, '_player_air_state', '') == 'slamming':
+            self._rig.set_p(25)
         crouched = getattr(self, "_player_crouched", False)
         self._rig.set_sz(.5 if crouched else 1)
         self._rig.set_z(-.22 * math.sin(math.pi * dodge) - (.445 if crouched else 0))
 
         self._elapsed += dt
+        if hasattr(self, '_slam_ring'):
+            fraction = max(0., min(1., 1 - (self._slam_expiry - self._elapsed) / .3))
+            self._slam_ring.set_scale(self._slam_radius * (.2 + .8 * fraction))
+            self._slam_ring.set_color_scale(1, 1, 1, 1 - fraction)
+            if self._elapsed >= self._slam_expiry:
+                self._slam_ring.hide()
         if hasattr(self, "_dash_trails"):
             for node, expiry in self._dash_trails:
                 if expiry <= self._elapsed:

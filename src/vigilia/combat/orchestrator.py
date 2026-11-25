@@ -1,17 +1,33 @@
 """Resolução de contatos, guarda, críticos, stagger e morte."""
 
-from vigilia.combat.attack import AttackKind, HitboxKind
+from dataclasses import dataclass
+import math
+from vigilia.combat.attack import AttackKind, HitboxKind, Attack
 from vigilia.combat.damage import resolve_damage
 from vigilia.combat.events import DamageDealt, EntityDied, ParrySucceeded, StaggerTriggered, ShotFired, HPChangedEvent, HealingApplied
 from vigilia.combat.fighter import Fighter
 from vigilia.combat.hitbox import HURT_BONES, WEAPON_BONES
 from vigilia.combat.parry import ParryOutcome, parry_outcome
-from vigilia.core.events import EventBus
+from vigilia.core.events import EventBus, SlamImpactEvent
 from vigilia.core.mathx import Transform, Vec3
 from vigilia.core.protocols import IContactVolumes, IPhysicsWorld
 from vigilia.core.timing import STAGGER_STEPS_HEAVY, STAGGER_STEPS_LIGHT, RIPOSTE_STEPS, HIT_REACT_STEPS
 from vigilia.entities.ecs import World, Entity
 from vigilia.entities.components import AttackIntent, BodyRef
+from vigilia.model.attacks import AttackDefinition, DamagePacket
+from vigilia.model.items import Weapon
+from vigilia.model.stats import StatsBlock
+
+
+@dataclass(frozen=True, slots=True)
+class AreaImpact:
+    source: int | None
+    position: Vec3
+    radius: float
+    packet: DamagePacket
+    kind: AttackKind
+    team: int | None = None
+    sight_check: bool = False
 
 
 def behind(attacker: Transform, defender: Transform) -> bool:
@@ -27,6 +43,8 @@ class CombatSystem:
         self._contacts = contacts
         self._physics = physics
         self._bus = bus
+        self._areas: list[AreaImpact] = []
+        bus.subscribe(SlamImpactEvent, self._on_slam)
 
     def consume_intents(self, world: World) -> None:
         """Inicia ataques do ECS usando a mesma entrada de combate do jogador."""
@@ -36,9 +54,24 @@ class CombatSystem:
                 intent.definition = None
 
     def queue_hazard(self, source, position, radius):
-        if not hasattr(self, "_hazards"):
-            self._hazards = []
-        self._hazards.append((source, position, radius))
+        self._areas.append(AreaImpact(source, position, radius, DamagePacket(fire=28), AttackKind.EMBER_VENT))
+
+    def _on_slam(self, event: SlamImpactEvent):
+        values = (event.radius, event.damage, event.poise, *tuple(value for _, value in event.damage_parts))
+        kinds = {'physical_slash', 'physical_strike', 'physical_pierce', 'fire', 'magic', 'holy'}
+        if (not all(type(value) in (int, float) and math.isfinite(value) and value >= 0 for value in values)
+                or event.radius <= 0 or any(key not in kinds for key, _ in event.damage_parts)
+                or len(dict(event.damage_parts)) != len(event.damage_parts)
+                or not isinstance(event.position, Vec3)
+                or not all(math.isfinite(value) for value in (event.position.x, event.position.y, event.position.z))
+                or (event.source is not None and (type(event.source) is not int or event.source < 0))
+                or (event.team is not None and type(event.team) is not int)):
+            raise ValueError('Invalid area impact')
+        parts = dict(event.damage_parts) if event.damage_parts else {'physical_strike': event.damage}
+        if event.damage_parts and not math.isclose(sum(parts.values()), event.damage, abs_tol=1e-6):
+            raise ValueError('Inconsistent area damage')
+        self._areas.append(AreaImpact(event.source, event.position, event.radius,
+            DamagePacket(**parts, poise=event.poise), AttackKind.SLAM, event.team, True))
 
     def resolve(self, world: World) -> None:
         self._resolve_hazards(world)
@@ -136,33 +169,41 @@ class CombatSystem:
         self._hit(source, target, attacker, defender, transform, target_transform, blocked)
 
     def _resolve_hazards(self, world):
-        from vigilia.model.attacks import DamagePacket
-        pending, self._hazards = getattr(self, "_hazards", []), []
-        for source, point, radius in pending:
-            attacker = world.get(Entity(source), Fighter)
-            if attacker is None or not attacker.alive:
+        if not self._areas:
+            return
+        pending, self._areas = self._areas, []
+        for impact in pending:
+            original = world.get(Entity(impact.source), Fighter) if impact.source is not None else None
+            if impact.kind == AttackKind.EMBER_VENT and (original is None or not original.alive):
                 continue
+            team = original.team if original is not None else impact.team
+            # An event impact does not require a live ECS attacker or a weapon hitbox.
+            attacker = Fighter(team if team is not None else -1,
+                original.weapon if original is not None else Weapon('Area'),
+                original.stats if original is not None else StatsBlock(0, 0, 0, 0, 0, 0, 0))
+            attacker.attack = Attack(AttackDefinition(impact.kind, 0, 1, 0, 0,
+                impact.packet, impact.radius, 0, parryable=False, blockable=False))
             for entity, (pose, defender) in world.query(Transform, Fighter):
-                if defender.team == attacker.team or not defender.alive or defender.invulnerable:
+                if (not defender.alive or defender.invulnerable or
+                        (team is not None and defender.team == team) or entity.id == impact.source):
                     continue
-                if (pose.position - point).flat().length() > radius:
+                if (pose.position - impact.position).flat().length() > impact.radius:
                     continue
-                amount = resolve_damage(DamagePacket(fire=28), attacker.stats, attacker.weapon,
-                                        defender.stats, defender.resist).hp
-                old_hp = defender.hp
-                defender.hp = max(0, old_hp - amount)
-                self._bus.publish(DamageDealt(source, entity.id, amount, defender.hp, False, "", "fire", "ember_vent"))
-                self._bus.publish(HPChangedEvent(entity.id, old_hp, defender.hp, defender.max_hp, "enemy"))
-                if not defender.alive:
-                    defender.attack, defender.blocking = None, False
-                    self._bus.publish(EntityDied(entity.id))
+                if impact.sight_check:
+                    if abs(pose.position.z - impact.position.z) > impact.radius:
+                        continue
+                    if self._physics.raycast(impact.position + Vec3(0, 0, .05), pose.position) is not None:
+                        continue
+                self._hit(impact.source if impact.source is not None else -1, entity.id, attacker, defender,
+                    Transform(impact.position), pose, False,
+                    cause='environment' if impact.source is None else None)
 
     def _touches(self, source: int, target: int, bones: tuple[str, ...]) -> bool:
         targets = tuple((target, bone) for bone in bones)
         return any(self._contacts.overlaps((source, bone), targets) for bone in WEAPON_BONES)
 
     def _hit(self, source: int, target: int, attacker: Fighter, defender: Fighter,
-             source_transform: Transform, target_transform: Transform, blocked: bool) -> None:
+             source_transform: Transform, target_transform: Transform, blocked: bool, *, cause=None) -> None:
         attack = attacker.attack
         assert attack is not None
         kind = attack.definition.kind
@@ -189,8 +230,8 @@ class CombatSystem:
         defender.hp = max(0.0, defender.hp - damage)
         defender.hit_steps = HIT_REACT_STEPS
         defender.poise -= result.poise
-        if defender.poise <= 0 and defender.alive and not defender.stagger_cooldown_steps:
-            steps = STAGGER_STEPS_HEAVY if kind == AttackKind.HEAVY else STAGGER_STEPS_LIGHT
+        if result.poise > 0 and defender.poise <= 0 and defender.alive and not defender.stagger_cooldown_steps:
+            steps = STAGGER_STEPS_HEAVY if kind in (AttackKind.HEAVY, AttackKind.SLAM) else STAGGER_STEPS_LIGHT
             defender.interrupt(steps)
             self._bus.publish(StaggerTriggered(target, False))
         if riposte:
@@ -211,7 +252,7 @@ class CombatSystem:
                                      "fire" if attack.definition.packet.fire > 0 else "magic" if attack.definition.packet.magic > 0 else "physical",
                                      attack.definition.kind.value))
         self._bus.publish(HPChangedEvent(target, old_hp, defender.hp, defender.max_hp,
-                                         "player" if attacker.team == 0 else "enemy"))
+                                         cause or ("player" if attacker.team == 0 else "enemy")))
         if not defender.alive:
             defender.attack = None
             defender.blocking = False

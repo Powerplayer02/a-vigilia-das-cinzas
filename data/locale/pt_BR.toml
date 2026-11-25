@@ -3,6 +3,7 @@
 "control.dash" = "Dash direcional"
 "control.slide" = "Deslizar"
 "control.jump" = "Pular (modo ágil)"
+"control.slam" = "Slam (ataque aéreo)"
 "movement.charges" = "Dash: {count}/2"
 "movement.blocked" = "Sem espaço para ficar de pé. Saia de baixo do obstáculo."
 "game.subtitle" = "A brasa ainda guarda o seu nome."

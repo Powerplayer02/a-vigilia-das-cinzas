@@ -1,0 +1,28 @@
+{
+  "native_wall_cling": true,
+  "cling_drift_m": 0.0,
+  "cling_snapshot": true,
+  "wall_jump_away": true,
+  "slam_snapshot": true,
+  "slam_damage": true,
+  "impact_count": 1,
+  "recovery_reload_did_not_repeat_damage": true,
+  "lock_preserved": true,
+  "gravity_restored": true,
+  "mode_off": true,
+  "landed_on_target": true,
+  "qa_seeds": [
+    "Teleport to wall and directly above training target",
+    "Training attack timer disabled"
+  ],
+  "manual_balance_certified": false,
+  "build_id": "d8f1c0ad3c23d5af",
+  "diagnostics": {
+    "build_id": "d8f1c0ad3c23d5af",
+    "quarantined": false,
+    "spikes": [],
+    "capture_errors": [],
+    "trigger_count": 0
+  },
+  "png_encoding": "after instrumented frames"
+}
