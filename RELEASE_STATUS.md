@@ -9,7 +9,7 @@ Estado em 25/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
 | Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Aprovado: 391 testes em cada plataforma, [wall jump + Slam](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45720831524) |
+| CI remoto Linux/macOS/Windows | Aprovado: 438 testes em cada plataforma, [momentum + coyote + buffer](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45724776396) |
 | Três desfechos a partir de saves anteriores ao chefe final | Aprovado: três fixtures versionadas, combate/epílogo/pós-créditos; repetido com Bullet/UI nativos |
 | Campanha manual com números de produção | Pendente e bloqueia release |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
@@ -122,6 +122,9 @@ O percurso nativo `6b7f72854807d0ce` repetiu
 coyote no sexto passo após reload, salto enfileirado na aterrissagem e
 cancelamento por roll: sem pico acima de 200 ms, erro de captura ou quarentena.
 Dash/slide, wall jump/Slam e os três desfechos também passaram novamente.
+
+Os 438 testes passaram no CI de Linux, macOS e Windows. Resultados por job
+e commit em `docs/qa/stage3-ci-2026-11-25.json`.
 
 O protocolo agora mede capped e uncapped. No chefe final fase 3 com 20
 inimigos e 500 partículas, 60 s: **252,80 FPS sem cap**, mediana/p95

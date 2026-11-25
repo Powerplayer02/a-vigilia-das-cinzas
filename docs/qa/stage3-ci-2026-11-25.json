@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-25",
+  "commit": "443094f44aff04aefb946f0f3ef0ddd0163e7883",
+  "build_id": "6b7f72854807d0ce",
+  "run_id": 45724776396,
+  "url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45724776396",
+  "original_tests_preserved": 391,
+  "new_tests": 47,
+  "jobs": [
+    {
+      "name": "Tests (ubuntu-latest)",
+      "id": 139591736983,
+      "conclusion": "success",
+      "pytest": "438 passed in 6.30s"
+    },
+    {
+      "name": "Tests (macos-latest)",
+      "id": 139591737202,
+      "conclusion": "success",
+      "pytest": "438 passed in 5.17s"
+    },
+    {
+      "name": "Tests (windows-latest)",
+      "id": 139591737303,
+      "conclusion": "success",
+      "pytest": "438 passed in 17.83s"
+    }
+  ],
+  "native_and_gpu_scope": "Native Game checks and 60-second capped/uncapped measurements ran locally; hosted CI tests have no native window."
+}
