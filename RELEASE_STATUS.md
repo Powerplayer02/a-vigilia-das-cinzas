@@ -9,7 +9,7 @@ Estado em 25/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
 | Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Aprovado: 354 testes em cada plataforma, [pacote de fechamento](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45708506880) |
+| CI remoto Linux/macOS/Windows | Aprovado: 391 testes em cada plataforma, [wall jump + Slam](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45720831524) |
 | Três desfechos a partir de saves anteriores ao chefe final | Aprovado: três fixtures versionadas, combate/epílogo/pós-créditos; repetido com Bullet/UI nativos |
 | Campanha manual com números de produção | Pendente e bloqueia release |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
@@ -91,6 +91,9 @@ O percurso nativo repetiu save/load no cling, na descida e após o impacto,
 com lock-on preservado e sem dano repetido, incluindo queda diretamente
 sobre o manequim e colisão na borda da cápsula. Build `d8f1c0ad3c23d5af`,
 gravador ativo: sem picos acima de 200 ms, sem erro e sem quarentena.
+
+Os 391 testes passaram também no CI de Linux, macOS e Windows. Contagens
+por job e commit em `docs/qa/stage2-ci-2026-11-25.json`.
 
 A exigência de ±5% de FPS foi retirada pelo usuário. A régua vigente usa
 60 s, clock limitado a 60 Hz, mediana e p95 em ms; OFF deve ficar até
