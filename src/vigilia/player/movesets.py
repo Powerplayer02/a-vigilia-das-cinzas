@@ -14,6 +14,7 @@ class Moveset:
     running: AttackDefinition
     riposte: AttackDefinition
     backstab: AttackDefinition
+    slide: AttackDefinition
 
     @classmethod
     def from_spec(cls, spec: WeaponSpec, upgrade: int = 0) -> "Moveset":
@@ -22,7 +23,7 @@ class Moveset:
                        (AttackKind.LIGHT_1, AttackKind.LIGHT_2, AttackKind.LIGHT_3))
         return cls(spec.instantiate(upgrade), lights, spec.attack(AttackKind.HEAVY),
                    spec.attack(AttackKind.RUNNING), spec.attack(AttackKind.RIPOSTE),
-                   spec.attack(AttackKind.BACKSTAB))
+                   spec.attack(AttackKind.BACKSTAB), spec.attack(AttackKind.SLIDING))
 
 
 LONGSWORD = Moveset.from_spec(LONGSWORD_SPEC)

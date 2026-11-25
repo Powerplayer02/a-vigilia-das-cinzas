@@ -12,7 +12,7 @@ from vigilia.core.events import (
     AreaEnteredEvent, EventBus, BonfireRestedEvent, SaveRequestedEvent, LevelUpRequestedEvent,
     BossArenaEnteredEvent, BossDefeatedEvent, MusicChangeRequestedEvent, AppStateChangedEvent,
     SfxRequestedEvent, SoulCollectedEvent, LevelUpEvent, ItemUseStartedEvent,
-    SettingsChangedEvent,
+    SettingsChangedEvent, EndingChosenEvent, DashStartedEvent, DashTrailEvent, SlideStartedEvent,
 )
 from vigilia.core.mathx import Transform, Vec3, lerp_angle
 from vigilia.core.timing import (
@@ -177,6 +177,9 @@ class Game:
         self._bus.subscribe(ParrySucceeded, self._on_parry)
         self._bus.subscribe(StaggerTriggered, self._on_stagger)
         self._bus.subscribe(EntityDied, self._on_death)
+        self._bus.subscribe(DashStartedEvent, lambda event: self._sfx("dash", event.position))
+        self._bus.subscribe(SlideStartedEvent, lambda event: self._sfx("slide", event.position))
+        self._bus.subscribe(DashTrailEvent, lambda event: self._renderer.dash_trail(event.position))
         self._bus.subscribe(BonfireRestedEvent, self._on_bonfire_rested)
         self._bus.subscribe(SaveRequestedEvent, self._on_save_requested)
         self._bus.subscribe(LevelUpRequestedEvent, self._on_level_up)
@@ -693,6 +696,14 @@ class Game:
                 transform, fighter, dodge=self._player.dodge_progress if entity == self._entity else 0,
                 rolling=entity == self._entity and self._player.state == PlayerState.ROLLING,
             )
+        if self._player.advanced is not None and self._player.body.crouched:
+            pose = self._poses[self._entity.id]
+            foot = self._transform.position.z - .89
+            def lower(point):
+                return Vec3(point.x, point.y, foot + (point.z - foot) * .5)
+            self._poses[self._entity.id] = replace(pose,
+                bones={name: lower(point) for name, point in pose.bones.items()},
+                volumes={name: (lower(point), radius * .5) for name, (point, radius) in pose.volumes.items()})
 
     def _critical_target(self) -> tuple[int, Vec3, AttackKind] | None:
         candidates = []
@@ -731,6 +742,8 @@ class Game:
         logger.info(message)
 
     def _on_damage(self, event: DamageDealt) -> None:
+        if event.source == self._entity.id and event.remaining_hp == 0 and self._player.advanced is not None:
+            self._player.advanced.on_kill(event.target)
         position = self._position(event.target) + Vec3(0, 0, .7)
         self._sfx(event.critical or ("hit_block" if event.blocked else "hit_flesh"), position)
         self._emit("sparks" if event.blocked else "embers" if event.damage_type == "fire" else
@@ -836,6 +849,7 @@ class Game:
         self._fighter.weapon = self.inventory.weapon
         self._commands = CombatController(self._fighter, self._transform, self.inventory, aim_source=self._spell_aim)
         self._target = None
+        self._commands.movement = self._player.advanced
         self._camera.set_target(None)
         self._previous_dodge = 0
         self._practice_wait = TRAINING_INITIAL_WAIT_STEPS
@@ -845,6 +859,8 @@ class Game:
         self._sync.sync({entity: pose.volumes for entity, pose in self._poses.items()})
 
     def _draw_combat(self) -> None:
+        if self._player.advanced is not None:
+            self._renderer.set_player_crouched(self._player.body.crouched)
         if hasattr(self._renderer, "hazard"):
             self._renderer.hazard(self.boss.hazard_position if self.boss else Vec3(),
                 bool(self.boss and self.boss.hazard_visible), bool(self.boss and 90 <= self.boss.hazard_step % 360 < 150))
@@ -902,6 +918,8 @@ class Game:
             self._renderer.combat_info(info, "\n".join(targets[:6]), feedback)
         if self.active_area == "forno_da_vigilia" and (self._transform.position - Vec3(240, 35, 1.02)).flat().length() < 3:
             feedback = self.localizer.t("ending.interact", key=self._bindings[Action.INTERACT].upper())
+        if not feedback and self._player.advanced is not None:
+            feedback = self.localizer.t("movement.charges", count=self._player.advanced.charges)
         self._context_feedback = feedback
         if self.hud is not None:
             self.hud.tick()
@@ -990,6 +1008,7 @@ class Game:
             self.inventory.equipped_weapon, self.inventory.equipped_gear,
             getattr(self, "character_name", "Vesper"), getattr(self, "character_class", "warrior"), getattr(self, "playtime_sec", 0),
             getattr(self, "starting_allocation", {}).copy(),
+            getattr(self._player, "advanced", None) is not None,
         )
         state = self.world_state
         actors = []
@@ -1068,9 +1087,12 @@ class Game:
         self._bonfires = BonfireService(self.world_state, self._bus)
         self.map_data.state = self.world_state
         self._fighter.from_snapshot(player.fighter, ids)
+        self._player.body.teleport(player.motion.position)
+        self._configure_agile(player.agile_movement)
         self._player.from_snapshot(player.motion)
         self._commands = CombatController(self._fighter, self._transform, self.inventory, aim_source=self._spell_aim)
         self._commands.from_snapshot(player.controls)
+        self._commands.movement = self._player.advanced
         provided = {actor.key for actor in world.actors}
         for key, entity in self._actors.items():
             if key != "player" and key not in provided:
@@ -1325,6 +1347,8 @@ class Game:
         self._emit("level", event.position)
 
     def _bind_presentation_sources(self):
+        if hasattr(self, "settings"):
+            self._configure_agile(self.settings.options.config.ultrakill_style)
         self._player.on_dodge = lambda: self._sfx("roll", self._transform.position)
         for entity, (_, fighter) in self._world.query(Transform, Fighter):
             fighter.on_attack = lambda definition, identity=entity.id: self._sfx(
@@ -1332,6 +1356,31 @@ class Game:
                 "cast_heal" if definition.kind == AttackKind.MENDING_LIGHT else
                 "swing_heavy" if definition.kind in (AttackKind.HEAVY, AttackKind.SLOW_OVERHEAD, AttackKind.FORGE_GRAB)
                 else "swing_light", self._position(identity))
+
+    def _configure_agile(self, enabled):
+        from vigilia.player.advanced_movement import AdvancedMovement
+        current = getattr(self._player, "advanced", None)
+        if not enabled and current is not None:
+            if not self._player.body.set_crouched(False):
+                raise ValueError("movement.blocked")
+            current.cancel()
+            if hasattr(self, "_renderer"):
+                self._renderer.set_player_crouched(False)
+            if self._fighter.attack is not None and self._fighter.attack.definition.kind == AttackKind.SLIDING:
+                self._fighter.attack = None
+            if self._player.state in (PlayerState.DASHING, PlayerState.SLIDING, PlayerState.AIRBORNE):
+                self._player.state, self._player.velocity = PlayerState.IDLE, Vec3()
+                self._fighter.invulnerable = False
+        if enabled and current is None:
+            current = AdvancedMovement(self._player.body, emit=self._bus.publish, entity_id=self._entity.id)
+            if hasattr(self, "_renderer"):
+                self._renderer.prepare_agile_visuals()
+        self._player.advanced = current if enabled else None
+        self._commands.movement = self._player.advanced
+        if hasattr(self, "settings"):
+            self.input.set_agile_enabled(enabled)
+            options = self.settings.options
+            self.settings.options = replace(options, config=replace(options.config, ultrakill_style=enabled))
 
     def _spell_aim(self):
         if self._target is not None:
@@ -1363,7 +1412,8 @@ class Game:
         report_path = report_path or self._data_root.parent / "artifacts/qa" / build_id / "diagnostics.json"
         monitor = QADiagnostics(self._app, directory, self._physics.diagnostic_contacts,
             lambda: dict(state=self.flow.current.value, area=self.active_area,
-                boss=self.boss.profile.id if self.boss else "", phase=self.boss.phase if self.boss else 0),
+                boss=self.boss.profile.id if self.boss else "", phase=self.boss.phase if self.boss else 0,
+                ending=self.world_state.ending, agile_movement=self._player.advanced is not None),
             build_id=build_id, report_path=report_path,
             registry_path=self._data_root.parent / "artifacts/qa" / build_id / "quarantine.json")
         for owner, name, label in ((self, "frame", "game_frame"), (self, "_fixed_step", "fixed_step"),
@@ -1465,6 +1515,10 @@ class Game:
             current = values.index((config.width, config.height)) if (config.width, config.height) in values else -1
             width, height = values[(current + delta) % len(values)]
             self.settings.save(replace(options, config=replace(config, width=width, height=height)))
+        elif key == "ultrakill_style":
+            enabled = not config.ultrakill_style
+            self._configure_agile(enabled)
+            self.settings.set(key, enabled)
         elif key in ("vsync", "fullscreen"):
             self.settings.set(key, not getattr(config, key))
         elif key in ("shadow_quality", "draw_distance"):
@@ -1495,12 +1549,15 @@ class Game:
         return self.localizer.t("options.rebound")
 
     def _reset_options(self, category):
+        if category in ("all", "controls") and not self.settings.defaults.config.ultrakill_style:
+            self._configure_agile(False)
         self.settings.reset(category)
         self._bus.publish(SettingsChangedEvent(self.settings.options, ("reset", category)))
         return self.localizer.t("options.reset_done")
 
     def _on_settings_changed(self, event):
         options, config = event.options, event.options.config
+        self._configure_agile(config.ultrakill_style)
         if self.localizer.language != options.language:
             self.localizer.set_language(options.language)
         self._config_adapter.apply(config)
@@ -1545,6 +1602,7 @@ class Game:
         if self._pending_save is not None:
             self.world_state.ending, self._ending_credits = previous, False
             raise ValueError("ending.save_failed")
+        self._bus.publish(EndingChosenEvent(self.active_slot, choice))
         self.flow.transition(AppState.CREDITS)
         return ""
 
@@ -1691,7 +1749,8 @@ class GameQueries:
                 for key in ("master_volume", "music_volume", "sfx_volume"))
         if category in ("controls", "gamepad"):
             mapping = {key: config.gamepad.get(key, "") for key in config.bindings} if category == "gamepad" else config.bindings
-            sensitivity = (OptionView("mouse_sensitivity", tr("options.sensitivity"), f"{config.mouse_sensitivity:.4f}"),) if category == "controls" else ()
+            sensitivity = (OptionView("mouse_sensitivity", tr("options.sensitivity"), f"{config.mouse_sensitivity:.4f}"),
+                OptionView("ultrakill_style", tr("options.ultrakill_style"), tr("options.on" if config.ultrakill_style else "options.off"))) if category == "controls" else ()
             return sensitivity + tuple(OptionView(action.value, tr("control." + action.value), binding.upper() if binding else tr("options.unbound"))
                 for action, binding in mapping.items())
         if category == "accessibility":

@@ -44,6 +44,18 @@ class FighterSnapshot:
 
 
 @dataclass(frozen=True, slots=True)
+class AdvancedMotionSnapshot:
+    mode: str
+    age: int
+    charges: int
+    recharge: int
+    direction: Vec3
+    crouched: bool
+    air_velocity: Vec3
+    air_steps: int
+
+
+@dataclass(frozen=True, slots=True)
 class MotionSnapshot:
     position: Vec3
     yaw: float
@@ -54,6 +66,7 @@ class MotionSnapshot:
     dodge_total: int
     dodge_speed: float
     dodge_progress: float
+    advanced: AdvancedMotionSnapshot | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,6 +92,7 @@ class PlayerSnapshot:
     character_class: str = "warrior"
     playtime_sec: float = 0
     starting_allocation: dict[str, int] = field(default_factory=dict)
+    agile_movement: bool = False
 
 
 @dataclass(frozen=True, slots=True)

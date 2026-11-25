@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-25",
+  "tests": 354,
+  "original_tests_preserved": 306,
+  "build_id": "0edc4fe38b5082dd",
+  "endings": [
+    {
+      "choice": "maintain",
+      "preboss_fixture": "ending_a_preboss.db",
+      "epilogue": "Você assume a vigília. As estradas de Vesper permanecem iluminadas, mas as memórias dos mortos ainda alimentam o fogo. Alguém lembrará o seu nome.",
+      "final_boss_alive_on_load": true,
+      "real_spell_damage": true,
+      "reward_count": 1,
+      "ending_event": "maintain",
+      "unacknowledged_credits_reopened": true,
+      "postcredits_persisted": true,
+      "fresh_process_load": true,
+      "source_unchanged": true,
+      "qa_seeds": [
+        "Synthetic preboss fixture",
+        "Final blow HP=1",
+        "Teleport after entering fog"
+      ],
+      "manual_balance_certified": false
+    },
+    {
+      "choice": "extinguish",
+      "preboss_fixture": "ending_b_preboss.db",
+      "epilogue": "Você deixa a chama morrer. Pela primeira vez em séculos, a noite alcança Vesper. Entre o medo e o silêncio, os vivos aprendem a caminhar sem oferecer os mortos.",
+      "final_boss_alive_on_load": true,
+      "real_spell_damage": true,
+      "reward_count": 1,
+      "ending_event": "extinguish",
+      "unacknowledged_credits_reopened": true,
+      "postcredits_persisted": true,
+      "fresh_process_load": true,
+      "source_unchanged": true,
+      "qa_seeds": [
+        "Synthetic preboss fixture",
+        "Final blow HP=1",
+        "Teleport after entering fog"
+      ],
+      "manual_balance_certified": false
+    },
+    {
+      "choice": "transform",
+      "preboss_fixture": "ending_c_preboss.db",
+      "epilogue": "Você reparte a última brasa. Pequenas luzes percorrem as casas de Vesper. Nenhuma memória volta ao forno: o reino aprende a carregar, junto, o peso de lembrar.",
+      "final_boss_alive_on_load": true,
+      "real_spell_damage": true,
+      "reward_count": 1,
+      "ending_event": "transform",
+      "unacknowledged_credits_reopened": true,
+      "postcredits_persisted": true,
+      "fresh_process_load": true,
+      "source_unchanged": true,
+      "qa_seeds": [
+        "Synthetic preboss fixture",
+        "Final blow HP=1",
+        "Teleport after entering fog"
+      ],
+      "manual_balance_certified": false
+    }
+  ],
+  "agile_native": {
+    "native_bullet": true,
+    "mode_off_has_no_controller_or_visual_pool": true,
+    "dash_iframes": true,
+    "lock_preserved": true,
+    "mid_dash_roundtrip": true,
+    "slide_capsule_half": true,
+    "slide_jump": true,
+    "mode_saved_per_character": true,
+    "off_after_loading_off_save": true,
+    "audio_events": [
+      "DashStartedEvent",
+      "SlideStartedEvent"
+    ],
+    "manual_balance_certified": false
+  },
+  "qa_active": {
+    "build_id": "0edc4fe38b5082dd",
+    "quarantined": false,
+    "capture_errors": [],
+    "spikes": []
+  },
+  "manual_balance_certified": false
+}

@@ -48,6 +48,7 @@ class InputManager:
         self._edges: deque[InputEdge] = deque()
         self._stick = (0.0, 0.0)
         self.mode = InputMode.GAMEPLAY
+        self._agile_enabled = False
         self._menu_edges: deque[InputEdge] = deque()
         self._suppressed_keys: set[str] = set()
         self._suppressed_buttons: set[str] = set()
@@ -90,6 +91,11 @@ class InputManager:
         self._suppressed_keys = self._keys.copy()
         self._suppressed_buttons = set(self._buttons)
         self._suppress_stick = hypot(*self._stick) > 0
+
+    def set_agile_enabled(self, enabled: bool) -> None:
+        if enabled != self._agile_enabled:
+            self._agile_enabled = enabled
+            self.set_mode(self.mode, force=True)
 
     def menu_request(self) -> InputEdge | None:
         """Captura a abertura de menu no render, antes de avançar qualquer passo."""
@@ -151,6 +157,8 @@ class InputManager:
                 action for action, chord in self._bindings.items()
                 if keys.issuperset(chord.replace("ctrl", "control").split("-"))
             ) | frozenset(action for action, button in self._gamepad.items() if button in buttons)
+            if not self._agile_enabled:
+                actions -= {Action.DASH, Action.SLIDE, Action.JUMP}
         else:
             actions = frozenset(action for action, bindings in MENU_KEYS.items()
                 if any(keys.issuperset(chord.split("-")) for chord in bindings))

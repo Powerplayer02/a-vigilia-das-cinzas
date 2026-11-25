@@ -84,7 +84,7 @@ class OptionsUI:
             return
         index = self.grid.index
         if CATEGORIES[self.category] == "controls" and index < len(self.rows):
-            if dx and self.rows[index].id == "mouse_sensitivity":
+            if dx and self.rows[index].id in ("mouse_sensitivity", "ultrakill_style"):
                 self.change(index, dx)
             elif dx:
                 self.turn_page(dx)
@@ -108,7 +108,7 @@ class OptionsUI:
         if self.modal:
             return
         row = self.rows[index]
-        if CATEGORIES[self.category] == "controls" and row.id != "mouse_sensitivity":
+        if CATEGORIES[self.category] == "controls" and row.id not in ("mouse_sensitivity", "ultrakill_style"):
             self.capture = row.id
             self.input.begin_binding_capture(self.device)
             self.message.set(self.backend.t("options.capture"))

@@ -478,6 +478,25 @@ class ArenaRenderer:
         node = self._app.render.attach_new_node(line.create())
         self._tracers.append((node, self._elapsed + .14))
 
+    def prepare_agile_visuals(self):
+        if not hasattr(self, "_dash_trails"):
+            self._dash_trails = []
+            for index in range(16):
+                node = self._box(self.root, f"dash-trail-{index}", Vec3(), Vec3(.5, .35, 1.55), (.2, .8, 1, .22))
+                node.set_transparency(TransparencyAttrib.M_alpha)
+                node.set_depth_write(False)
+                node.hide()
+                self._dash_trails.append([node, 0.])
+    def dash_trail(self, position):
+        self.prepare_agile_visuals()
+        slot = min(self._dash_trails, key=lambda item: item[1])
+        slot[0].set_pos(to_point(position))
+        slot[0].show()
+        slot[1] = self._elapsed + .25
+
+    def set_player_crouched(self, enabled):
+        self._player_crouched = enabled
+
     def draw(self, camera: CameraPose, player: Vec3, yaw: float, speed: float,
              dodge: float, rolling: bool, locked: int | None, paused: bool, dt: float) -> None:
         """Atualiza câmera, animações de prévia e informações de controle."""
@@ -494,9 +513,15 @@ class ArenaRenderer:
         for index, limb in enumerate(self._limbs):
             limb.set_p(gait * (1 if index in (0, 3) else -1) if not dodge else 0)
         self._rig.set_p(-360 * dodge if rolling else 17 * math.sin(math.pi * dodge))
-        self._rig.set_z(-.22 * math.sin(math.pi * dodge))
+        crouched = getattr(self, "_player_crouched", False)
+        self._rig.set_sz(.5 if crouched else 1)
+        self._rig.set_z(-.22 * math.sin(math.pi * dodge) - (.445 if crouched else 0))
 
         self._elapsed += dt
+        if hasattr(self, "_dash_trails"):
+            for node, expiry in self._dash_trails:
+                if expiry <= self._elapsed:
+                    node.hide()
         retained = []
         for tracer, expiry in self._tracers:
             if expiry < self._elapsed:

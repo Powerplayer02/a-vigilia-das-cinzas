@@ -15,7 +15,7 @@ from vigilia.model.items import WEAPONS, ITEM_WEIGHTS, GEAR_IDS
 from vigilia.model.spells import SPELLS
 from vigilia.model.snapshots import (
     SNAPSHOT_VERSION, ActorSnapshot, AttackSnapshot, ControlSnapshot, FighterSnapshot,
-    MotionSnapshot, PlayerSnapshot, SaveSnapshot, WorldSnapshot, BossSnapshot, AreaSnapshot,
+    MotionSnapshot, AdvancedMotionSnapshot, PlayerSnapshot, SaveSnapshot, WorldSnapshot, BossSnapshot, AreaSnapshot,
 )
 from vigilia.model.stats import StatsBlock, ResistBlock
 from vigilia.model.characters import CHARACTER_CLASSES, validate_name
@@ -57,6 +57,11 @@ def decode(version: int, timing_version: int, player_json: str, world_json: str)
         motion = player["motion"].copy()
         for field in ("position", "velocity", "dodge_direction"):
             motion[field] = Vec3(**motion[field])
+        if motion.get("advanced") is not None:
+            advanced = motion["advanced"].copy()
+            for field in ("direction", "air_velocity"):
+                advanced[field] = Vec3(**advanced[field])
+            motion["advanced"] = AdvancedMotionSnapshot(**advanced)
         player["motion"] = MotionSnapshot(**motion)
         player["fighter"] = _fighter(player["fighter"])
         player["controls"] = ControlSnapshot(**player["controls"])
@@ -170,7 +175,18 @@ def validate(snapshot: SaveSnapshot) -> None:
     _require((weapon.spec_id, weapon.upgrade) == (player.fighter.weapon_id, player.fighter.upgrade),
              "Arma e inventário divergentes.")
     motion = player.motion
-    _require(motion.state in ("idle", "walking", "running", "rolling", "backstep", "hit_react", "death", "knockdown"),
+    _require(type(player.agile_movement) is bool and (motion.advanced is not None) == player.agile_movement,
+             "Modo de movimento divergente.")
+    if motion.advanced is not None:
+        a = motion.advanced
+        _require(a.mode in ("", "dash", "slide") and _integer(a.age) and
+                 a.age < (12 if a.mode == "dash" else 36) and
+                 _integer(a.charges) and a.charges <= 2 and _integer(a.recharge) and a.recharge < 72
+                 and (a.charges < 2 or a.recharge == 0) and type(a.crouched) is bool
+                 and _vector(a.direction) and _vector(a.air_velocity)
+                 and _integer(a.air_steps) and a.air_steps <= 24, "Movimento ágil inválido.")
+    _require(motion.state in ("idle", "walking", "running", "rolling", "backstep", "hit_react", "death", "knockdown")
+             or (player.agile_movement and motion.state in ("dashing", "sliding", "airborne")),
              "Estado de locomoção inválido.")
     _require(_vector(motion.position) and _vector(motion.velocity) and _vector(motion.dodge_direction)
              and _finite(motion.yaw, motion.dodge_speed, motion.dodge_progress), "Pose inválida.")
@@ -183,6 +199,8 @@ def validate(snapshot: SaveSnapshot) -> None:
              type(player.controls.combo_buffered) is bool, "Buffer de comando inválido.")
     active_keys = {"player"} | {actor.key for actor in world.actors} | {boss.id for boss in world.bosses}
     _validate_fighter(player.fighter, active_keys)
+    _require(player.agile_movement or player.fighter.attack is None
+             or player.fighter.attack.definition.kind != AttackKind.SLIDING, "Deslize sem modo ágil.")
     for area in areas:
         local_keys = {"player"} | {actor.key for actor in area.actors} | {boss.id for boss in area.bosses}
         for actor in area.actors:
@@ -239,6 +257,10 @@ def _validate_fighter(fighter: FighterSnapshot, keys: set[str]) -> None:
         _require(definition.kind in AttackKind and _integer(definition.windup) and
                  _integer(definition.active, 1) and _integer(definition.recovery), "Definição de ataque inválida.")
         definitions = {item.kind: item for item in WEAPONS[fighter.weapon_id].attacks}
+        if definition.kind == AttackKind.SLIDING:
+            _require(any(item.kind == AttackKind.LIGHT_1 for item in WEAPONS[fighter.weapon_id].attacks),
+                     "Deslize incompatível com a arma.")
+            definitions[AttackKind.SLIDING] = WEAPONS[fighter.weapon_id].attack(AttackKind.SLIDING)
         definitions.update({spell.attack.kind: spell.attack for spell in SPELLS.values()
                             if spell.can_cast(fighter.stats, fighter.weapon_id)})
         if definition.kind in (spell.attack.kind for spell in SPELLS.values()):

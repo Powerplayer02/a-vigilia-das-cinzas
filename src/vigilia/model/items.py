@@ -63,6 +63,10 @@ class WeaponSpec:
                       scaling.intelligence.coefficient, scaling.faith.coefficient, upgrade, self.id)
 
     def attack(self, kind: Kind) -> AttackDefinition:
+        if kind == Kind.SLIDING:
+            from vigilia.core.timing import SLIDE_ATTACK_WINDUP, SLIDE_ATTACK_ACTIVE, SLIDE_ATTACK_RECOVERY
+            return replace(self.attack(Kind.LIGHT_1), kind=kind, windup=SLIDE_ATTACK_WINDUP,
+                active=SLIDE_ATTACK_ACTIVE, recovery=SLIDE_ATTACK_RECOVERY, stamina=18, cancel_from=None)
         return next(attack for attack in self.attacks if attack.kind == kind)
 
 

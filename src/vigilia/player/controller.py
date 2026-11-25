@@ -22,6 +22,9 @@ class PlayerState(StrEnum):
     HIT_REACT = auto()
     DEATH = auto()
     KNOCKDOWN = auto()
+    DASHING = auto()
+    SLIDING = auto()
+    AIRBORNE = auto()
 
 
 class PlayerController:
@@ -41,6 +44,7 @@ class PlayerController:
         self.dodge_progress = 0.0
         self._dodge_total = ROLL_STEPS_MID
         self._dodge_speed = RollTier.MID.speed
+        self.advanced = None
 
     @property
     def dodging(self) -> bool:
@@ -51,6 +55,8 @@ class PlayerController:
                busy: bool = False, mobility: RollTier = RollTier.MID) -> None:
         """Calcula a intenção do passo a partir do estado e de uma borda."""
         move = forward * held.move_y + right * held.move_x
+        advanced = self.advanced.step(held, edge, forward, right, fighter,
+            self.transform.position, busy=busy) if self.advanced is not None and fighter is not None else None
         if fighter is not None:
             fighter.invulnerable = False
             if not fighter.alive or fighter.stagger_steps:
@@ -60,6 +66,14 @@ class PlayerController:
                 self.state = PlayerState.DEATH if not fighter.alive else (
                     PlayerState.KNOCKDOWN if fighter.knockdown_steps else PlayerState.HIT_REACT)
                 return
+        if advanced is not None:
+            self._dodge_remaining, self.dodge_progress = 0, 0
+            self.velocity, self.state = advanced.velocity, PlayerState(advanced.state)
+            fighter.invulnerable = advanced.invulnerable
+            facing = forward if locked else self.velocity
+            if facing.length() > .001:
+                self.transform.yaw = lerp_angle(self.transform.yaw, math.atan2(facing.x, facing.y), 14 * FIXED_DT)
+            return
         if edge == InputEdge(Action.ROLL, True) and not self._dodge_remaining and not busy:
             if fighter is not None and not fighter.spend(24):
                 edge = None
@@ -128,6 +142,7 @@ class PlayerController:
             self.transform.position, self.transform.yaw, self.state.value, self.velocity,
             self._dodge_direction, self._dodge_remaining, self._dodge_total,
             self._dodge_speed, self.dodge_progress,
+            self.advanced.to_snapshot() if self.advanced is not None else None,
         )
 
     def from_snapshot(self, snapshot: MotionSnapshot) -> None:
@@ -139,3 +154,5 @@ class PlayerController:
         self._dodge_speed, self.dodge_progress = snapshot.dodge_speed, snapshot.dodge_progress
         self.body.teleport(snapshot.position)
         self.body.set_velocity(snapshot.velocity)
+        if self.advanced is not None and snapshot.advanced is not None:
+            self.advanced.from_snapshot(snapshot.advanced)

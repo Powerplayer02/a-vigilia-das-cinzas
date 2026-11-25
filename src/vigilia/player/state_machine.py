@@ -38,6 +38,7 @@ class CombatController:
         self.aim_source = aim_source
         self.charge = 0
         self.combo_buffered = False
+        self.movement = None
 
     @property
     def state(self) -> CombatState | AttackKind:
@@ -66,6 +67,8 @@ class CombatController:
             self.combo_buffered = False
             return
         pressed = edge.action if edge is not None and edge.pressed else None
+        if self.movement is not None:
+            dodging |= self.movement.before_combat(pressed)
         if dodging:
             self.charge = 0
             return
@@ -134,7 +137,9 @@ class CombatController:
                     self._face(direction)
                 return
             running = Action.RUN in held.actions and (held.move_x or held.move_y)
-            if fighter.start(self.moveset.running if running else self.moveset.light[0]):
+            move = self.moveset.slide if self.movement is not None and self.movement.sliding else (
+                self.moveset.running if running else self.moveset.light[0])
+            if fighter.start(move):
                 self._face(facing)
             return
         if Action.BLOCK in held.actions and fighter.stamina > 0:

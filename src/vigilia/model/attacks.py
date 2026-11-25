@@ -17,6 +17,7 @@ class AttackKind(StrEnum):
     LIGHT_3 = auto()
     HEAVY = auto()
     RUNNING = auto()
+    SLIDING = auto()
     RIPOSTE = auto()
     BACKSTAB = auto()
     PRACTICE = auto()

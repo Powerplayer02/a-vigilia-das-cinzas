@@ -8,6 +8,9 @@ fullscreen = false
 shadow_quality = "medium"
 draw_distance = 100.0
 
+[movement]
+ultrakill_style = false
+
 [camera]
 # Radianos por pixel de deslocamento do mouse
 mouse_sensitivity = 0.003

@@ -1,0 +1,26 @@
+{
+  "source": "Synthetic native Game snapshots; production class/boss stats; not historical player saves",
+  "differentiator": "Only intended choice in this manifest. No ending selected before victory.",
+  "prior_bosses": [
+    "warden_of_the_forge",
+    "abbess_of_the_tide"
+  ],
+  "final_boss_alive": true,
+  "cases": [
+    {
+      "file": "ending_a_preboss.db",
+      "choice_after_victory": "maintain",
+      "sha256": "314645564d511cb3712679ba9a9229908eda50883abca3daf1cfb7f777e065f6"
+    },
+    {
+      "file": "ending_b_preboss.db",
+      "choice_after_victory": "extinguish",
+      "sha256": "c11ccdd5d75eb1daca8c63175433c42566b4fe49a0a773b500e62802bd2460f7"
+    },
+    {
+      "file": "ending_c_preboss.db",
+      "choice_after_victory": "transform",
+      "sha256": "1b5633df3e569d9b1399100066a41a133e548557b8bf294ca100e61fb6cb3e8f"
+    }
+  ]
+}

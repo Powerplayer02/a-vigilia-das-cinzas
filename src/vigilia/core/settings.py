@@ -25,10 +25,10 @@ class UserOptions:
     high_contrast: bool = False
 
 
-CONFIG_KEYS = ("width", "height", "vsync", "fullscreen", "shadow_quality", "draw_distance", "mouse_sensitivity")
+CONFIG_KEYS = ("width", "height", "vsync", "fullscreen", "shadow_quality", "draw_distance", "mouse_sensitivity", "ultrakill_style")
 OPTION_KEYS = ("language", "master_volume", "music_volume", "sfx_volume", "hud_scale", "shake_strength", "high_contrast")
 SECTIONS = {"graphics": CONFIG_KEYS[:6], "audio": ("master_volume", "music_volume", "sfx_volume"),
-    "controls": ("mouse_sensitivity",), "language": ("language",),
+    "controls": ("mouse_sensitivity", "ultrakill_style"), "language": ("language",),
     "accessibility": ("hud_scale", "shake_strength", "high_contrast")}
 
 
@@ -71,7 +71,7 @@ class SettingsStore:
                 or not .0001 <= config.mouse_sensitivity <= .02 or options.language not in LANGUAGES
                 or type(config.fullscreen) is not bool or config.shadow_quality not in ("off", "low", "medium", "high")
                 or type(config.draw_distance) not in (int, float) or not math.isfinite(config.draw_distance) or not 30 <= config.draw_distance <= 150
-                or type(options.high_contrast) is not bool
+                or type(options.high_contrast) is not bool or type(config.ultrakill_style) is not bool
                 or type(options.hud_scale) not in (int, float) or not math.isfinite(options.hud_scale) or not .8 <= options.hud_scale <= 1.4
                 or type(options.shake_strength) not in (int, float) or not math.isfinite(options.shake_strength) or not 0 <= options.shake_strength <= 1
                 or not all(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 1 for value in

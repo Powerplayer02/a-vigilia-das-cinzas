@@ -114,3 +114,27 @@ class SoulCollectedEvent(Event):
 @dataclass(frozen=True, slots=True)
 class LevelUpEvent(Event):
     position: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class EndingChosenEvent(Event):
+    slot: int
+    choice: str
+
+
+@dataclass(frozen=True, slots=True)
+class DashStartedEvent(Event):
+    entity_id: int
+    position: Vec3
+    direction: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class DashTrailEvent(Event):
+    position: Vec3
+
+
+@dataclass(frozen=True, slots=True)
+class SlideStartedEvent(Event):
+    entity_id: int
+    position: Vec3

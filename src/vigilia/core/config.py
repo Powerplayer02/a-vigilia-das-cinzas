@@ -15,6 +15,9 @@ DEFAULT_KEYMAP = {
     Action.MOVE_RIGHT: "d",
     Action.RUN: "shift",
     Action.ROLL: "space",
+    Action.DASH: "alt",
+    Action.SLIDE: "v",
+    Action.JUMP: "b",
     Action.LOCK_ON: "q",
     Action.PAUSE: "escape",
     Action.LIGHT: "mouse1",
@@ -56,6 +59,9 @@ DEFAULT_PADMAP = {
     Action.SWAP_WEAPON: "face_y",
     Action.RESET_ARENA: "back",
     Action.INTERACT: "face_x",
+    Action.DASH: "dpad_right",
+    Action.SLIDE: "dpad_down",
+    Action.JUMP: "dpad_up",
 }
 
 
@@ -70,6 +76,7 @@ class Config:
     fullscreen: bool = False
     shadow_quality: str = "medium"
     draw_distance: float = 100.
+    ultrakill_style: bool = False
 
 
 def _bindings(data: dict, key: str, defaults: dict[Action, str]) -> dict[Action, str]:
@@ -95,8 +102,11 @@ def load_config(path: Path) -> Config:
     if type(vsync) is not bool:
         raise ValueError("window.vsync precisa ser true ou false.")
     graphics = data.get("graphics", {})
+    agile = data.get("movement", {}).get("ultrakill_style", False)
+    if type(agile) is not bool:
+        raise ValueError("movement.ultrakill_style precisa ser true ou false.")
     return Config(width, height, sensitivity,
                   _bindings(data, "bindings", DEFAULT_KEYMAP),
                   _bindings(data, "gamepad", DEFAULT_PADMAP), vsync,
                   window.get("fullscreen", False), graphics.get("shadow_quality", "medium"),
-                  graphics.get("draw_distance", 100.))
+                  graphics.get("draw_distance", 100.), agile)

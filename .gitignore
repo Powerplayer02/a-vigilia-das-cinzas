@@ -5,6 +5,9 @@ __pycache__/
 saves/*
 data/settings.toml
 artifacts/
+*.db.slot-*.lock
+*.db-wal
+*.db-shm
 *.log
 .env
 .env.*

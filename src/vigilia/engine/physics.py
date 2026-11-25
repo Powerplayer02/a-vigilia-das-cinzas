@@ -34,6 +34,12 @@ class CharacterBody:
     path: NodePath
     world: BulletWorld
     active: bool = True
+    radius: float = .39
+    height: float = 1.78
+    crouched: bool = False
+    _standing: tuple | None = None
+    _low: tuple | None = None
+    _stand_query: NodePath | None = None
 
     def set_velocity(self, velocity: Vec3) -> None:
         """Define a velocidade em coordenadas mundiais."""
@@ -41,12 +47,64 @@ class CharacterBody:
 
     def position(self) -> Vec3:
         """Lê a posição do centro da cápsula."""
-        return _from_panda(self.path.get_pos())
+        position = _from_panda(self.path.get_pos())
+        return position + Vec3(0, 0, self.height / 4) if self.crouched else position
 
     def teleport(self, position: Vec3) -> None:
         """Reposiciona a cápsula para reiniciar o exercício."""
         self.set_velocity(Vec3())
-        self.path.set_pos(to_point(position))
+        self.path.set_pos(to_point(position - Vec3(0, 0, self.height / 4) if self.crouched else position))
+
+    def grounded(self) -> bool:
+        return self.node.is_on_ground()
+
+    def jump(self, speed: float) -> bool:
+        if not self.node.can_jump():
+            return False
+        self.node.set_jump_speed(speed)
+        self.node.set_max_jump_height(3)
+        self.node.do_jump()
+        return True
+
+    def set_crouched(self, enabled: bool) -> bool:
+        """Swap cached controllers, preserving feet and rejecting blocked standing space."""
+        if self.crouched == enabled:
+            return True
+        anchor = self.position()
+        if self._standing is None:
+            self._standing = self.node, self.path
+            shape = BulletCapsuleShape(self.radius, self.height / 2 - 2 * self.radius, ZUp)
+            node = BulletCharacterControllerNode(shape, .135, 'player-slide')
+            node.set_gravity(20)
+            path = self.path.get_parent().attach_new_node(node)
+            path.set_collide_mask(_CHARACTERS)
+            self._low = node, path
+            query = BulletGhostNode('standing-clearance')
+            query.add_shape(self._standing[0].get_shape())
+            self._stand_query = self.path.get_parent().attach_new_node(query)
+            self._stand_query.set_collide_mask(_CHARACTERS)
+        node, path = self._low if enabled else self._standing
+        path.set_pos(to_point(anchor - Vec3(0, 0, self.height / 4 if enabled else 0)))
+        if not enabled:
+            self._stand_query.set_pos(to_point(anchor))
+            query = self._stand_query.node()
+            result = self.world.contact_test(query)
+            candidates = {contact.get_node1() if contact.get_node0() == query else contact.get_node0()
+                          for contact in result.get_contacts()}
+            for other in candidates - {self.node}:
+                # Resolve each pair independently: aggregate queries reuse manifold data.
+                pair = self.world.contact_test_pair(query, other)
+                for contact in pair.get_contacts():
+                    point = contact.get_manifold_point()
+                    normal = point.get_normal_world_on_b().z * (1 if contact.get_node0() == query else -1)
+                    support = normal > .5 and point.get_distance() > -.08
+                    if point.get_distance() < -.01 and not support:
+                        return False
+        if self.active:
+            self.world.remove_character(self.node)
+            self.world.attach_character(node)
+        self.node, self.path, self.crouched = node, path, enabled
+        return True
 
     def set_active(self, active: bool) -> None:
         """Retira corpos mortos e reinsere os personagens no respawn."""
@@ -95,7 +153,7 @@ class BulletPhysicsAdapter:
         path.set_pos(to_point(position))
         path.set_collide_mask(_CHARACTERS)
         self._world.attach_character(node)
-        body = CharacterBody(node, path, self._world)
+        body = CharacterBody(node, path, self._world, radius=radius, height=height)
         self._characters.append(body)
         return body
 
