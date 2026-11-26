@@ -1,0 +1,559 @@
+# Generated preset catalogue; source: engine/sfx_synthesis.py.
+
+[longsword_light]
+variants = ["longsword_light_1", "longsword_light_2", "longsword_light_3"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[longsword_heavy]
+variants = ["longsword_heavy"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[longsword_running]
+variants = ["longsword_running"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[longsword_dash_attack]
+variants = ["longsword_dash_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[longsword_slide_attack]
+variants = ["longsword_slide_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[axe_light]
+variants = ["axe_light_1", "axe_light_2", "axe_light_3"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[axe_heavy]
+variants = ["axe_heavy"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[axe_running]
+variants = ["axe_running"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[axe_dash_attack]
+variants = ["axe_dash_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[axe_slide_attack]
+variants = ["axe_slide_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[katana_light]
+variants = ["katana_light_1", "katana_light_2", "katana_light_3"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[katana_heavy]
+variants = ["katana_heavy"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[katana_running]
+variants = ["katana_running"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[katana_dash_attack]
+variants = ["katana_dash_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[katana_slide_attack]
+variants = ["katana_slide_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[staff_light]
+variants = ["staff_light_1", "staff_light_2", "staff_light_3"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[staff_heavy]
+variants = ["staff_heavy"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[staff_running]
+variants = ["staff_running"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[staff_dash_attack]
+variants = ["staff_dash_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[staff_slide_attack]
+variants = ["staff_slide_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[mace_light]
+variants = ["mace_light_1", "mace_light_2", "mace_light_3"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[mace_heavy]
+variants = ["mace_heavy"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[mace_running]
+variants = ["mace_running"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[mace_dash_attack]
+variants = ["mace_dash_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[mace_slide_attack]
+variants = ["mace_slide_attack"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[hit_flesh]
+variants = ["hit_flesh"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[hit_armor]
+variants = ["hit_armor"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[hit_shield]
+variants = ["hit_shield"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[hit_block]
+variants = ["hit_block"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[parry]
+variants = ["parry"]
+bus = "combat"
+priority = 70
+gain = 0.8
+
+[parry_fail]
+variants = ["parry_fail"]
+bus = "combat"
+priority = 20
+gain = 0.8
+
+[riposte]
+variants = ["riposte"]
+bus = "combat"
+priority = 65
+gain = 0.8
+
+[backstab]
+variants = ["backstab"]
+bus = "combat"
+priority = 65
+gain = 0.8
+
+[stagger_light]
+variants = ["stagger_light"]
+bus = "combat"
+priority = 45
+gain = 0.8
+
+[stagger_heavy]
+variants = ["stagger_heavy"]
+bus = "combat"
+priority = 50
+gain = 0.8
+
+[death_player]
+variants = ["death_player"]
+bus = "combat"
+priority = 60
+gain = 0.8
+
+[death_enemy]
+variants = ["death_enemy"]
+bus = "combat"
+priority = 50
+gain = 0.8
+
+[roll]
+variants = ["roll"]
+bus = "combat"
+priority = 20
+gain = 0.8
+
+[dash]
+variants = ["dash"]
+bus = "combat"
+priority = 25
+gain = 0.8
+
+[slide]
+variants = ["slide"]
+bus = "combat"
+priority = 20
+gain = 0.8
+
+[wall_cling]
+variants = ["wall_cling"]
+bus = "combat"
+priority = 20
+gain = 0.8
+
+[wall_jump]
+variants = ["wall_jump"]
+bus = "combat"
+priority = 25
+gain = 0.8
+
+[slam]
+variants = ["slam"]
+bus = "combat"
+priority = 55
+gain = 0.8
+
+[slam_descent]
+variants = ["slam_descent"]
+bus = "combat"
+priority = 25
+gain = 0.8
+
+[drink]
+variants = ["drink"]
+bus = "combat"
+priority = 30
+gain = 0.8
+
+[footstep_stone]
+variants = ["footstep_stone_1", "footstep_stone_2", "footstep_stone_3"]
+bus = "combat"
+priority = 10
+gain = 0.55
+
+[footstep_mud]
+variants = ["footstep_mud_1", "footstep_mud_2", "footstep_mud_3"]
+bus = "combat"
+priority = 10
+gain = 0.55
+
+[footstep_wood]
+variants = ["footstep_wood_1", "footstep_wood_2", "footstep_wood_3"]
+bus = "combat"
+priority = 10
+gain = 0.55
+
+[footstep_water]
+variants = ["footstep_water_1", "footstep_water_2", "footstep_water_3"]
+bus = "combat"
+priority = 10
+gain = 0.55
+
+[status_bleed]
+variants = ["status_bleed"]
+bus = "combat"
+priority = 35
+gain = 0.8
+
+[status_bleed_tick]
+variants = ["status_bleed_tick"]
+bus = "combat"
+priority = 25
+gain = 0.5
+
+[status_poison]
+variants = ["status_poison"]
+bus = "combat"
+priority = 35
+gain = 0.8
+
+[status_poison_tick]
+variants = ["status_poison_tick"]
+bus = "combat"
+priority = 25
+gain = 0.5
+
+[status_frost]
+variants = ["status_frost"]
+bus = "combat"
+priority = 35
+gain = 0.8
+
+[status_frost_tick]
+variants = ["status_frost_tick"]
+bus = "combat"
+priority = 25
+gain = 0.5
+
+[status_curse]
+variants = ["status_curse"]
+bus = "combat"
+priority = 35
+gain = 0.8
+
+[status_curse_tick]
+variants = ["status_curse_tick"]
+bus = "combat"
+priority = 25
+gain = 0.5
+
+[ui_open]
+variants = ["ui_open"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[ui_close]
+variants = ["ui_close"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[ui_hover]
+variants = ["ui_hover"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[ui_click]
+variants = ["ui_click"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[ui_back]
+variants = ["ui_back"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[ui_confirm]
+variants = ["ui_confirm"]
+bus = "ui"
+priority = 60
+gain = 0.9
+
+[ui_error]
+variants = ["ui_error"]
+bus = "ui"
+priority = 60
+gain = 0.9
+
+[level_up]
+variants = ["level_up"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[item_acquired]
+variants = ["item_acquired"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[soul_collect]
+variants = ["soul_collect"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[ui_change]
+variants = ["ui_change"]
+bus = "ui"
+priority = 30
+gain = 0.9
+
+[bonfire_light]
+variants = ["bonfire_light"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[bonfire_rest]
+variants = ["bonfire_rest"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[bonfire_ambient]
+variants = ["bonfire_ambient"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[area_transition]
+variants = ["area_transition"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[shortcut_open]
+variants = ["shortcut_open"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[door_open]
+variants = ["door_open"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[door_close]
+variants = ["door_close"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[fog_wall_enter]
+variants = ["fog_wall_enter"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[fog_wall_exit]
+variants = ["fog_wall_exit"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[chest_open]
+variants = ["chest_open"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[item_pickup]
+variants = ["item_pickup"]
+bus = "ambient"
+priority = 15
+gain = 0.8
+
+[cast_arcane]
+variants = ["cast_arcane"]
+bus = "combat"
+priority = 45
+gain = 0.8
+
+[magic_impact]
+variants = ["magic_impact"]
+bus = "combat"
+priority = 45
+gain = 0.8
+
+[magic_dissipate]
+variants = ["magic_dissipate"]
+bus = "combat"
+priority = 45
+gain = 0.8
+
+[cast_heal]
+variants = ["cast_heal"]
+bus = "combat"
+priority = 45
+gain = 0.8
+
+[healing]
+variants = ["healing"]
+bus = "combat"
+priority = 45
+gain = 0.8
+
+[boss_roar]
+variants = ["boss_roar"]
+bus = "combat"
+priority = 85
+gain = 0.8
+
+[boss_phase]
+variants = ["boss_phase"]
+bus = "combat"
+priority = 90
+gain = 0.8
+
+[boss_phase2]
+variants = ["boss_phase2"]
+bus = "combat"
+priority = 95
+gain = 0.8
+
+[boss_death]
+variants = ["boss_death"]
+bus = "combat"
+priority = 80
+gain = 0.8
+
+[swing_light]
+variants = ["longsword_light_1", "longsword_light_2", "longsword_light_3"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[swing_heavy]
+variants = ["longsword_heavy"]
+bus = "combat"
+priority = 40
+gain = 0.8
+
+[footstep_light]
+variants = ["footstep_stone_1", "footstep_stone_2", "footstep_stone_3"]
+bus = "combat"
+priority = 10
+gain = 0.55
+
+[footstep_heavy]
+variants = ["footstep_stone_1", "footstep_stone_2", "footstep_stone_3"]
+bus = "combat"
+priority = 10
+gain = 0.7
+
+[ui_ping]
+variants = ["ui_confirm"]
+bus = "ui"
+priority = 60
+gain = 0.9

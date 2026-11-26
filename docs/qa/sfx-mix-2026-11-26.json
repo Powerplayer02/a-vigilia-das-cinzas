@@ -1,0 +1,14 @@
+{
+  "peak_dbfs": -8.726120253958221,
+  "simultaneous_sfx": 8,
+  "reserved_ui": 2,
+  "music_channels_additional": 2,
+  "sliders": "all 100%",
+  "output": "artifacts/sfx/verification/boss-eight-voices.wav",
+  "mixture_sha256": "1ba78649c9ca4d024032b5578ddb58049a8d36bc5b6003de8139ff19bac22018",
+  "generated_clips": 106,
+  "maximum_asset_peak_dbfs": -4.0000883347026726,
+  "assets_bytes": 7309392,
+  "scope": "Offline additive PCM using production gain/preemption policy, not a speaker recording or listening assessment",
+  "audibility_not_certified": true
+}

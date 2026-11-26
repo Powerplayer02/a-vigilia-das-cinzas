@@ -8,6 +8,9 @@ artifacts/
 assets/music/*.wav
 assets/music/*.json
 assets/music/*.tmp
+assets/sfx/*.wav
+assets/sfx/*.json
+assets/sfx/*.tmp
 *.db.slot-*.lock
 *.db-wal
 *.db-shm

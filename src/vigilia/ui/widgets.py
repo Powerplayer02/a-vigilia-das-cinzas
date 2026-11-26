@@ -53,6 +53,8 @@ class Button(Widget):
 
     def activate(self) -> None:
         if self.enabled:
+            if hasattr(self.backend, "feedback"):
+                self.backend.feedback("ui_click")
             self._command()
 
     def enable(self, enabled: bool) -> None:
@@ -65,6 +67,8 @@ class Button(Widget):
             self.backend.color(self.key, self.highlight if value else self.surface)
             if hasattr(self.backend, "focus_outline"):
                 self.backend.focus_outline(self.key, value)
+            if value and hasattr(self.backend, "feedback"):
+                self.backend.feedback("ui_hover")
 
 
 class Bar(Panel):

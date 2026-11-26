@@ -273,6 +273,7 @@ def main() -> None:
     parser.add_argument("--particles", type=int, choices=(0, 500), default=0)
     parser.add_argument("--fps-cap", type=int, default=0)
     parser.add_argument("--procedural-music", action="store_true", help="Gera/pré-carrega a nova partitura antes da medição")
+    parser.add_argument("--procedural-sfx", action="store_true", help="Ativa os novos SFX, buses, reserva de UI e proteção de pico")
     parser.add_argument("--warmup-seconds", type=float, default=2.)
     parser.add_argument("--split-flip", action="store_true", help="GraphicsEngine: render sem auto-flip e flip_frame medido à parte")
     parser.add_argument("--hitch-directory", type=Path, help="Diagnóstico com overhead: salva cProfile apenas de frames >16ms")
@@ -300,7 +301,8 @@ def main() -> None:
     except ModuleNotFoundError as error:
         if error.name != "vigilia.engine.diagnostics":
             raise
-    config = Config(vsync=args.vsync, shadow_quality=args.shadow_quality, procedural_music=args.procedural_music)
+    config = Config(vsync=args.vsync, shadow_quality=args.shadow_quality,
+        procedural_music=args.procedural_music, procedural_sfx=args.procedural_sfx)
     if args.shader_log:
         from panda3d.core import load_prc_file_data
         load_prc_file_data("shader-diagnostic", "notify-level-glgsg debug\nnotify-timestamp true")

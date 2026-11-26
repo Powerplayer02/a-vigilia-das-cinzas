@@ -14,7 +14,7 @@ from vigilia.core.events import (
     BossArenaEnteredEvent, BossDefeatedEvent, MusicChangeRequestedEvent, AppStateChangedEvent,
     SfxRequestedEvent, SoulCollectedEvent, LevelUpEvent, ItemUseStartedEvent,
     SettingsChangedEvent, EndingChosenEvent, DashStartedEvent, DashTrailEvent, SlideStartedEvent,
-    WallJumpStartedEvent, SlamImpactEvent,
+    WallJumpStartedEvent, SlamImpactEvent, WallClingStartedEvent, SlamStartedEvent, UIFeedbackEvent,
 )
 from vigilia.core.mathx import Transform, Vec3, lerp_angle
 from vigilia.core.timing import (
@@ -98,7 +98,7 @@ class Game:
 
     def __init__(self, app: ArenaApp, config: Config, assets: Path, *,
                  save_path: Path | None = None, enemy_count: int = 3, legacy_hud: bool = False,
-                 front_end: bool = False, settings_path: Path | None = None) -> None:
+                 front_end: bool = False, settings_path: Path | None = None, sfx_channels: int = 32) -> None:
         self._app = app
         self.active_area = "patio_da_vigilia"
         self._dormant_areas = {}
@@ -125,6 +125,21 @@ class Game:
         self._camera = SpringArmCamera(self._physics, config.mouse_sensitivity)
         self._renderer = ArenaRenderer(app, assets, config, localizer=self.localizer)
         self._music_director = None
+        self._sfx_enabled = config.procedural_sfx
+        audio_options = {}
+        if self._sfx_enabled:
+            from vigilia.engine.sfx_synthesis import ensure_sfx
+            try:
+                audio_options["sfx_directory"] = ensure_sfx(assets / "sfx")
+            except (OSError, ValueError) as error:
+                logger.warning("SFX indisponíveis; usando áudio existente: %s", error)
+            audio_options.update(enhanced_sfx=True, buses=config.audio_buses, channels=sfx_channels)
+        self._sfx_poll = self._sfx_status_tick = 0.
+        self._sfx_statuses = {}
+        self._parry_sound_pending = self._parry_sound_success = False
+        self._sfx_tails = []
+        self._sfx_fire_age = 0.
+        self._sfx_lit_fires = set()
         if config.procedural_music:
             from vigilia.engine.music_synthesis import ensure_score, TRACKS
             from vigilia.engine.music import MusicDirector
@@ -134,11 +149,13 @@ class Game:
                 logger.warning("Partitura indisponível; usando áudio existente: %s", error)
                 music_directory = None
             self._audio = AudioBackend(assets, music_directory=music_directory,
-                music_loops={key: track.loop for key, track in TRACKS.items()}, music_clock=time.monotonic)
+                music_loops={key: track.loop for key, track in TRACKS.items()}, music_clock=time.monotonic, **audio_options)
             self._music_director = MusicDirector(self._audio)
         else:
-            self._audio = AudioBackend(assets)
-        self._audio_events = AudioEventRouter(self._bus, self._audio, assets.parent / "data/audio/map.toml")
+            self._audio = AudioBackend(assets, **audio_options)
+        self._audio_events = AudioEventRouter(self._bus, self._audio,
+            assets.parent / ("data/audio/sfx.toml" if self._sfx_enabled else "data/audio/map.toml"))
+        self._bus.subscribe(UIFeedbackEvent, self._on_ui_feedback)
         self._apply_audio_options()
         self._particles = ParticleEmitter(app.render, camera=app.camera)
         self._polish = PresentationPolish(app)
@@ -196,12 +213,13 @@ class Game:
         self._bus.subscribe(SlideStartedEvent, lambda event: self._sfx("slide", event.position))
         self._bus.subscribe(DashTrailEvent, lambda event: self._renderer.dash_trail(event.position))
         self._bus.subscribe(WallJumpStartedEvent, lambda event: self._sfx("wall_jump", event.position))
+        self._bus.subscribe(WallClingStartedEvent, lambda event: self._sfx("wall_cling", event.position))
+        self._bus.subscribe(SlamStartedEvent, lambda event: self._sfx("slam_descent", event.position))
         self._bus.subscribe(SlamImpactEvent, self._on_slam_effect)
         self._bus.subscribe(BonfireRestedEvent, self._on_bonfire_rested)
         self._bus.subscribe(SaveRequestedEvent, self._on_save_requested)
         self._bus.subscribe(LevelUpRequestedEvent, self._on_level_up)
-        self._bus.subscribe(ShotFired, lambda event: self._renderer.tracer(event.origin, event.end,
-            color=(.25, .65, 1, 1) if event.damage_type == "magic" else (1, .65, .24, 1)))
+        self._bus.subscribe(ShotFired, self._on_shot)
         self._bus.subscribe(HealingApplied, self._on_healing)
         self._bus.subscribe(BossArenaEnteredEvent, self._on_boss_entered)
         self._bus.subscribe(BossDefeatedEvent, self._on_boss_defeated)
@@ -212,7 +230,8 @@ class Game:
         self._bus.subscribe(ItemUseStartedEvent, lambda event: self._sfx("drink", self._position(event.entity_id)))
         self.queries = GameQueries(self)
         self.ui_backend = None if legacy_hud else PandaUIBackend(app, assets / "fonts" / "ui.ttf",
-            localizer=self.localizer, capture_text=self.input.set_text_capture)
+            localizer=self.localizer, capture_text=self.input.set_text_capture,
+            feedback=lambda kind: self._bus.publish(UIFeedbackEvent(kind)))
         self.hud = None if legacy_hud else HUD(self.ui_backend, self.queries)
         self.menus = None if legacy_hud else MenuRouter(self.ui_backend, self.input, self.queries, self.queries, self, map_query=self.map_data)
         self._renderer.set_legacy_hud(legacy_hud, font=self.ui_backend.font if self.ui_backend else None)
@@ -235,6 +254,9 @@ class Game:
     def _on_area_entered(self, event: AreaEnteredEvent) -> None:
         logger.info("Área carregada: %s", event.area_id)
         self.world_state.discovered_areas.add(event.area_id)
+        if getattr(self, "_sfx_enabled", False):
+            self._sfx("area_transition")
+            self._sfx_statuses.clear()
         if self.boss is None or not self.boss.active:
             self._bus.publish(MusicChangeRequestedEvent(
                 self._ambient_track()))
@@ -578,6 +600,8 @@ class Game:
             self._music_director.update(dt)
         self._particles.update(0 if paused else dt, position)
         self._presentation_footsteps(position, paused)
+        if getattr(self, "_sfx_enabled", False):
+            self._presentation_sfx(dt, paused)
         pose = self._polish.update(pose, 0 if paused else dt, paused=paused)
         self._renderer.draw(
             pose, position, yaw, self._player.velocity.length(), dodge,
@@ -769,7 +793,19 @@ class Game:
         if event.source == self._entity.id and event.remaining_hp == 0 and movement is not None:
             movement.on_kill(event.target)
         position = self._position(event.target) + Vec3(0, 0, .7)
-        self._sfx(event.critical or ("hit_block" if event.blocked else "hit_flesh"), position)
+        sound = event.critical or ("hit_block" if event.blocked else "hit_flesh")
+        if getattr(self, "_sfx_enabled", False) and not event.critical:
+            tag = self._world.get(Entity(event.target), EnemyTag)
+            if event.blocked:
+                sound = "hit_shield"
+            elif tag is not None and tag.profile_id in ("salt_guard", "cinzeiro"):
+                sound = "hit_armor"
+            attacker = self._world.get(Entity(event.source), Fighter)
+            target = self._world.get(Entity(event.target), Fighter)
+            status = attacker.attack.definition.status if attacker is not None and attacker.attack else None
+            if status and status[0].value == "bleed" and target is not None and not event.blocked and status[0] not in target.status.buildup:
+                self._sfx("status_bleed", position)
+        self._sfx(sound, position)
         self._emit("sparks" if event.blocked else "embers" if event.damage_type == "fire" else
                    "arcane" if event.damage_type == "magic" else "blood", position)
         if event.attack_kind == "forge_grab" and hasattr(self, "_polish"):
@@ -781,6 +817,8 @@ class Game:
         self._notify(f"{label}   -{event.amount:.0f} HP   {detail}   HP {event.remaining_hp:.0f}")
 
     def _on_parry(self, event: ParrySucceeded) -> None:
+        if getattr(self, "_sfx_enabled", False) and event.defender == self._entity.id:
+            self._parry_sound_success = True
         position = self._position(event.defender) + Vec3(0, 0, .8)
         self._sfx("parry", position)
         self._emit("sparks", position)
@@ -793,11 +831,22 @@ class Game:
         self._notify(self.localizer.t("spell.healed", amount=f"{event.amount:.0f}"))
 
     def _on_stagger(self, event: StaggerTriggered) -> None:
+        if getattr(self, "_sfx_enabled", False):
+            self._sfx("stagger_heavy" if event.guard_broken else "stagger_light", self._position(event.target))
         self._notify("GUARDA QUEBRADA" if event.guard_broken else "STAGGER")
+
+    def _on_shot(self, event: ShotFired) -> None:
+        self._renderer.tracer(event.origin, event.end,
+            color=(.25, .65, 1, 1) if event.damage_type == "magic" else (1, .65, .24, 1))
+        if getattr(self, "_sfx_enabled", False) and event.damage_type == "magic":
+            self._sfx("magic_impact", event.end)
+            self._sfx_tails.append([.18, "magic_dissipate", event.end])
 
     def _on_death(self, event: EntityDied) -> None:
         if self._world.get(Entity(event.target), BossTag) is not None:
-            self._bus.publish(MusicChangeRequestedEvent("", fade_sec=1))
+            self._bus.publish(MusicChangeRequestedEvent("", fade_sec=3 if getattr(self, "_music_director", None) is not None else 1))
+            if getattr(self, "_sfx_enabled", False):
+                self._sfx("boss_death", self._position(event.target))
             return
         if event.target == self._entity.id:
             if self._respawn_remaining:
@@ -972,6 +1021,9 @@ class Game:
         return keys
 
     def _on_bonfire_rested(self, event: BonfireRestedEvent) -> None:
+        if getattr(self, "_sfx_enabled", False) and event.bonfire_id not in self._sfx_lit_fires:
+            self._sfx_lit_fires.add(event.bonfire_id)
+            self._sfx("bonfire_light", BONFIRES[event.bonfire_id].position)
         self._respawn()
         if getattr(self, "_polish", None) is not None:
             self._polish.fade(.25, immediate=True)
@@ -992,6 +1044,8 @@ class Game:
         # capturado após o passo, num fade, tela de morte ou menu pausado.
         if event.reason == "quit" or (getattr(self, "flow", None) and self.flow.current == AppState.QUIT):
             return
+        if getattr(self, "_sfx_enabled", False) and event.reason in ("shortcut", "item_pickup"):
+            self._sfx("shortcut_open" if event.reason == "shortcut" else "item_pickup", self._transform.position)
         self._pending_save = SaveRequestedEvent(getattr(self, "active_slot", 1), event.reason)
         if event.reason in {"bonfire", "area_change", "respawn", "main_menu"}:
             self._save_boundary = True
@@ -1113,6 +1167,8 @@ class Game:
         )
         self._bonfires = BonfireService(self.world_state, self._bus)
         self.map_data.state = self.world_state
+        if getattr(self, "_sfx_enabled", False):
+            self._sfx_lit_fires = set(self.world_state.visited_bonfires)
         self._fighter.from_snapshot(player.fighter, ids)
         self._player.body.teleport(player.motion.position)
         self._configure_agile(player.agile_movement)
@@ -1298,6 +1354,8 @@ class Game:
         self.world_state.boss_phases[event.boss_id] = event.phase
         position = self._position(self.boss.entity.id) if self.boss else Vec3()
         self._sfx("boss_roar", position)
+        if getattr(self, "_sfx_enabled", False):
+            self._sfx("boss_phase2" if event.phase == 2 else "boss_phase", position)
         self._emit("arcane" if event.boss_id == "abbess_of_the_tide" else "boss_phase", position)
         self._notify(self.localizer.t("boss." + self.boss.profile.id + ".phase" + str(self.boss.phase)))
 
@@ -1313,8 +1371,11 @@ class Game:
             item = self.boss.profile.reward_item
             self.inventory.items[item] = 1
             self.world_state.collected_items.add(item)
+            if getattr(self, "_sfx_enabled", False):
+                self._sfx("item_acquired")
         self._bus.publish(MusicChangeRequestedEvent("", fade_sec=3 if getattr(self, "_music_director", None) is not None else 1))
-        self._sfx("boss_death", self._position(self.boss.entity.id))
+        if not getattr(self, "_sfx_enabled", False):
+            self._sfx("boss_death", self._position(self.boss.entity.id))
         self._bus.publish(SoulCollectedEvent(self._position(self.boss.entity.id), gained))
         if hasattr(self, "_polish"):
             self._polish.shake(8, 5)
@@ -1336,6 +1397,8 @@ class Game:
         self._app.set_paused(not self.flow.simulating)
         self.input.set_mode(InputMode.GAMEPLAY if self.flow.simulating else InputMode.MENU, force=True)
         self._clock.reset()
+        if getattr(self, "_sfx_enabled", False):
+            self._sfx("ui_open" if event.current in (AppState.PAUSED, AppState.OPTIONS) else "ui_close")
         if self.hud is not None:
             self.hud.root.hide() if self.front.opened else self.hud.root.show()
         tracks = {AppState.MAIN_MENU: "menu_theme", AppState.CHARACTER_CREATION: "menu_theme",
@@ -1372,6 +1435,10 @@ class Game:
     def _sfx(self, kind, position=None):
         self._bus.publish(SfxRequestedEvent(kind, position))
 
+    def _on_ui_feedback(self, event):
+        if getattr(self, "_sfx_enabled", False):
+            self._sfx(event.kind)
+
     def _on_slam_effect(self, event):
         self._sfx("slam", event.position)
         self._renderer.slam_wave(event.position, event.radius)
@@ -1393,11 +1460,68 @@ class Game:
             self._configure_agile(self.settings.options.config.ultrakill_style)
         self._player.on_dodge = lambda: self._sfx("roll", self._transform.position)
         for entity, (_, fighter) in self._world.query(Transform, Fighter):
-            fighter.on_attack = lambda definition, identity=entity.id: self._sfx(
-                "cast_arcane" if definition.kind == AttackKind.ARCANE_BOLT else
-                "cast_heal" if definition.kind == AttackKind.MENDING_LIGHT else
-                "swing_heavy" if definition.kind in (AttackKind.HEAVY, AttackKind.SLOW_OVERHEAD, AttackKind.FORGE_GRAB)
-                else "swing_light", self._position(identity))
+            fighter.on_attack = lambda definition, identity=entity.id: self._on_attack_sound(identity, definition)
+
+    def _on_attack_sound(self, identity, definition):
+        kind = definition.kind
+        sound = ("cast_arcane" if kind == AttackKind.ARCANE_BOLT else
+            "cast_heal" if kind == AttackKind.MENDING_LIGHT else
+            "swing_heavy" if kind in (AttackKind.HEAVY, AttackKind.SLOW_OVERHEAD, AttackKind.FORGE_GRAB)
+            else "swing_light")
+        if getattr(self, "_sfx_enabled", False):
+            fighter = self._world.get(Entity(identity), Fighter)
+            weapon = fighter.weapon.spec_id if fighter is not None else "longsword"
+            if weapon in PLAYER_WEAPON_IDS and kind not in (AttackKind.ARCANE_BOLT, AttackKind.MENDING_LIGHT):
+                move = {AttackKind.HEAVY: "heavy", AttackKind.RUNNING: "running",
+                    AttackKind.DASH_ATTACK: "dash_attack", AttackKind.SLIDING: "slide_attack"}.get(kind, "light")
+                sound = weapon + "_" + move
+        self._sfx(sound, self._position(identity))
+
+    def _presentation_sfx(self, dt, paused):
+        # Observes completed domain state, never changes timers, HP or buildup.
+        for row in self._sfx_tails:
+            row[0] -= dt
+        while self._sfx_tails and self._sfx_tails[0][0] <= 0:
+            _, kind, position = self._sfx_tails.pop(0)
+            self._sfx(kind, position)
+        if paused:
+            return
+        if self._fighter.parry_step >= 0:
+            self._parry_sound_pending = True
+        elif self._parry_sound_pending:
+            if not self._parry_sound_success:
+                self._sfx("parry_fail", self._transform.position)
+            self._parry_sound_pending = self._parry_sound_success = False
+        self._sfx_poll -= dt
+        self._sfx_status_tick += dt
+        if self._sfx_poll > 0:
+            return
+        self._sfx_poll = .1
+        tick = self._sfx_status_tick >= 1.
+        if tick:
+            self._sfx_status_tick %= 1.
+        self._sfx_fire_age += .1
+        if self._sfx_fire_age >= 2:
+            self._sfx_fire_age %= 2
+            fire = self._bonfires.nearby(self._transform.position)
+            if fire is not None and fire.id in self.world_state.visited_bonfires:
+                self._sfx("bonfire_ambient", fire.position)
+        live = set()
+        for entity, (pose, fighter) in self._world.query(Transform, Fighter):
+            if not fighter.alive or (pose.position - self._transform.position).length() > 20:
+                continue
+            live.add(entity.id)
+            active = {effect.value for effect in fighter.status.active}
+            previous = self._sfx_statuses.get(entity.id, ())
+            for effect in active:
+                if effect not in previous:
+                    self._sfx("status_" + effect, pose.position)
+                elif tick:
+                    self._sfx("status_" + effect + "_tick", pose.position)
+            self._sfx_statuses[entity.id] = active
+        for identity in tuple(self._sfx_statuses):
+            if identity not in live:
+                del self._sfx_statuses[identity]
 
     def _configure_agile(self, enabled):
         from vigilia.player.advanced_movement import AdvancedMovement
@@ -1445,7 +1569,13 @@ class Game:
         self._footstep_distance += distance
         if self._footstep_distance >= .85:
             self._footstep_distance %= .85
-            self._sfx("footstep_heavy" if self.inventory.mobility(self._fighter.stats).value == "heavy" else "footstep_light", position)
+            if getattr(self, "_sfx_enabled", False):
+                surface = ("water" if self.active_area == "catedral_submersa" else
+                    "mud" if self.active_area == "pantano_das_cinzas" else
+                    "wood" if self.active_area == "ruinas_subterraneas" and abs(position.x - 180) < 2.5 and 31 < position.y < 35 else "stone")
+                self._sfx("footstep_" + surface, position)
+            else:
+                self._sfx("footstep_heavy" if self.inventory.mobility(self._fighter.stats).value == "heavy" else "footstep_light", position)
 
     def _apply_audio_options(self):
         self._bus.publish(SettingsChangedEvent(self.settings.options, ("audio",)))
@@ -1701,8 +1831,14 @@ class Game:
             }
             if handler := handlers.get(command.kind):
                 try:
-                    return handler(command.argument) or ""
+                    result = handler(command.argument) or ""
+                    if getattr(self, "_sfx_enabled", False):
+                        self._sfx("ui_back" if command.kind == UICommandKind.BACK else
+                                  "ui_change" if command.kind == UICommandKind.SET_OPTION else "ui_confirm")
+                    return result
                 except (ValueError, OSError, sqlite3.Error, KeyError) as exc:
+                    if getattr(self, "_sfx_enabled", False):
+                        self._sfx("ui_error")
                     return self.localizer.t("common.error", error=self.localizer.t(str(exc)))
         if command.kind == UICommandKind.RESUME:
             if self.menus is not None:
@@ -1730,8 +1866,12 @@ class Game:
             else:
                 raise ValueError("action.unknown")
             self._flush_save()
+            if getattr(self, "_sfx_enabled", False):
+                self._sfx("ui_confirm")
             return message
         except ValueError as exc:
+            if getattr(self, "_sfx_enabled", False):
+                self._sfx("ui_error")
             return self.localizer.t(str(exc))
 
 

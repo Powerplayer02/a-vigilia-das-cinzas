@@ -1,6 +1,6 @@
 # Camada audiovisual — fase 1: música
 
-Somente música está no escopo desta entrega. SFX, sprites, animações,
+As fases 1 e 2 cobrem música e efeitos sonoros. Sprites, animações,
 partículas e acessibilidade aguardam as fases seguintes.
 
 ## Partitura original
@@ -94,3 +94,88 @@ o relógio é injetável. O QA nativo carrega as duas geometrias reais e usa
 uma Catedral sem inimigos como fixture de apresentação; não é outro teste
 de dificuldade. A geração é proibida após o boot nesse ensaio. Registro:
 `docs/qa/music-native-2026-11-26.json`.
+
+
+## Fase 2 — efeitos sonoros
+
+O gerador `tools/sfx_gen.py --all` cria 106 WAVs originais em `assets/sfx/`.
+Há 93 presets incluindo aliases. Cada arquivo tem seed por ID, parâmetros de
+ADSR, frequência, ruído, duração, pico e SHA-256. PCM estéreo 44,1kHz/16-bit,
+regenerado antes do mixer se faltar ou estiver corrompido. O catálogo ocupa
+7.309.392 bytes; nenhum arquivo externo é obrigatório.
+
+Paletas para espada longa, machado, katana, cajado e maça: três leves por arma,
+forte, corrida, dash e slide. Também impactos de carne/armadura/escudo,
+parry/falha, críticos, stagger, mortes, movimento, quatro superfícies,
+magia/impacto/dissipação, condições, menus, fogueiras, transições e chefes.
+UI dura até 200ms, combate até 400ms; rugidos e cues de ambiente duram 1–3s.
+Os sons partem de famílias compartilhadas com cores próprias por arma;
+a coerência percebida e a ausência de mascaramento psicoacústico ainda
+exigem oitiva humana. Não houve avaliação pelo ouvido pelo agente.
+
+### Grupos e prioridade
+
+`audio.procedural_sfx=true` ativa a fase. `[audio.buses]` define
+`combat=1.0`, `ui=0.9`, `ambient=0.6`, `music=0.7`. Os sliders existentes
+continuam controlando master, música e efeitos. Ganhos dos grupos são
+multiplicadores internos, sem nova tela técnica no jogo.
+
+O padrão continua com 32 vozes de efeitos mais dois canais de música.
+Duas vozes de efeitos são exclusivas da UI. O teste reduz para oito vozes:
+duas de UI e seis compartilhadas. Combate não ocupa as vozes reservadas;
+ambiente perde para combate. Na mesma classe, a voz de menor prioridade e
+mais antiga sai primeiro. Variantes alternam, sem tocar todas juntas.
+
+Ordem de combate: rugido de fase 2 (95), transição (90), entrada (85),
+morte de chefe (80), parry (70), críticos (65), impacto (40), passos (10).
+Cues menos prioritários podem ser descartados quando todos os canais
+apropriados estão ocupados. A UI também tem sua própria ordem e pode
+substituir uma confirmação anterior, preservando o feedback recente.
+
+A reserva garante reprodução sem roubo de canal; volume de grupo sozinho
+não garante ausência de mascaramento. Ambiente é reduzido sob combate/UI,
+e a UI recebe uma parcela própria da margem. Os sons de UI têm ataque curto
+e banda distinta dos impactos graves.
+
+### Proteção contra clipping
+
+Picos dos arquivos: no máximo −4dBFS no catálogo atual (gate solicitado:
+≤−1dBFS). O mixer lê os picos PCM uma vez no carregamento. Por quadro,
+usa uma soma conservadora dos ganhos e picos para distribuir margem;
+nenhuma síntese ou leitura de WAV acontece no combate. A soma é limitada
+a 0,78 antes da quantização do mixer, incluindo música no volume máximo.
+Esse limite deixa margem adicional para arredondamento de canais.
+
+O teste soma os PCM de oito efeitos simultâneos e música, usando a política
+de ganho de produção e todos os sliders em 100%, sem recortar amostras na
+exportação. Pico medido: **−8,7261dBFS**. O arquivo é uma renderização de
+verificação offline, não uma gravação da saída física nem aprovação auditiva.
+Evidência: `docs/qa/sfx-mix-2026-11-26.json`.
+
+### Disparos e limites
+
+Widgets publicam feedback por callback da composição; `game.py` transforma
+isso em eventos canônicos. Armas, impactos, parry, stagger, mortes e magia
+usam os handlers existentes. Condições são observadas na apresentação, sem
+avançar timers ou mudar HP. O teste verifica que o estado de domínio não muda.
+Piso: pedra no Pátio/Forno, água na Catedral, lama no Pântano e madeira na
+plataforma do Elevador; demais trechos das Ruínas usam pedra.
+
+Morte de chefe dispara som no evento letal, sem esperar o fim da animação;
+a música sai em três segundos. Recompensa posterior não repete o som.
+
+Portas e baús que não possuem interação nesta versão têm cues gerados,
+roteáveis e testados, mas não foram inventadas novas mecânicas para acioná-los.
+Não confundir cobertura do catálogo com existência dessas interações.
+
+A matriz de imports foi preservada. Uma verificação adicional proíbe chamadas
+`play_sfx`/`play_music` em combate, jogador, mundo, IA e UI. O passo fixo é
+idêntico ao da fase 1. Sprites/animações/partículas continuam em fases futuras.
+
+### Picos históricos
+
+Os benchmarks leves da fase 1 não estavam com flight recorder. Portanto,
+seus bons percentis não eliminam carregamento, SQLite, GC ou compilação de
+shader como causas históricas. Os perfis observados localizam parte do atraso
+em renderização, sem identificar a causa nativa. Registros e quarentena
+permanecem preservados; não foi aplicado `gc.freeze()` como suposta correção.

@@ -80,6 +80,9 @@ class Config:
     draw_distance: float = 100.
     ultrakill_style: bool = False
     procedural_music: bool = False
+    procedural_sfx: bool = False
+    audio_buses: dict[str, float] = field(default_factory=lambda: {
+        "combat": 1., "ui": .9, "ambient": .6, "music": .7})
 
 
 def _bindings(data: dict, key: str, defaults: dict[Action, str]) -> dict[Action, str]:
@@ -111,8 +114,16 @@ def load_config(path: Path) -> Config:
     music = data.get("audio", {}).get("procedural_music", False)
     if type(music) is not bool:
         raise ValueError("audio.procedural_music precisa ser true ou false.")
+    sfx = data.get("audio", {}).get("procedural_sfx", False)
+    if type(sfx) is not bool:
+        raise ValueError("audio.procedural_sfx precisa ser true ou false.")
+    buses = Config().audio_buses | data.get("audio", {}).get("buses", {})
+    if set(buses) != {"combat", "ui", "ambient", "music"} or any(
+            type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1
+            for value in buses.values()):
+        raise ValueError("audio.buses exige ganhos entre 0 e 1.")
     return Config(width, height, sensitivity,
                   _bindings(data, "bindings", DEFAULT_KEYMAP),
                   _bindings(data, "gamepad", DEFAULT_PADMAP), vsync,
                   window.get("fullscreen", False), graphics.get("shadow_quality", "medium"),
-                  graphics.get("draw_distance", 100.), agile, music)
+                  graphics.get("draw_distance", 100.), agile, music, sfx, buses)

@@ -61,6 +61,14 @@ def test_gameplay_has_no_direct_audio_or_particle_backend_imports():
             assert not any(name.startswith(("vigilia.engine.audio", "vigilia.engine.particles")) for name in imports)
 
 
+def test_gameplay_never_calls_the_audio_player_directly():
+    for layer in ("combat", "player", "world", "ai", "ui"):
+        for source in (SRC / layer).glob("*.py"):
+            tree = ast.parse(source.read_text(encoding="utf8"))
+            assert not any(isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr in {"play_sfx", "play_music"} for node in ast.walk(tree)), source
+
+
 def test_boss_and_fog_wall_have_event_only_dependencies():
     for relative, forbidden in (("ai/bosses.py", {"world", "save", "ui", "engine"}),
                                 ("world/fog_wall.py", {"ai", "save", "ui"})):

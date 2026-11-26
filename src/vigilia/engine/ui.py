@@ -12,7 +12,7 @@ from vigilia.core.views import Rect, Color
 
 
 class PandaUIBackend(DirectObject):
-    def __init__(self, app, font_path: Path | None = None, *, localizer=None, capture_text=None) -> None:
+    def __init__(self, app, font_path: Path | None = None, *, localizer=None, capture_text=None, feedback=None) -> None:
         self.app = app
         self.root = app.aspect2d.attach_new_node("interface-4.5")
         self.root.set_bin("fixed", 30)
@@ -23,6 +23,7 @@ class PandaUIBackend(DirectObject):
         self._transition_age = .15
         self.localizer = localizer
         self.capture_text = capture_text or (lambda active: None)
+        self._feedback = feedback
         self.font = app.loader.loadFont(Filename.from_os_specific(str(font_path)).get_fullpath()) if font_path and font_path.is_file() else app.loader.loadFont("cmss12")
         if hasattr(self.font, "set_pixels_per_unit"):
             self.font.set_pixels_per_unit(48)
@@ -31,6 +32,10 @@ class PandaUIBackend(DirectObject):
 
     def t(self, key, **values):
         return self.localizer.t(key, **values)
+
+    def feedback(self, kind):
+        if self._feedback is not None:
+            self._feedback(kind)
 
     def _layout(self) -> None:
         scale = min(2 / 720, 2 * self.app.getAspectRatio() / 1280)
@@ -49,6 +54,7 @@ class PandaUIBackend(DirectObject):
         if kind == "button":
             node = DirectButton(parent=owner, frameSize=(0, width, -height, 0),
                                 pos=(x, 0, -y), frameColor=color, relief=DGG.FLAT, borderWidth=(0, 0), command=command)
+            node.bind(DGG.ENTER, lambda event: self.feedback("ui_hover"))
         elif kind == "slider":
             node = DirectSlider(parent=owner, range=(minimum, maximum), value=value, pageSize=(maximum - minimum) / 10,
                 frameSize=(0, width, -height, 0), pos=(x, 0, -y), scale=1,

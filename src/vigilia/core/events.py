@@ -106,6 +106,11 @@ class SfxRequestedEvent(Event):
 
 
 @dataclass(frozen=True, slots=True)
+class UIFeedbackEvent(Event):
+    kind: str
+
+
+@dataclass(frozen=True, slots=True)
 class SoulCollectedEvent(Event):
     position: Vec3
     amount: int
