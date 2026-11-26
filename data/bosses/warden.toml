@@ -1,7 +1,7 @@
 id = "warden_of_the_forge"
 name = "Vigia da Fornalha"
 arena = "forge_arena"
-max_hp = 3200
+max_hp = 2720
 poise = 180
 souls = 2400
 intro_steps = 180

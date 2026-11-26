@@ -1,0 +1,887 @@
+{
+  "date": "2026-11-26",
+  "build_id": "6b7f72854807d0ce",
+  "scope": "Native and agent-driver QA, distinct from lightweight benchmark",
+  "captures": [
+    {
+      "path": "artifacts/balance/off_01/diagnostics/spike_20261126T165549_315299Z.frame.pstats",
+      "sha256": "d4dea3b50dfbf5d98d14b33da5017dc26cbc990c34ede1ce0bd47d5e25b97d53",
+      "wall_ms": 364.3041999999923,
+      "cpu_ms": 0.0,
+      "context": {
+        "state": "slot_select",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 1,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 362.705
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 362.671
+        },
+        {
+          "file": "app.py",
+          "line": 139,
+          "function": "_update",
+          "cumulative_ms": 1.289
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 74,
+          "function": "measured",
+          "cumulative_ms": 1.146
+        },
+        {
+          "file": "game.py",
+          "line": 516,
+          "function": "frame",
+          "cumulative_ms": 1.127
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T175236_124401Z.frame.pstats",
+      "sha256": "44c8aaabd222986a1f340e81e80b8bc65f26820b2715ef7240cb2aa7e71f8e83",
+      "wall_ms": 323.7202000000252,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 318.873
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 318.82
+        },
+        {
+          "file": "play_balance.py",
+          "line": 114,
+          "function": "update",
+          "cumulative_ms": 4.489
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 3.199
+        },
+        {
+          "file": "play_balance.py",
+          "line": 118,
+          "function": "<genexpr>",
+          "cumulative_ms": 3.196
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T180032_673787Z.frame.pstats",
+      "sha256": "0a5ae21cdde800e36c11c2891bd0466e13b3ef40d112804a857c2e858dec9de3",
+      "wall_ms": 414.56100000050355,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 393.82
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 393.744
+        },
+        {
+          "file": "play_balance.py",
+          "line": 114,
+          "function": "update",
+          "cumulative_ms": 19.977
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 15.502
+        },
+        {
+          "file": "play_balance.py",
+          "line": 118,
+          "function": "<genexpr>",
+          "cumulative_ms": 15.477
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T180032_928630Z.frame.pstats",
+      "sha256": "27912618feb314670f3f6e05e40ecac5449aff5ce8e933dcc5158f37afba807f",
+      "wall_ms": 251.41979999989417,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [
+        {
+          "generation": 1,
+          "start": 4888.5817,
+          "end": 4888.584689,
+          "ms": 2.989000000525266
+        }
+      ],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 250.864
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 250.716
+        },
+        {
+          "file": "play_balance.py",
+          "line": 114,
+          "function": "update",
+          "cumulative_ms": 140.295
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 129.512
+        },
+        {
+          "file": "pstats.py",
+          "line": 569,
+          "function": "add_func_stats",
+          "cumulative_ms": 88.919
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T181129_156881Z.frame.pstats",
+      "sha256": "f778b5cd1c702a511b8ea4b161d5802831aaa5b92c81696070ebad4dae831de6",
+      "wall_ms": 730.6179999995948,
+      "cpu_ms": 0.0,
+      "context": {
+        "state": "playing",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 1,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "play_balance.py",
+          "line": 114,
+          "function": "update",
+          "cumulative_ms": 725.059
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 74,
+          "function": "measured",
+          "cumulative_ms": 725.049
+        },
+        {
+          "file": "game.py",
+          "line": 516,
+          "function": "frame",
+          "cumulative_ms": 725.035
+        },
+        {
+          "file": "timing.py",
+          "line": 77,
+          "function": "advance",
+          "cumulative_ms": 723.575
+        },
+        {
+          "file": "game.py",
+          "line": 583,
+          "function": "_fixed_step",
+          "cumulative_ms": 722.472
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T191722_922084Z.frame.pstats",
+      "sha256": "35231d7f7f29dcd5b5d1331c774514a26f14bd1b0c47590dc4972948d907ee9d",
+      "wall_ms": 1076.7873000004329,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 1,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "play_balance.py",
+          "line": 136,
+          "function": "update",
+          "cumulative_ms": 1072.452
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 1069.7
+        },
+        {
+          "file": "play_balance.py",
+          "line": 140,
+          "function": "<genexpr>",
+          "cumulative_ms": 1069.691
+        },
+        {
+          "file": "glob.py",
+          "line": 451,
+          "function": "select_wildcard",
+          "cumulative_ms": 1062.547
+        },
+        {
+          "file": "_local.py",
+          "line": 346,
+          "function": "name",
+          "cumulative_ms": 4.899
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T192457_903915Z.frame.pstats",
+      "sha256": "194239a030160bb911f43e136da1823e4751fb1a6b6a1fe6db9768786b21676a",
+      "wall_ms": 328.8047000005463,
+      "cpu_ms": 0.0,
+      "context": {
+        "state": "playing",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 324.835
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 324.804
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 3.368
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 74,
+          "function": "measured",
+          "cumulative_ms": 3.263
+        },
+        {
+          "file": "game.py",
+          "line": 516,
+          "function": "frame",
+          "cumulative_ms": 3.25
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T193539_563326Z.frame.pstats",
+      "sha256": "d7e06f8e2806d87f3dfb858896d8d38eb9c7a1fd1fa05a9f07e2c8965371466a",
+      "wall_ms": 301.06229999910283,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 1,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 290.49
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 290.398
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 10.032
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 8.309
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 8.303
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T195608_342171Z.frame.pstats",
+      "sha256": "e60bd34c2311d61f49940a541241df55645eee3473a33de463f99f460d4ab174",
+      "wall_ms": 319.1814000001614,
+      "cpu_ms": 0.0,
+      "context": {
+        "state": "paused",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 308.268
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 308.219
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 10.5
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 9.213
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 9.208
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T202024_621293Z.frame.pstats",
+      "sha256": "b622e2b253b2ed36d6eb4f78412cbb8c5e52b55d6fd447d77809af1d89539fd8",
+      "wall_ms": 271.13229999849864,
+      "cpu_ms": 46.875,
+      "context": {
+        "state": "playing",
+        "area": "pantano_das_cinzas",
+        "boss": "abbess_of_the_tide",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 218.26
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 218.229
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 52.264
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 74,
+          "function": "measured",
+          "cumulative_ms": 52.121
+        },
+        {
+          "file": "game.py",
+          "line": 516,
+          "function": "frame",
+          "cumulative_ms": 52.044
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T202024_872403Z.frame.pstats",
+      "sha256": "5b8af0d7fc447bf6214916492f638c2c08023b64e6801db99c3cf9e35d98d989",
+      "wall_ms": 249.4339000004402,
+      "cpu_ms": 171.875,
+      "context": {
+        "state": "playing",
+        "area": "pantano_das_cinzas",
+        "boss": "abbess_of_the_tide",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [
+        {
+          "generation": 0,
+          "start": 13280.5437728,
+          "end": 13280.5450876,
+          "ms": 1.3147999998182058
+        }
+      ],
+      "top": [
+        {
+          "file": "game.py",
+          "line": 583,
+          "function": "_fixed_step",
+          "cumulative_ms": 284.416
+        },
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 249.317
+        },
+        {
+          "file": "thread.py",
+          "line": 54,
+          "function": "run",
+          "cumulative_ms": 248.97
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 114,
+          "function": "persist",
+          "cumulative_ms": 248.941
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 127,
+          "function": "_write_report",
+          "cumulative_ms": 248.928
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T202025_104089Z.frame.pstats",
+      "sha256": "80395e7e6b9679bd0a60333bca828e652d1c8c3ba9f916eb5fa95283eb46c183",
+      "wall_ms": 230.7160999989719,
+      "cpu_ms": 187.5,
+      "context": {
+        "state": "playing",
+        "area": "pantano_das_cinzas",
+        "boss": "abbess_of_the_tide",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [
+        {
+          "generation": 0,
+          "start": 13280.7929878,
+          "end": 13280.7933506,
+          "ms": 0.3628000013122801
+        }
+      ],
+      "top": [
+        {
+          "file": "game.py",
+          "line": 583,
+          "function": "_fixed_step",
+          "cumulative_ms": 298.913
+        },
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 230.55
+        },
+        {
+          "file": "thread.py",
+          "line": 54,
+          "function": "run",
+          "cumulative_ms": 228.638
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 114,
+          "function": "persist",
+          "cumulative_ms": 228.587
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 127,
+          "function": "_write_report",
+          "cumulative_ms": 228.572
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T202025_328025Z.frame.pstats",
+      "sha256": "93dbf6b47eb7fa05d7cb88a3e766682cfe836f37cee5ad493d82177a1af8ce35",
+      "wall_ms": 222.76980000060576,
+      "cpu_ms": 140.625,
+      "context": {
+        "state": "playing",
+        "area": "pantano_das_cinzas",
+        "boss": "abbess_of_the_tide",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [
+        {
+          "generation": 0,
+          "start": 13281.0257783,
+          "end": 13281.026197,
+          "ms": 0.4186999994999496
+        }
+      ],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 222.654
+        },
+        {
+          "file": "thread.py",
+          "line": 54,
+          "function": "run",
+          "cumulative_ms": 221.663
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 114,
+          "function": "persist",
+          "cumulative_ms": 221.637
+        },
+        {
+          "file": "diagnostics.py",
+          "line": 127,
+          "function": "_write_report",
+          "cumulative_ms": 221.621
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 214.416
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T205953_816399Z.frame.pstats",
+      "sha256": "f25cf41ff6673b14770e5bc34e40f173a623817a54c8addc719d37b922ca8364",
+      "wall_ms": 453.93700000022363,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "forno_da_vigilia",
+        "boss": "last_ember_custodian",
+        "phase": 1,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 445.452
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 445.4
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 8.172
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 7.295
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 7.292
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T210855_484735Z.frame.pstats",
+      "sha256": "4882650a6c0cd1f45935840406256836e8f3733faddaea43a29a0fb9f64347ba",
+      "wall_ms": 218.44439999949827,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "forno_da_vigilia",
+        "boss": "last_ember_custodian",
+        "phase": 2,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 209.268
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 209.23
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 8.922
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 7.983
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 7.98
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T211303_336369Z.frame.pstats",
+      "sha256": "84f093b1a00ed296b6466496e37d96f4eb44efd74625295e33c639a0182d7a21",
+      "wall_ms": 513.2597999981954,
+      "cpu_ms": 15.625,
+      "context": {
+        "state": "paused",
+        "area": "forno_da_vigilia",
+        "boss": "last_ember_custodian",
+        "phase": 3,
+        "ending": "",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 503.291
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 503.25
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 9.694
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 8.674
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 8.67
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T212332_750463Z.frame.pstats",
+      "sha256": "67bfacdbca71109d9f18ffca60fc645c700043bc145e6939dc66e99aaba62ffc",
+      "wall_ms": 211.1960000002,
+      "cpu_ms": 0.0,
+      "context": {
+        "state": "paused",
+        "area": "forno_da_vigilia",
+        "boss": "last_ember_custodian",
+        "phase": 3,
+        "ending": "transform",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 201.746
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 201.716
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 9.175
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 8.24
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 8.238
+        }
+      ]
+    },
+    {
+      "path": "artifacts/balance/off_agent_01/spikes/spike_20261126T212834_755196Z.frame.pstats",
+      "sha256": "07454ca628668c66b5c01eb50d2c3fe0b635e019bdc6bf7be66e89f299b44bec",
+      "wall_ms": 332.089100000303,
+      "cpu_ms": 31.25,
+      "context": {
+        "state": "paused",
+        "area": "forno_da_vigilia",
+        "boss": "last_ember_custodian",
+        "phase": 3,
+        "ending": "transform",
+        "agile_movement": false
+      },
+      "gc": [],
+      "top": [
+        {
+          "file": "ShowBase.py",
+          "line": 2148,
+          "function": "__igLoop",
+          "cumulative_ms": 321.586
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+          "cumulative_ms": 321.548
+        },
+        {
+          "file": "play_balance.py",
+          "line": 137,
+          "function": "update",
+          "cumulative_ms": 10.185
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sorted>",
+          "cumulative_ms": 9.082
+        },
+        {
+          "file": "play_balance.py",
+          "line": 141,
+          "function": "<genexpr>",
+          "cumulative_ms": 9.078
+        }
+      ]
+    }
+  ],
+  "findings": [
+    "Latest capture: native renderFrame dominates; CPU time substantially below wall time. Native wait/driver cause not identified.",
+    "No GC entries in latest trigger; SQLite commit is not on its stack. Do not attribute to shader compilation without native evidence.",
+    "Older agent captures include per-frame directory enumeration of 500+ commands. Replaced by scandir and 10 Hz idle polling; production loop unchanged.",
+    "Historical quarantine is retained. Profile triage does not prove all hitches fixed."
+  ]
+}

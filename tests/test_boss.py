@@ -17,7 +17,7 @@ from vigilia.model.items import LONGSWORD_SPEC
 
 def test_profile_has_numeric_movesets_and_derived_resources():
     e = encounter()
-    assert (e.fighter.hp, e.fighter.poise) == (3200, 180)
+    assert (e.fighter.hp, e.fighter.poise) == (2720, 180)
     assert len(e.profile.moveset(1)) == 3 and len(e.profile.moveset(2)) == 5
     assert [(m.windup, m.active, m.recovery) for m in e.profile.moveset(2)] == [
         (54, 12, 54), (30, 9, 36), (12, 6, 18), (42, 6, 78), (60, 30, 120)]
@@ -42,11 +42,11 @@ def test_phase_event_filters_entity_and_exact_half_then_protects_90_steps():
     e.boss.start()
     e.bus.subscribe(PhaseTransitionEvent, phases.append)
     e.bus.subscribe(MusicChangeRequestedEvent, music.append)
-    e.bus.publish(HPChangedEvent(e.player.id, 2000, 1000, 3200, "self"))
-    e.bus.publish(HPChangedEvent(e.entity.id, 3200, 1600, 3200, "player"))
+    e.bus.publish(HPChangedEvent(e.player.id, 2000, 1000, 2720, "self"))
+    e.bus.publish(HPChangedEvent(e.entity.id, 2720, 1360, 2720, "player"))
     assert e.boss.phase == 1
-    e.fighter.hp = 1599
-    e.bus.publish(HPChangedEvent(e.entity.id, 1600, 1599, 3200, "player"))
+    e.fighter.hp = 1359
+    e.bus.publish(HPChangedEvent(e.entity.id, 1360, 1359, 2720, "player"))
     assert phases == [PhaseTransitionEvent(e.profile.id, 2)]
     assert music[-1].track_id == "boss_phase2"
     for _ in range(90):
@@ -54,7 +54,7 @@ def test_phase_event_filters_entity_and_exact_half_then_protects_90_steps():
         assert e.fighter.invulnerable
     e.boss.tick(e.world)
     assert not e.fighter.invulnerable
-    e.bus.publish(HPChangedEvent(e.entity.id, 1599, 500, 3200, "dot"))
+    e.bus.publish(HPChangedEvent(e.entity.id, 1359, 500, 2720, "dot"))
     assert len(phases) == 1
 
 
@@ -121,16 +121,16 @@ def test_phase_transition_blocks_existing_poison_for90_steps_then_resumes_ticks(
     from vigilia.combat.status import StatusEffect
     e = encounter()
     e.boss.active = True
-    e.fighter.hp = 1599
+    e.fighter.hp = 1359
     e.fighter.status.active[StatusEffect.POISON] = 600
-    e.bus.publish(HPChangedEvent(e.entity.id, 1600, 1599, 3200, "dot"))
+    e.bus.publish(HPChangedEvent(e.entity.id, 1360, 1359, 2720, "dot"))
     for _ in range(90):
         e.boss.tick(e.world)
         e.fighter.tick()
-    assert e.fighter.hp == 1599
+    assert e.fighter.hp == 1359
     e.boss.tick(e.world)
     e.fighter.tick()
-    assert e.fighter.hp < 1599
+    assert e.fighter.hp < 1359
 
 
 def test_death_waits_exactly_240_steps_and_emits_once_even_after_rest():
@@ -157,7 +157,7 @@ def test_hot_reload_restarts_live_encounter_and_rejects_new_identity(tmp_path):
     profile = load_boss_profile(path, register=False)
     e.fighter.hp = 2100
     e.boss.reload_profile(profile)
-    assert e.fighter.hp == 3200 and e.boss.intro_remaining == 180
+    assert e.fighter.hp == 2720 and e.boss.intro_remaining == 180
     assert e.boss.profile.moveset(1)[0].windup == 48
     with pytest.raises(ValueError):
         e.boss.reload_profile(replace(profile, id="other"))

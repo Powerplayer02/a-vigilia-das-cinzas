@@ -76,8 +76,8 @@ def test_grab_ignores_guard_parry_and_poise_and_knocks_down_for60_steps():
 
 def test_transition_invulnerability_rejects_real_combat_contacts():
     e = encounter(distance=1)
-    e.fighter.hp = 1599
-    e.bus.publish(HPChangedEvent(e.entity.id, 1600, 1599, 3200, "player"))
+    e.fighter.hp = 1359
+    e.bus.publish(HPChangedEvent(e.entity.id, 1360, 1359, 2720, "player"))
     attack = LONGSWORD_SPEC.attacks[0]
     e.hero.attack = Attack(attack, age=14)
     contacts = ContactFake()
@@ -87,7 +87,7 @@ def test_transition_invulnerability_rejects_real_combat_contacts():
     for _ in range(90):
         e.boss.tick(e.world)
         combat.resolve(e.world)
-        assert e.fighter.hp == 1599
+        assert e.fighter.hp == 1359
 
 
 def test_bullet_updates_live_sphere_radius_and_removes_inactive_shape():

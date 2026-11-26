@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-26",
+  "source_build_id": "6b7f72854807d0ce",
+  "commit": "5912371bee8b87017567c60d7abed653b4a2be64",
+  "mode": "agent-driven real-clock keyboard commands; optional movement OFF",
+  "human_playthrough": false,
+  "ending": "transform",
+  "credits_seen": true,
+  "active_s": 2817.191,
+  "bosses": [
+    {
+      "id": "warden_of_the_forge",
+      "attempts": 9,
+      "entry_s": 1155.290741,
+      "lethal_s": 1658.649756,
+      "duration_s": 503.359015,
+      "level": 1,
+      "weapon_upgrade": 0,
+      "hp_before": 3200,
+      "hp_after_candidate": 2720
+    },
+    {
+      "id": "abbess_of_the_tide",
+      "attempts": 6,
+      "entry_s": 2352.288836,
+      "lethal_s": 2518.753982,
+      "duration_s": 166.465146,
+      "level": 9,
+      "weapon_upgrade": 2,
+      "changed": false
+    },
+    {
+      "id": "last_ember_custodian",
+      "attempts": 1,
+      "entry_s": 2561.740755,
+      "lethal_s": 2809.317154,
+      "duration_s": 247.576399,
+      "level": 14,
+      "weapon_upgrade": 2,
+      "changed": false,
+      "normal_save_load_midfight": true
+    }
+  ],
+  "save_hashes": {
+    "after_abbess.sqlite3": "a885b82f5f1bd11913150183561953494cc9d061d8a69b4c0e4ddf2334e90d34",
+    "after_credits.sqlite3": "c7e9f607fd79d3572efd1f89a094d0b17ad249fef2345ac4d89fdced7e545eb5",
+    "after_custodian.sqlite3": "340a7303d132db7fc2209bbf54aa5295905dd1a2bd2c9c67eaae3a265139c4c5",
+    "after_warden.sqlite3": "d0cc3db64a41d515d45cbe61e46c5ce73b2be01240da6bbb30e6e7264f933412"
+  }
+}

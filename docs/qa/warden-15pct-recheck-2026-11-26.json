@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-26",
+  "session": {
+    "client_date": "2026-11-26",
+    "started_utc": "2026-11-26T21:30:42.567808+00:00",
+    "commit": "5912371bee8b87017567c60d7abed653b4a2be64",
+    "source_build_id": "a3ded25f99a3fead",
+    "driver": "Agent chooses logical keyboard/mouse input; real clock",
+    "production_tables": {
+      "data/bosses/custodian.toml": "90a8669636391f8ba8d9b6dece148b9c484efbbd28c70164bfb99f1f67299a5b",
+      "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+      "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+      "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+      "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+      "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+      "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+      "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+    },
+    "agile_movement": false,
+    "fast_forward": false,
+    "window_type": "onscreen",
+    "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+    "manual_human_playthrough": false,
+    "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+  },
+  "entry_s": 6.869014,
+  "lethal_s": 184.476893,
+  "duration_s": 177.607879,
+  "reward_s": 188.526206,
+  "attempts": 1,
+  "character": "new Knight level 1; Vigor18 Endurance15 Strength12; longsword+0",
+  "remaining_hp": 162.3119266055046,
+  "warning": "Policy includes learned parry/riposte strategy. This is a focused functional recheck, not a causal A/B comparison or human difficulty assessment.",
+  "policy_hashes": [
+    "7a6ff9a130bd8cce8ced992621e794b7ab1a9444cd458dfb6004a9e0cfc67b5b"
+  ]
+}

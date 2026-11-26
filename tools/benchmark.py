@@ -40,8 +40,8 @@ def prepare_boss_stress(game: Game) -> None:
     game._practice_target = None
     entry = Vec3(0, 25.5, 1.02)
     game._bus.publish(BossArenaEnteredEvent(boss.profile.id, boss.profile.arena, entry))
-    boss.fighter.hp = 1500
-    game._bus.publish(HPChangedEvent(boss.entity.id, 3200, 1500, 3200, "self"))
+    boss.fighter.hp = boss.profile.max_hp * .45
+    game._bus.publish(HPChangedEvent(boss.entity.id, boss.profile.max_hp, boss.fighter.hp, boss.profile.max_hp, "self"))
     # Começa a amostra com a condição de proximidade já carregada para observar a AoE.
     boss.close_steps = boss.profile.close_trigger_steps - 1
     points = [Vec3(x, y, .95) for y in (20, 25, 31, 34) for x in (-7, -4, 0, 4, 7)]
