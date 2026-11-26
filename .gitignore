@@ -5,6 +5,9 @@ __pycache__/
 saves/*
 data/settings.toml
 artifacts/
+assets/music/*.wav
+assets/music/*.json
+assets/music/*.tmp
 *.db.slot-*.lock
 *.db-wal
 *.db-shm

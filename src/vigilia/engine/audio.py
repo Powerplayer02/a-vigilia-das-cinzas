@@ -30,7 +30,8 @@ class AudioBackend:
     """Não importa/inicializa pygame quando não há WAVs; erros deixam silêncio."""
 
     def __init__(self, assets: Path, *, mixer_hz: int = 44100, channels: int = 32,
-                 mixer=None) -> None:
+                 mixer=None, music_directory: Path | None = None, music_loops=None,
+                 music_clock=None) -> None:
         if channels < 1:
             raise ValueError("channels deve ser positivo")
         self.enabled = False
@@ -47,10 +48,20 @@ class AudioBackend:
         self._fade_age = self._fade_duration = 0.0
         self._current = -1
         self.track_id = ""
+        self.music_finished = False
+        self._music_loops = music_loops or {}
+        self._duck_gain = self._duck_target = 1.
+        self.music_clock = music_clock
+        self._fade_started = music_clock() if music_clock else 0.
         self._serial = 0
         self.listener, self.right = Vec3(), Vec3(1, 0)
         self.master_volume, self.music_volume, self.sfx_volume = 1.0, .6, .8
         files = list((assets / "audio").glob("*/*.wav"))
+        if music_directory is not None:
+            generated = list(music_directory.glob("*.wav"))
+            names = {path.stem for path in generated}
+            files = [path for path in files if path.parent.name != "music" or path.stem not in names]
+            files += generated
         if not files:
             return
         try:
@@ -71,6 +82,8 @@ class AudioBackend:
                 except Exception as error:
                     logging.getLogger(__name__).warning("Áudio ignorado %s: %s", path.name, error)
             self.enabled = True
+            if music_directory is not None and "furnace_ambient" in self._music_sounds:
+                self._music_sounds["forge_ambient"] = self._music_sounds["furnace_ambient"]
         except Exception as error:
             logging.getLogger(__name__).warning("Áudio indisponível, continuando em silêncio: %s", error)
             self.close()
@@ -118,12 +131,15 @@ class AudioBackend:
         self._starts = self._levels.copy()
         self._targets = targets
         self._fade_age, self._fade_duration = 0., max(0., fade_sec)
+        if self.music_clock is not None:
+            self._fade_started = self.music_clock()
         self.update(0)
 
     def play_music(self, track_id: str, *, fade_sec: float = 1.5) -> None:
         if track_id == self.track_id:
             return
         self.track_id = track_id
+        self.music_finished = False
         if not self.enabled:
             return
         sound = self._music_sounds.get(track_id)
@@ -135,24 +151,33 @@ class AudioBackend:
         self._music[index].stop()
         self._levels[index] = 0.
         self._music[index].set_volume(0.)
-        self._music[index].play(sound, loops=-1)
+        self._music[index].play(sound, loops=-1 if self._music_loops.get(track_id, True) else 0)
         self._current = index
         self._fade([1. if i == index else 0. for i in range(2)], fade_sec)
 
     def stop_music(self, *, fade_sec: float = 1.0) -> None:
         self.track_id = ""
+        self.music_finished = False
         self._fade([0., 0.], fade_sec)
+
+    def set_music_duck(self, decibels: float) -> None:
+        self._duck_target = 10 ** (min(0., decibels) / 20)
 
     def update(self, dt: float) -> None:
         if not self.enabled:
             return
-        self._fade_age += max(0., dt)
+        self._duck_gain += (self._duck_target - self._duck_gain) * min(1., max(0., dt) / .15)
+        self._fade_age = (max(0., self.music_clock() - self._fade_started)
+                          if self.music_clock is not None else self._fade_age + max(0., dt))
         alpha = min(1., self._fade_age / self._fade_duration) if self._fade_duration else 1.
         for i, channel in enumerate(self._music):
             self._levels[i] = self._starts[i] + (self._targets[i] - self._starts[i]) * alpha
-            channel.set_volume(self._levels[i] * self.master_volume * self.music_volume)
+            channel.set_volume(self._levels[i] * self.master_volume * self.music_volume * self._duck_gain)
             if alpha == 1 and self._targets[i] == 0 and channel.get_busy():
                 channel.stop()
+        if (self._current >= 0 and self.track_id and not self._music_loops.get(self.track_id, True)
+                and not self._music[self._current].get_busy()):
+            self.music_finished = True
         for voice in self.voices:
             if voice.channel.get_busy():
                 self._volume(voice)

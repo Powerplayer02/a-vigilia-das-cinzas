@@ -4,6 +4,7 @@ import logging
 import math
 import sqlite3
 import json
+import time
 from dataclasses import replace
 from pathlib import Path
 
@@ -123,7 +124,20 @@ class Game:
         self._clock = FixedClock()
         self._camera = SpringArmCamera(self._physics, config.mouse_sensitivity)
         self._renderer = ArenaRenderer(app, assets, config, localizer=self.localizer)
-        self._audio = AudioBackend(assets)
+        self._music_director = None
+        if config.procedural_music:
+            from vigilia.engine.music_synthesis import ensure_score, TRACKS
+            from vigilia.engine.music import MusicDirector
+            try:
+                music_directory = ensure_score(assets / "music")
+            except (OSError, ValueError) as error:
+                logger.warning("Partitura indisponível; usando áudio existente: %s", error)
+                music_directory = None
+            self._audio = AudioBackend(assets, music_directory=music_directory,
+                music_loops={key: track.loop for key, track in TRACKS.items()}, music_clock=time.monotonic)
+            self._music_director = MusicDirector(self._audio)
+        else:
+            self._audio = AudioBackend(assets)
         self._audio_events = AudioEventRouter(self._bus, self._audio, assets.parent / "data/audio/map.toml")
         self._apply_audio_options()
         self._particles = ParticleEmitter(app.render, camera=app.camera)
@@ -560,6 +574,8 @@ class Game:
         direction = (pose.look_at - pose.position).flat().normalized()
         self._audio.set_listener(position, Vec3(direction.y, -direction.x))
         self._audio.update(dt)
+        if getattr(self, "_music_director", None) is not None:
+            self._music_director.update(dt)
         self._particles.update(0 if paused else dt, position)
         self._presentation_footsteps(position, paused)
         pose = self._polish.update(pose, 0 if paused else dt, paused=paused)
@@ -1297,7 +1313,7 @@ class Game:
             item = self.boss.profile.reward_item
             self.inventory.items[item] = 1
             self.world_state.collected_items.add(item)
-        self._bus.publish(MusicChangeRequestedEvent("", fade_sec=1))
+        self._bus.publish(MusicChangeRequestedEvent("", fade_sec=3 if getattr(self, "_music_director", None) is not None else 1))
         self._sfx("boss_death", self._position(self.boss.entity.id))
         self._bus.publish(SoulCollectedEvent(self._position(self.boss.entity.id), gained))
         if hasattr(self, "_polish"):
@@ -1306,7 +1322,9 @@ class Game:
 
     def _on_music(self, event: MusicChangeRequestedEvent) -> None:
         self.music_track = event.track_id
-        if hasattr(self, "_audio"):
+        if getattr(self, "_music_director", None) is not None:
+            self._music_director.request(event)
+        elif hasattr(self, "_audio"):
             if event.track_id:
                 self._audio.play_music(event.track_id, fade_sec=event.fade_sec)
             else:
@@ -1323,8 +1341,17 @@ class Game:
         tracks = {AppState.MAIN_MENU: "menu_theme", AppState.CHARACTER_CREATION: "menu_theme",
                   AppState.SLOT_SELECT: "menu_theme", AppState.CREDITS: "menu_theme"}
         track = tracks.get(event.current)
+        director = getattr(self, "_music_director", None)
+        if director is not None:
+            director.set_options(event.current == AppState.OPTIONS)
+            if event.current == AppState.CREDITS and self._ending_credits and self.world_state.ending:
+                track = "ending_" + self.world_state.ending
         if self.flow.simulating:
             track = f"{self.boss.profile.music_prefix}_phase{self.boss.phase}" if self.boss is not None and self.boss.active else self._ambient_track()
+            if (director is not None and event.previous == AppState.CREDITS
+                    and self.world_state.credits_seen):
+                director.play_postcredits(track)
+                self.music_track, track = "post_credits", None
         if track is not None and track != self.music_track:
             self._bus.publish(MusicChangeRequestedEvent(track))
         if event.current == AppState.QUIT:

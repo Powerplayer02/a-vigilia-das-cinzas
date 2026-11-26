@@ -79,6 +79,7 @@ class Config:
     shadow_quality: str = "medium"
     draw_distance: float = 100.
     ultrakill_style: bool = False
+    procedural_music: bool = False
 
 
 def _bindings(data: dict, key: str, defaults: dict[Action, str]) -> dict[Action, str]:
@@ -107,8 +108,11 @@ def load_config(path: Path) -> Config:
     agile = data.get("movement", {}).get("ultrakill_style", False)
     if type(agile) is not bool:
         raise ValueError("movement.ultrakill_style precisa ser true ou false.")
+    music = data.get("audio", {}).get("procedural_music", False)
+    if type(music) is not bool:
+        raise ValueError("audio.procedural_music precisa ser true ou false.")
     return Config(width, height, sensitivity,
                   _bindings(data, "bindings", DEFAULT_KEYMAP),
                   _bindings(data, "gamepad", DEFAULT_PADMAP), vsync,
                   window.get("fullscreen", False), graphics.get("shadow_quality", "medium"),
-                  graphics.get("draw_distance", 100.), agile)
+                  graphics.get("draw_distance", 100.), agile, music)

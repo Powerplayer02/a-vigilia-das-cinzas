@@ -1,0 +1,192 @@
+{
+  "date": "2026-11-26",
+  "protocol": "60s + 5s warmup; 1280x720 medium; GTX1660Ti; Custodian3 + 20 commons + 500 particles; onscreen, no cProfile; movement OFF",
+  "ci_before_music": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45899901886",
+  "historical_native_hitch_cause": "unresolved, profiles triaged; lightweight samples do not erase historical quarantine",
+  "trials": [
+    {
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "window_type": "onscreen",
+      "qa_diagnostics": false,
+      "source_build_id": "a3ded25f99a3fead",
+      "eligible_fps_baseline": true,
+      "valid_sample": false,
+      "minimized_frames": 256,
+      "excluded_samples": {
+        "count": 256,
+        "total_ms": 31842.003,
+        "reason": "window_minimized"
+      },
+      "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+      "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+      "scenario": "final_boss_20",
+      "hud": "full",
+      "contact_shadow_quality": "medium",
+      "static_geometry_batched": true,
+      "static_render_nodes": 4,
+      "draw_distance": 100.0,
+      "nav_grid": [
+        38,
+        75
+      ],
+      "patio_training_dummies": 0,
+      "static_bullet_bodies": 24,
+      "resolution": [
+        1280,
+        720
+      ],
+      "vsync": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "agile_movement_enabled": false,
+      "audio_enabled": true,
+      "logging_handlers": [
+        "QueueHandler"
+      ],
+      "diagnostic_minimization_injected": false,
+      "audio_track": "cinder_boss_phase3",
+      "particles_requested": 500,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "gc_mode": "normal",
+      "enemies": 20,
+      "boss_phase": 3,
+      "boss_moves_started": {
+        "wide_sweep": 16,
+        "slow_overhead": 19
+      },
+      "live_enemy_bodies": 21,
+      "fsm_states": {
+        "recover": 14,
+        "attack_windup": 5,
+        "chase": 1
+      },
+      "player_hp": 36542,
+      "frames": 1944,
+      "seconds": 60.075,
+      "fps": 32.36,
+      "one_percent_low_fps": 6.88,
+      "max_frame_ms": 180.877,
+      "median_frame_ms": 16.67015,
+      "p99_frame_ms": 133.4457,
+      "p95_frame_ms": 124.2467,
+      "percentile_method": "nearest rank",
+      "ai_steps": 3605,
+      "ai_tick_mean_ms": 0.2225,
+      "path_queries_live": 0,
+      "path_live_mean_ms": 0.0,
+      "path_isolated": {
+        "queries": 200,
+        "attempted_queries": 200,
+        "mode": "reachable_only",
+        "mean_ms": 0.7198,
+        "grid": [
+          38,
+          75
+        ],
+        "reachable": 200,
+        "unreachable": 0,
+        "reachable_mean_ms": 0.7198,
+        "unreachable_mean_ms": 0
+      },
+      "raw_sha256": "9bda3e2257ccc0591ff003210fc6829e59af67ec84b8b646689027064e5cb43a",
+      "raw_file": "artifacts/balance/performance/pre-music-capped-repeat.json",
+      "label": "pre-music-capped",
+      "valid_for_comparison": false
+    },
+    {
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "window_type": "onscreen",
+      "qa_diagnostics": false,
+      "source_build_id": "a3ded25f99a3fead",
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+      "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+      "scenario": "final_boss_20",
+      "hud": "full",
+      "contact_shadow_quality": "medium",
+      "static_geometry_batched": true,
+      "static_render_nodes": 4,
+      "draw_distance": 100.0,
+      "nav_grid": [
+        38,
+        75
+      ],
+      "patio_training_dummies": 0,
+      "static_bullet_bodies": 24,
+      "resolution": [
+        1280,
+        720
+      ],
+      "vsync": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "agile_movement_enabled": false,
+      "audio_enabled": true,
+      "logging_handlers": [
+        "QueueHandler"
+      ],
+      "diagnostic_minimization_injected": false,
+      "audio_track": "cinder_boss_phase3",
+      "particles_requested": 500,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "gc_mode": "normal",
+      "enemies": 20,
+      "boss_phase": 3,
+      "boss_moves_started": {
+        "wide_sweep": 18,
+        "slow_overhead": 17
+      },
+      "live_enemy_bodies": 21,
+      "fsm_states": {
+        "recover": 15,
+        "attack_windup": 5
+      },
+      "player_hp": 36781,
+      "frames": 14611,
+      "seconds": 60.006,
+      "fps": 243.49,
+      "one_percent_low_fps": 98.96,
+      "max_frame_ms": 21.174,
+      "median_frame_ms": 3.465,
+      "p99_frame_ms": 8.2917,
+      "p95_frame_ms": 6.8199,
+      "percentile_method": "nearest rank",
+      "ai_steps": 3600,
+      "ai_tick_mean_ms": 0.1942,
+      "path_queries_live": 0,
+      "path_live_mean_ms": 0.0,
+      "path_isolated": {
+        "queries": 200,
+        "attempted_queries": 200,
+        "mode": "reachable_only",
+        "mean_ms": 0.8771,
+        "grid": [
+          38,
+          75
+        ],
+        "reachable": 200,
+        "unreachable": 0,
+        "reachable_mean_ms": 0.8771,
+        "unreachable_mean_ms": 0
+      },
+      "raw_sha256": "af27e3b2f3d771367ff2c57e7d0f4fd99ab1a5bf0899afdc94768c5045542e67",
+      "raw_file": "artifacts/balance/performance/pre-music-uncapped-repeat.json",
+      "label": "pre-music-uncapped",
+      "valid_for_comparison": true
+    }
+  ],
+  "invalid_control_note": "Capped repeat excluded 256 minimized frames (31842ms) and is invalid. First control also retained but invalidated due helper setup mismatch. Fresh capped OFF/ON controls will follow."
+}

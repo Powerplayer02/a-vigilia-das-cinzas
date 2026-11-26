@@ -1,0 +1,163 @@
+{
+  "passed": true,
+  "real_mixer": true,
+  "scope": "Native presentation QA with synthetic area/music events, not a playthrough.",
+  "synthesis_during_frames": false,
+  "events": [
+    {
+      "label": "patio",
+      "seconds": 2.018,
+      "track": "patio_ambient",
+      "levels": [
+        1.0,
+        0.0
+      ],
+      "duck": 1.0,
+      "busy": [
+        true,
+        false
+      ]
+    },
+    {
+      "label": "area_midpoint",
+      "seconds": 3.082,
+      "track": "cathedral_ambient",
+      "levels": [
+        0.5045510666677728,
+        0.49544893333222717
+      ],
+      "duck": 1.0,
+      "busy": [
+        true,
+        true
+      ]
+    },
+    {
+      "label": "cathedral",
+      "seconds": 4.099,
+      "track": "cathedral_ambient",
+      "levels": [
+        0.0,
+        1.0
+      ],
+      "duck": 1.0,
+      "busy": [
+        false,
+        true
+      ]
+    },
+    {
+      "label": "fog_out",
+      "seconds": 4.583,
+      "track": "",
+      "levels": [
+        0.0,
+        0.5124265999984345
+      ],
+      "duck": 1.0,
+      "busy": [
+        false,
+        true
+      ]
+    },
+    {
+      "label": "boss_fade_in",
+      "seconds": 5.099,
+      "track": "boss_phase1",
+      "levels": [
+        0.24990389999948093,
+        0.0
+      ],
+      "duck": 1.0,
+      "busy": [
+        true,
+        false
+      ]
+    },
+    {
+      "label": "phase_midpoint",
+      "seconds": 7.132,
+      "track": "boss_phase2",
+      "levels": [
+        0.49979644999984885,
+        0.5002035500001512
+      ],
+      "duck": 1.0,
+      "busy": [
+        true,
+        true
+      ]
+    },
+    {
+      "label": "death_midpoint",
+      "seconds": 9.766,
+      "track": "",
+      "levels": [
+        0.0,
+        0.4997915666669238
+      ],
+      "duck": 1.0,
+      "busy": [
+        false,
+        true
+      ]
+    },
+    {
+      "label": "death_silence",
+      "seconds": 11.382,
+      "track": "",
+      "levels": [
+        0.0,
+        0.0
+      ],
+      "duck": 1.0,
+      "busy": [
+        false,
+        false
+      ]
+    },
+    {
+      "label": "options",
+      "seconds": 12.199,
+      "track": "cathedral_ambient",
+      "levels": [
+        1.0,
+        0.0
+      ],
+      "duck": 0.502684132921285,
+      "busy": [
+        true,
+        false
+      ]
+    },
+    {
+      "label": "options_closed",
+      "seconds": 13.016,
+      "track": "cathedral_ambient",
+      "levels": [
+        1.0,
+        0.0
+      ],
+      "duck": 0.9985002982173686,
+      "busy": [
+        true,
+        false
+      ]
+    },
+    {
+      "label": "ending_one_shot",
+      "seconds": 13.133,
+      "track": "ending_transform",
+      "levels": [
+        0.9347026666679691,
+        0.06529733333203087
+      ],
+      "duck": 0.9993419156248046,
+      "busy": [
+        true,
+        true
+      ]
+    }
+  ],
+  "fixture_note": "Actual area load with original geometry, cathedral enemies omitted in this presentation fixture. Not a production-rules difficulty run."
+}
