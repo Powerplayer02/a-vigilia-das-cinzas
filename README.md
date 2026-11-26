@@ -696,3 +696,24 @@ Na [primeira execução remota](https://github.com/Powerplayer02/a-vigilia-das-c
 **Etapas 4 e 5.1–5.4 aceitas pelo usuário.** O pico histórico de aproximadamente 0,5 s permanece não confirmado e monitorado por build. O escopo mais recente substitui o plano de mini-chefes/lore na 5.5: agora ela fecha os testes de desfechos, o save, o CI e o balanceamento. Sentinela Oca, Viúva das Cinzas e expansões adicionais ficam fora da 1.0. A campanha manual integral com números de produção ainda bloqueia o lançamento.
 
 **Créditos** · Projeto, geometria e material procedurais criados para A Vigília das Cinzas. Engine e física por Panda3D e Bullet.
+
+
+## Música procedural — 26/11/2026
+
+A fase 1 está implementada: 17 faixas originais para as cinco áreas, fases
+dos três chefes, menu, finais e pós-créditos. O jogo gera o cache WAV ausente
+antes de iniciar a partida. Para preparar antecipadamente:
+`python tools/music_gen.py --all`.
+
+Exemplo com seed explícita:
+`python tools/music_gen.py --track patio_ambient --seed 17 --output artifacts/music-example`.
+`audio.procedural_music` em `data/config.toml` permite comparar com o áudio anterior.
+
+[Decisões de música](docs/audio_visual.md) ·
+[QA da campanha OFF](docs/qa/balance-off-2026-11-26.md) ·
+[466 testes nas três plataformas](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45903934895) ·
+[Medição de 60s](docs/qa/music-performance-2026-11-26.json).
+
+A campanha do agente chegou ao final Transformar; avaliação humana e
+comparação ON/OFF da mobilidade seguem pendentes. Próxima fase audiovisual:
+efeitos sonoros, após aceite da música.

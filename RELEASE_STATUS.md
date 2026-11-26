@@ -1,19 +1,22 @@
 # Fechamento da 1.0 — Etapa 5.5
 
-Estado em 25/11/2026: 5.4 aceita funcionalmente; release ainda não certificada.
+Estado em 26/11/2026: campanha OFF conduzida pelo agente concluída; fase 1
+de música implementada. Release ainda não certificada; avaliação humana e
+comparação ON/OFF dos chefes permanecem pendentes. As seções antigas abaixo
+preservam a cronologia, e a atualização atual está no fim deste documento.
 
 | Verificação | Estado |
 | --- | --- |
-| Testes locais de regras e contratos | 438 passaram no Windows, Python 3.13; os 391 anteriores preservados |
+| Testes locais de regras e contratos | 466 passaram no Windows, Python 3.13; os 438 anteriores preservados |
 | Fechar a janela sem salvar | Corrigido e verificado por Alt+F4 real: zero commits no fechamento |
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
 | Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Aprovado: 438 testes em cada plataforma, [momentum + coyote + buffer](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45724776396) |
+| CI remoto Linux/macOS/Windows | Aprovado: 466 testes em cada plataforma, [fase 1 de música](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45903934895) |
 | Três desfechos a partir de saves anteriores ao chefe final | Aprovado: três fixtures versionadas, combate/epílogo/pós-créditos; repetido com Bullet/UI nativos |
-| Campanha manual com números de produção | Pendente e bloqueia release |
+| Campanha com números de produção | Percurso principal e final Transformar concluídos por comandos do agente; não é avaliação humana |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
-| Pico histórico de combate de aproximadamente 0,5 s | Não reproduzido na última campanha de QA; monitorado |
+| Picos nativos de renderização | 18 capturas triadas; causa nativa não identificada. Quarentena histórica preservada |
 
 O pico anterior de 333,681 ms era um commit iniciado por `request_quit`.
 Esse caminho foi removido. Checkpoints, transições explícitas, desfecho e
@@ -140,3 +143,50 @@ substituída por smoke tests: tentativas, dificuldade percebida e calibração
 de stamina ainda não foram medidas em partida. Nenhum HP/dano/resistência
 de chefe foi ajustado. Balance OFF precede a comparação ON/OFF e continua
 bloqueando a certificação do lançamento.
+
+
+## Atualização de 26/11 — campanha OFF e música
+
+Campanha OFF: Vigia, 9 tentativas / 503,359s; Abadessa, 6 / 166,465s;
+Custódio, 1 / 247,576s. Final Transformar e créditos vistos persistidos em
+save real. É um percurso conduzido pelo agente, não uma avaliação humana
+nem exploração completa. O Custódio supera a referência de 210s.
+
+A pedido do usuário, somente o HP do Vigia caiu 15% (3.200 → 2.720).
+Rechecagem com Cavaleiro novo, nível 1 e espada +0: 177,608s, uma tentativa,
+162,312/188 HP restantes. A política já tinha aprendizado; a diferença não
+isola o efeito do HP. Abadessa, Custódio, fórmulas, timings, IA e passo fixo
+preservados. Descanso preserva almas e mancha pela decisão mais recente.
+Ver [relatório OFF](docs/qa/balance-off-2026-11-26.md).
+[CI do balanceamento](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45899901886).
+
+Fase 1: 17 faixas originais; cinco ambientes de 96s, sete variações de
+chefe de 96s, menu de 30s, três finais de 60s e pós-créditos de 30s.
+Gerador NumPy + wave, cache WAV reparável no boot, sem geração por quadro.
+Catálogo de 245.549.548 bytes. Medidor independente: −18 LUFS, com erro
+máximo de 0,0003 LU. Crossfade por relógio real, névoa, fases, vitória,
+redução de 6dB nas opções e finais sem loop. Mixer real validado em fixture
+de apresentação separada da campanha. [Documentação](docs/audio_visual.md).
+
+[466 testes nas três plataformas](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45903934895),
+incluindo hash PCM determinístico. Logs: Ubuntu, 466 / 10,46s; macOS,
+466 / 5,40s; Windows, 466 / 22,38s.
+
+60s por amostra, 5s de warmup, 1280×720 médio, Custódio fase 3 + 20 comuns +
+500 partículas, janela nativa, sem cProfile ou minimização:
+
+| Música | Cap | Mediana ms | p95 ms | FPS médio | 1% low |
+| --- | --- | ---: | ---: | ---: | ---: |
+| OFF | 60Hz | 16,6645 | 16,7313 | 59,98 | 55,91 |
+| ON | 60Hz | 16,6640 | 16,7602 | 59,97 | 55,05 |
+| OFF | Livre | 3,2583 | 6,5740 | 254,37 | 106,24 |
+| ON | Livre | 3,2771 | 6,5854 | 253,29 | 101,65 |
+
+Delta ON−OFF sem cap: +0,0188ms, dentro de +1ms. Não prova melhoria causal
+ou eliminação dos picos históricos. Amostras minimizadas e uma sobreposição
+acidental entre execuções foram invalidadas, preservadas e repetidas.
+[Dados e hashes](docs/qa/music-performance-2026-11-26.json).
+
+SFX novos e demais fases audiovisuais aguardam confirmação. A comparação
+ON/OFF da mobilidade ainda está pendente. Nenhuma tag de release 1.0 foi
+criada. Gamepad continua fora dos recursos validados.
