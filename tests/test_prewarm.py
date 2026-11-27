@@ -12,6 +12,7 @@ class Root:
         self.node=NodePath('root');self.events=events
     def attach_new_node(self,node):return self.node.attach_new_node(node)
     def prepare_scene(self,gsg):self.events.append('prepare')
+    def premunge_scene(self,gsg):self.events.append('premunge')
 
 
 def fixture(fail=False):
@@ -29,7 +30,7 @@ def fixture(fail=False):
 def test_cover_persists_until_resources_are_submitted_without_running_tasks():
     app,events=fixture()
     result=prewarm_scene(app)
-    assert events==['render','prepare','prepare','render','render','sync']
+    assert events==['render','premunge','premunge','prepare','prepare','render','render','sync']
     assert app.aspect2d.node.find('**/render-warmup-cover').is_empty()
     assert result['simulation_steps']==0
 
@@ -38,3 +39,11 @@ def test_cover_is_removed_after_graphics_failure():
     app,_=fixture(fail=True)
     with pytest.raises(RuntimeError):prewarm_scene(app)
     assert app.aspect2d.node.find('**/render-warmup-cover').is_empty()
+
+
+def test_dynamic_world_geometry_is_only_prepared_when_static_scope_is_supplied():
+    app,events=fixture()
+    app.render.premunge_scene=lambda _:pytest.fail('Must not replace dynamic Geoms')
+    static=Root(events)
+    prewarm_scene(app,static_scene=static)
+    assert events==['render','premunge','premunge','prepare','prepare','render','render','sync']

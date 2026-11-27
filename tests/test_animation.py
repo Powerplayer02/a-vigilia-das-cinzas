@@ -75,13 +75,15 @@ def test_phase_preparation_only_queues_existing_resources_once():
     calls=[]
     class Node:
         def prepare_scene(self,gsg):calls.append(gsg)
+        def premunge_scene(self,gsg):calls.append('premunge')
     renderer=ArenaRenderer.__new__(ArenaRenderer)
     renderer._app=SimpleNamespace(render=Node(),win=SimpleNamespace(get_gsg=lambda:'gsg'))
+    renderer.root=Node()
     renderer._phase_prepares=set();renderer._phase_prepared=set()
     renderer._enemies={10:(Node(),None,None)};renderer._combat_gear={10:(Node(),)}
     renderer.queue_phase_warmup(10,3);renderer.prepare_phase_resources()
     renderer.queue_phase_warmup(10,3);renderer.prepare_phase_resources()
-    assert calls==['gsg']*3
+    assert calls==['premunge']+['gsg']*3
     assert renderer._phase_prepares==set()
 
 

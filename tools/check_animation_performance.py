@@ -1,10 +1,12 @@
 """Phase4 GPU gate: comparable controls plus explicit 120s catalog coverage."""
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'src'))
 from vigilia.engine.animation import WARMUP_CLIPS
+from vigilia.model.enemies import ENEMIES
 
 
 def validate(capped,uncapped,coverage):
@@ -27,10 +29,17 @@ def validate(capped,uncapped,coverage):
     expected=set(WARMUP_CLIPS)
     if set(seen.get('player',[]))!=expected:problems.append('coverage: missing player clips')
     common=[role for role in seen if role!='player' and not role.startswith('boss:')]
-    if len(common)<3 or any(set(seen[role])!=expected for role in common):problems.append('coverage: missing enemy families or clips')
+    if set(common)!=set(ENEMIES) or any(set(seen[role])!=expected for role in common):problems.append('coverage: missing enemy families or clips')
+    if set(coverage.get('enemy_profile_ids',[]))!=set(ENEMIES):problems.append('coverage: actual world does not contain all six families')
     bosses=[role for role in seen if role.startswith('boss:')]
     if not bosses or any(set(seen[role])!={f'{phase}:{clip}' for phase in (1,2,3) for clip in expected} for role in bosses):
         problems.append('coverage: missing boss phase/clip pairs')
+    timing=coverage.get('animation_timing',{})
+    mean=timing.get('animation_total_mean_ms_per_render')
+    if (not coverage.get('animation_direct_timing') or timing.get('render_frames',0)<1
+            or timing.get('render_frames')!=coverage.get('frames')
+            or type(mean) not in (int,float) or not math.isfinite(mean) or mean>2):
+        problems.append('coverage: animation CPU timing missing or above2ms per render')
     return dict(passed=not problems,problems=problems,
         note='Catalog-pose stress over production combat, not proof that each action was played through inputs. Historical stall remains open.')
 

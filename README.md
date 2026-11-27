@@ -2,8 +2,11 @@
 
 Fase 4 disponível para revisão: animações procedurais do jogador, seis tipos de
 inimigo e três chefes, com preparação no carregamento e nas transições de fase.
-A validação final de desempenho foi adiada a pedido do usuário; a fase ainda
-não tem aceite de GPU. [Escopo e evidências](docs/qa/animations-2026-11-27.md).
+A sincronia dos ataques foi corrigida e verificada em 35 combinações de
+ataque/fase. O preparo usa `premunge_scene` e `prepare_scene` no Panda3D 1.10.16.
+Conforme a escolha mais recente, “Faça a sincronia e o preparo; GPU depois”,
+as medições finais e o aceite de desempenho continuam pendentes.
+[Correção, evidências e protocolo atual](docs/qa/animation-acceptance-2026-11-27.md).
 
 Interface da fase 3: atlas original com 36 símbolos e molduras, cores em
 `data/palette.toml`, uma fonte compartilhada e escala de HUD até 150%.

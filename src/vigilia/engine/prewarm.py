@@ -8,7 +8,7 @@ import time
 from panda3d.core import CardMaker
 
 
-def prewarm_scene(app, *, samples=()):
+def prewarm_scene(app, *, samples=(), static_scene=None):
     started=time.perf_counter()
     card=CardMaker('render-warmup-cover')
     aspect=app.get_aspect_ratio()
@@ -23,6 +23,11 @@ def prewarm_scene(app, *, samples=()):
         app.graphicsEngine.render_frame()
         render_calls+=1
         gsg=app.win.get_gsg()
+        # Premunge replaces Geoms. Keep externally updated particle buffers out
+        # of that destructive walk; prepare_scene and the sample renders still
+        # prepare them through the ordinary GSG cache.
+        (static_scene if static_scene is not None else app.render).premunge_scene(gsg)
+        app.aspect2d.premunge_scene(gsg)
         app.render.prepare_scene(gsg)
         app.aspect2d.prepare_scene(gsg)
         # prepare_scene enqueues resources in1.10.16; render consumes the queue.

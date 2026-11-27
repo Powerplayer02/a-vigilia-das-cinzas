@@ -47,17 +47,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Reject minimized samples and frame-time regressions
         run: python candidate/tools/check_render_performance.py --animation --baseline-capped perf/baseline-capped.json --candidate-capped perf/candidate-capped.json --baseline-uncapped perf/baseline-uncapped.json --candidate-uncapped perf/candidate-uncapped.json --output perf/gate.json
-      - name: 120s catalog poses over production combat (not an input playthrough)
-        run: python candidate/tools/benchmark.py --seconds 120 --warmup-seconds 5 --final-boss --enemies 20 --particles 500 --procedural-music --procedural-sfx --animation-coverage --output perf/animation-coverage.json
+      - name: 120s catalog poses, all six enemy families and direct CPU timings
+        run: python candidate/tools/benchmark.py --seconds 120 --warmup-seconds 5 --final-boss --enemies 20 --all-enemy-profiles --particles 500 --procedural-music --procedural-sfx --animation-coverage --animation-timing --output perf/animation-coverage.json
       - name: Require every pose, all boss phases and no frame above50ms
         run: python candidate/tools/check_animation_performance.py --capped perf/candidate-capped.json --uncapped perf/candidate-uncapped.json --coverage perf/animation-coverage.json --output perf/animation-gate.json
-      - name: Reference synchronization experiment (excluded from FPS acceptance)
-        shell: pwsh
-        run: |
-          python candidate/tools/benchmark.py --seconds 10 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --profile --split-flip --output perf/reference-async.json
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python candidate/tools/benchmark.py --seconds 10 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --profile --split-flip --gl-finish --output perf/reference-finish.json
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Native asynchronous GPU timer queries (separate diagnostic)
+        run: python candidate/tools/diagnose_gpu_timers.py --seconds 10 --directory perf/gpu-timer-queries
       - name: Preserve GPU measurements even on failure
         if: always()
         uses: actions/upload-artifact@v7.0.2

@@ -26,6 +26,7 @@ from vigilia.game import Game
 from vigilia.model.stats import StatsBlock
 from vigilia.world.arena import nav_grid
 from vigilia.entities.components import AIStateComponent, BodyRef, NavAgentComponent
+from vigilia.entities.components import EnemyTag
 
 
 def prepare_boss_stress(game: Game) -> None:
@@ -265,11 +266,14 @@ def main() -> None:
     parser.add_argument("--qa-diagnostics", action="store_true", help="Flight recorder do executável e gate por build; não usar como baseline FPS")
     parser.add_argument("--profile", action="store_true")
     parser.add_argument("--animation-coverage",action="store_true",help="Catalog-pose stress over production combat, not an input playthrough")
+    parser.add_argument('--animation-timing',action='store_true',help='Direct timings for logical poses, views and mixer/transform application')
+    parser.add_argument('--all-enemy-profiles',action='store_true',help='Use all six enemy families in the regional stress fixture')
     parser.add_argument("--gl-finish",action="store_true",help="Synchronization diagnostic; excludes FPS baseline eligibility")
     parser.add_argument("--deep-profile", action="store_true")
     parser.add_argument("--freeze-gc", action="store_true")
     parser.add_argument("--disable-gc", action="store_true", help="Experimento isolado; não muda o jogo de produção")
     parser.add_argument("--pstats-port", type=int)
+    parser.add_argument('--pstats-max-rate',type=int,default=60)
     parser.add_argument("--shader-log", action="store_true")
     parser.add_argument("--ready-file", type=Path)
     parser.add_argument("--particles", type=int, choices=(0, 500), default=0)
@@ -291,6 +295,8 @@ def main() -> None:
         args.enemies = 15 if args.boss else 20
     if args.seconds < 1:
         parser.error("Meça por ao menos um segundo.")
+    if args.all_enemy_profiles and not (args.final_boss or args.tide_boss):
+        parser.error('--all-enemy-profiles requires a regional boss stress fixture')
     if args.qa_diagnostics and (args.hitch_directory or args.spike_directory):
         parser.error("O modo QA já possui seu próprio cProfile; não combine gravadores.")
     if args.hitch_directory and args.spike_directory:
@@ -306,15 +312,16 @@ def main() -> None:
             raise
     config = Config(vsync=args.vsync, shadow_quality=args.shadow_quality,
         procedural_music=args.procedural_music, procedural_sfx=args.procedural_sfx)
-    if args.gl_finish:
-        from panda3d.core import load_prc_file_data
-        load_prc_file_data('finish-reference','gl-finish true')
+    from panda3d.core import load_prc_file_data
+    load_prc_file_data('finish-reference',f'gl-finish {str(args.gl_finish).lower()}')
+    if not args.pstats_port:
+        load_prc_file_data('fps-no-pstats','want-pstats false\npstats-gpu-timing false')
     if args.shader_log:
         from panda3d.core import load_prc_file_data
         load_prc_file_data("shader-diagnostic", "notify-level-glgsg debug\nnotify-timestamp true")
     if args.pstats_port:
         from panda3d.core import load_prc_file_data
-        load_prc_file_data("stats-diagnostic", "want-pstats true\npstats-gpu-timing true\npstats-max-rate 1000")
+        load_prc_file_data("stats-diagnostic", f"want-pstats true\npstats-gpu-timing true\npstats-max-rate {args.pstats_max_rate}")
     if args.tide_boss or args.final_boss:
         from vigilia.world.area import load_area
         isolated_grid = load_area(ROOT / ("data/areas/forno_da_vigilia.toml" if args.final_boss else "data/areas/pantano_das_cinzas.toml")).navigation(fog_closed=True)
@@ -348,6 +355,9 @@ def main() -> None:
                 from panda3d.core import ClockObject
                 app._clock.set_mode(ClockObject.M_limited)
                 app._clock.set_frame_rate(args.fps_cap)
+            else:
+                from panda3d.core import ClockObject
+                app._clock.set_mode(ClockObject.M_normal)
             if args.gpu_log:
                 args.gpu_log.parent.mkdir(parents=True, exist_ok=True)
                 gpu_file = args.gpu_log.open("w")
@@ -376,7 +386,11 @@ def main() -> None:
             game._fighter.restore()
             if args.tide_boss or args.final_boss:
                 entry = Vec3(240, 25.7, 1.02) if args.final_boss else Vec3(120, 27.7, 1.02)
-                game.change_area("forno_da_vigilia" if args.final_boss else "pantano_das_cinzas", entry, stress_enemies=args.enemies)
+                region_options=dict(stress_enemies=args.enemies)
+                if args.all_enemy_profiles:
+                    from vigilia.model.enemies import ENEMIES
+                    region_options['stress_profiles']=tuple(ENEMIES)
+                game.change_area("forno_da_vigilia" if args.final_boss else "pantano_das_cinzas", entry, **region_options)
                 boss = game.boss
                 boss._rng.seed(args.seed)
                 game._bus.publish(BossArenaEnteredEvent(boss.profile.id, boss.profile.arena, entry))
@@ -392,6 +406,10 @@ def main() -> None:
             game.keyboard("control", True)
             game.alert_enemies()
             app.taskMgr.remove("vigilia-update")
+            animation_timing=None
+            if args.animation_timing:
+                from animation_timing import AnimationTiming
+                animation_timing=AnimationTiming(game)
             animation_workload=None
             if args.animation_coverage:
                 from animation_workload import AnimationWorkload
@@ -416,6 +434,13 @@ def main() -> None:
             boss_moves = {}
             previous_boss_attack = None
             particle_min, particle_max = 500, 0
+            if args.pstats_port:
+                from panda3d.core import PStatCollector
+                measuring_collector=PStatCollector('QA measuring')
+                def mark_measurement(task):
+                    measuring_collector.set_level(int(measuring))
+                    return task.cont
+                app.taskMgr.add(mark_measurement,'gpu-measurement-marker',sort=8)
 
             def observe_window(task):
                 nonlocal sample_minimized
@@ -442,7 +467,9 @@ def main() -> None:
                         injected_restore = True
                 if profile is not None:
                     profile.begin_frame(elapsed)
+                if animation_timing:animation_timing.begin_render()
                 game.frame(elapsed, (0, 0), (0, 0))
+                if animation_timing:animation_timing.end_render()
                 if (args.boss or args.tide_boss or args.final_boss) and game.boss.fighter.attack is not previous_boss_attack:
                     previous_boss_attack = game.boss.fighter.attack
                     if measuring and previous_boss_attack is not None:
@@ -471,6 +498,7 @@ def main() -> None:
                     game.ai.tick_count = game.ai.path_count = 0
                     game.ai.tick_seconds = game.ai.path_seconds = 0.0
                     if animation_workload:animation_workload.begin()
+                    if animation_timing:animation_timing.begin()
                     if profile is not None:
                         profile.measuring = True
                     return task.cont
@@ -482,6 +510,7 @@ def main() -> None:
                     particle_min = min(particle_min, game._particles.pool.active_count)
                     particle_max = max(particle_max, game._particles.pool.active_count)
                 if measuring and now - measurement_start >= args.seconds:
+                    from panda3d.core import PStatClient
                     frame_times = sorted(samples)
                     worst = sorted(samples, reverse=True)[:max(1, math.ceil(len(samples) * .01))]
                     states = {}
@@ -493,9 +522,13 @@ def main() -> None:
                         "qa_diagnostics": args.qa_diagnostics,
                         "source_build_id": qa.build_id if qa else source_id,
                         "eligible_fps_baseline": args.window_type == "onscreen" and not args.spike_directory and args.diagnostic_minimize_at is None and not args.qa_diagnostics and not args.gl_finish and not args.pstats_port and not args.split_flip and not args.profile and not args.hitch_directory,
-                        "pstats_connected":bool(args.pstats_port),
+                        "pstats_connected":PStatClient.is_connected(),
                         "gl_finish":args.gl_finish,
                         "animation_coverage_fixture":args.animation_coverage,
+                        "enemy_profile_ids":sorted({tag.profile_id for _,(tag,) in game._world.query(EnemyTag)}),
+                        "animation_direct_timing":args.animation_timing,
+                        "gpu_timer_supported":app.win.get_gsg().get_supports_timer_query(),
+                        "gpu_timer_queries_active":app.win.get_gsg().get_timer_queries_active(),
                         "animation_warmups":getattr(game,'presentation_warmups',[]),
                         "valid_sample": minimized_frames == 0,
                         "minimized_frames": minimized_frames,
@@ -514,6 +547,7 @@ def main() -> None:
                         "resolution": [app.win.get_x_size(), app.win.get_y_size()],
                         "vsync": config.vsync,
                         "fps_cap": args.fps_cap,
+                        "clock_mode":int(app._clock.get_mode()),
                         "warmup_seconds": args.warmup_seconds,
                         "agile_movement_enabled": getattr(game._player, "advanced", None) is not None,
                         "audio_enabled": game._audio.enabled,
@@ -558,6 +592,7 @@ def main() -> None:
                             profile.recorder.discard()
                             result["spike_captures"] = [timestamp for timestamp, _ in profile.recorder.captures]
                     if animation_workload:result['animation_workload']=animation_workload.report(len(samples))
+                    if animation_timing:result['animation_timing']=animation_timing.report()
                     if args.output:
                         args.output.parent.mkdir(parents=True, exist_ok=True)
                         args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

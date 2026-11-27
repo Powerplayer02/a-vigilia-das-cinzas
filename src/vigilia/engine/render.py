@@ -548,7 +548,10 @@ class ArenaRenderer:
         """
         if not self._phase_prepares:return
         gsg=self._app.win.get_gsg()
-        # Includes the shared particle buffers made visible by the phase event.
+        # Only immutable geometry: premunge replaces Geoms, invalidating the
+        # particle emitter's retained geometry/bounds references outside root.
+        self.root.premunge_scene(gsg)
+        # Includes the shared dynamic particle buffers via the normal GSG cache.
         self._app.render.prepare_scene(gsg)
         for identifier,phase in self._phase_prepares:
             if identifier in self._enemies:self._enemies[identifier][0].prepare_scene(gsg)
@@ -576,7 +579,8 @@ class ArenaRenderer:
                 for identity in self._animation_nodes:
                     self._apply_animation(identity,sample(clip,.65,speed=5.8,phase=3),free_arms=True)
                     self._animation_props[identity].show() if clip=='drink' else self._animation_props[identity].hide()
-            result=prewarm_scene(self._app,samples=(lambda clip=clip:apply(clip) for clip in WARMUP_CLIPS))
+            result=prewarm_scene(self._app,static_scene=self.root,
+                samples=(lambda clip=clip:apply(clip) for clip in WARMUP_CLIPS))
             result['clips']=len(WARMUP_CLIPS)
             result['actors']=len(actors)
             return result

@@ -2,6 +2,7 @@
 
 As fases1/2 cobrem música/SFX e a fase3 cobre atlas/UI. A fase4 tem
 implementação para revisão e validação final de GPU adiada pelo usuário.
+Revisão atual: [sincronia corrigida e preparo](qa/animation-acceptance-2026-11-27.md).
 As seções anteriores preservam o histórico de cada entrega.
 
 ## Partitura original
@@ -324,3 +325,26 @@ os estados alpha/additive compartilhados do pool, sob cobertura preta. Tudo
 de chefe apenas agenda `prepare_scene` e usa o frame normal do rugido.
 Isso amplia cobertura de preparação, sem provar eliminação de first-use ou
 da causa histórica. [QA, protocolo e pendências](qa/animations-2026-11-27.md).
+
+### Revisão de sincronia e preparo
+
+O pico da pose corporal agora coincide com o início do contato em ±2 passos
+nos 35 pares de ataque/fase existentes testados. A arma é conferida por três
+pontos geométricos durante a janela ativa. O teste segue a ordem de produção:
+resolver volumes, avançar Fighter, construir view e aplicar os transforms.
+Elimina-se o crossfade adicional entre etapas contínuas do mesmo golpe;
+as demais transições mantêm mistura. Dano e janelas lógicas não mudaram.
+
+Além de `prepare_scene`, loading e transições usam `premunge_scene` no GSG
+da janela. A passagem destrutiva de premunge fica no cenário estático e UI;
+partículas mutáveis usam preparo/cache normal e renders representativos.
+Não há Actor/skinning ou shader automático: são nós rígidos articulados e
+GLSL explícito na versão 1.10.16. Não se afirma compilação antecipada universal.
+
+O próximo ensaio cobre seis famílias reais simultâneas e registra os custos
+de pose lógica, view, mixer/transforms, sincronização da arma e apresentação.
+O total de animação soma somente escopos sem sobreposição, por render;
+não soma duas vezes o custo da apresentação externa. O diagnóstico de GPU
+usa `pstats-gpu-timing`, glFinish OFF, separado dos controles de FPS.
+Esses números aguardam execução por decisão do usuário, assim como o aceite
+de desempenho e a liberação da fase 5. [Protocolo atual](qa/animation-acceptance-2026-11-27.md).

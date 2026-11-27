@@ -49,12 +49,23 @@ def sample(action: str, progress: float, *, speed=0., phase=1, profile='player')
     if ':' in action:
         name, stage = action.split(':', 1)
         windup, impact = ATTACKS.get(name, ATTACKS['light_1'])
-        if stage == 'windup': result = interpolate_pose(NEUTRAL, windup, smoothstep(p))
-        elif stage == 'active': result = interpolate_pose(windup, impact, smoothstep(p))
-        else: result = interpolate_pose(impact, NEUTRAL, smoothstep(p))
+        follow=interpolate_pose(impact,NEUTRAL,.35)
+        if stage == 'windup':
+            if p<.85:
+                result=interpolate_pose(NEUTRAL,windup,smoothstep(p/.85))
+                strike=0.
+            else:
+                strike=smoothstep((p-.85)/.15)
+                result=interpolate_pose(windup,impact,strike)
+        elif stage == 'active':
+            result=interpolate_pose(impact,follow,smoothstep(p))
+            strike=1-.35*smoothstep(p)
+        else:
+            result=interpolate_pose(follow,NEUTRAL,smoothstep(p))
+            strike=.65*(1-smoothstep(p))
         if profile.startswith('boss:') and phase>=2:
             result=result._replace(torso=result.torso*(1+.06*(phase-1)),
-                head=-4*(phase-1),roll=result.roll+math.sin(math.pi*p)*2*(phase-1))
+                head=result.head-4*(phase-1)*strike,roll=result.roll*(1+.06*(phase-1)))
         return result
     if action in ('walk','run'):
         wave = math.sin(math.tau * p); running = min(1., max(0., (speed - 3.1) / 2.7))
@@ -137,7 +148,13 @@ class AnimationMixer:
             sector=round(self.last_direction/(math.pi/2)) % 4
             action=('roll_forward','roll_right','roll_back','roll_left')[sector]
         if action!=self.action:
+            old_parts=self.action.split(':');new_parts=action.split(':')
+            same_attack=(len(old_parts)==len(new_parts)==2 and old_parts[0]==new_parts[0]
+                and (old_parts[1],new_parts[1]) in (('windup','active'),('active','recovery')))
             self.previous=self.pose;self.action=action;self.age=self.fade=0.
+            # These stages already have continuous key poses. A second crossfade
+            # would delay the visible strike after the authoritative active age.
+            if same_attack:self.fade=.085
         self.age+=dt;self.fade+=dt
         if progress is None:
             if action in ('walk','run'):

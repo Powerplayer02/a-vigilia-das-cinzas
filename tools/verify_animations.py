@@ -7,7 +7,7 @@ import sys
 import tempfile
 
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'src'))
-from panda3d.core import Filename
+from panda3d.core import Filename, GeomVertexReader
 from vigilia.core.animation import AnimationView
 from vigilia.core.config import Config
 from vigilia.core.mathx import Transform,Vec3
@@ -20,19 +20,47 @@ from vigilia.entities.components import EnemyTag
 from vigilia.entities.ecs import Entity
 from vigilia.model.items import WEAPONS
 from vigilia.engine.diagnostics import build_fingerprint
+from vigilia.model.enemies import ENEMIES
+
+
+def verify_dynamic_particle_buffers(emitter):
+    """Check the live graph still uses the mutable buffers owned by the emitter."""
+    for index,node in enumerate(emitter.nodes):
+        actual=node.node().get_geom(0)
+        assert actual.this==emitter.geometries[index].this
+        assert actual.get_vertex_data().this==emitter.data.this
+        assert actual.get_primitive(0).this==emitter.primitives[index].this
+    # Save/restore all particle state and write different data through the live
+    # emitter, then read it from the actual graph, not from its cached references.
+    with emitter.warmup():
+        emitter.clear();emitter.spawn('blood',Vec3(10,20,30),count=1);emitter.update(0)
+        data=emitter.nodes[0].node().get_geom(0).get_vertex_data()
+        reader=GeomVertexReader(data,'vertex')
+        reader.set_row(next(i for i,slot in enumerate(emitter.pool.slots) if slot.alive)*4)
+        first=reader.get_data3()
+        assert first.x>9 and first.y>19 and first.z>29
+    return True
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--area',choices=('patio_da_vigilia','pantano_das_cinzas','forno_da_vigilia'),default='patio_da_vigilia')
+    parser.add_argument('--all-enemy-profiles',action='store_true')
+    parser.add_argument('--setup-only',action='store_true',help='Verify native preparation and snapshot invariants without a screenshot gallery')
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='vigilia-animation-') as temp:
         app=ArenaApp(Config(vsync=False),window_type='offscreen')
         try:
             game=Game(app,Config(),ROOT/'assets',save_path=Path(temp)/'save.sqlite3',front_end=True,enemy_count=3)
             app.start(game)
-            if args.area!='patio_da_vigilia':game.change_area(args.area,stash=False,restore=False,stress_enemies=3)
+            verify_dynamic_particle_buffers(game._particles)
+            if args.all_enemy_profiles and args.area=='patio_da_vigilia':parser.error('Six-family stress requires a regional boss area')
+            if args.area!='patio_da_vigilia':
+                region_options=dict(stash=False,restore=False,stress_enemies=20 if args.all_enemy_profiles else 3)
+                if args.all_enemy_profiles:region_options['stress_profiles']=tuple(ENEMIES)
+                game.change_area(args.area,**region_options)
+                verify_dynamic_particle_buffers(game._particles)
             snapshot=game.build_snapshot();rng=game._particles.pool._rng.getstate()
             transforms=[(node,node.get_transform()) for row in game._renderer._animation_nodes.values()
                 for node in (row[0],row[1],row[2],*row[3],*row[4:])]
@@ -43,7 +71,9 @@ def main():
             results=dict(kind='Native visual fixture; no human gameplay claim',warmup=warmup,
                 source_build_id=build_fingerprint(ROOT),
                 area=args.area,boss=game.boss.profile.id,
+                enemy_profile_ids=sorted({tag.profile_id for _,(tag,) in game._world.query(EnemyTag)}),
                 snapshot_preserved=True,transforms_preserved=True,visual_rng_preserved=True,clips=list(WARMUP_CLIPS),screenshots=[])
+            results['dynamic_particle_buffers_connected']=verify_dynamic_particle_buffers(game._particles)
             renderer=game._renderer
             renderer.statics.hide()
             for node in renderer._flames:node.hide()
@@ -63,6 +93,7 @@ def main():
             cases=['idle','walk','run','roll_left','roll_back','light_1:windup','light_1:active',
                 'heavy:active','parry','drink','wall_cling','slamming','phase','death_front',
                 'slow_overhead:active','wide_sweep:active','forge_grab:active','fire_aoe_ring:active']
+            if args.setup_only:cases=[]
             for index,clip in enumerate(cases):
                 for offset,(identity,root) in enumerate(zip(actor_ids,roots)):
                     position=Vec3((offset-2)*1.65,0,1.02)
@@ -100,7 +131,9 @@ def main():
                 renderer.prepare_phase_resources();app.graphicsEngine.render_frame()
                 assert game.build_snapshot()==before
                 assert game._particles.pool._rng.getstate()==rng
+                dynamic_connected=verify_dynamic_particle_buffers(game._particles)
                 phase_checks.append(dict(phase=game.boss.phase,snapshot_preserved=True,
+                    dynamic_particle_buffers_connected=dynamic_connected,
                     transition_steps_remaining=game.boss.transition_remaining,
                     queued_native_resources=sum(getattr(app.win.get_gsg().get_prepared_objects(),'get_num_queued_'+kind)()
                         for kind in ('shaders','textures','vertex_buffers','index_buffers'))))

@@ -1,5 +1,9 @@
 # Animações — implementação e limites de aceite
 
+Nota histórica da entrega original. A correção de sincronia e o protocolo
+atual, que substitui a cobertura de três famílias e as referências glFinish
+descritas abaixo, estão em [revisão de aceite](animation-acceptance-2026-11-27.md).
+
 Fase 4 liberada pelo usuário após o diagnóstico nativo, com causa histórica
 aberta. A implementação está pronta para revisão funcional. **A medição final
 de GPU foi explicitamente adiada pelo usuário**, portanto esta nota não dá

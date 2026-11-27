@@ -4,6 +4,9 @@ Estado em 27/11/2026: campanha OFF conduzida pelo agente concluída; fases 1
 e 2 de música e efeitos implementadas. Release ainda não certificada; avaliação humana e
 comparação ON/OFF dos chefes permanecem pendentes. As seções antigas abaixo
 preservam a cronologia, e a atualização atual está no fim deste documento.
+O acompanhamento atual da fase 4 está em
+[sincronia e preparo](docs/qa/animation-acceptance-2026-11-27.md): correção funcional
+concluída, medições de CPU/GPU pendentes por escolha explícita mais recente.
 
 | Verificação | Estado |
 | --- | --- |
@@ -321,3 +324,30 @@ O pico histórico e a abertura preta não foram atribuídos a first-use. Esta
 controles seguintes; fica registrada, sem nova perseguição nesta fase.
 Não há certificação de release1.0 nem de desempenho nesta entrega.
 Relatório: `docs/qa/animations-2026-11-27.md`.
+
+### Revisão da fase 4 — sincronia corrigida; desempenho ainda pendente
+
+Os 35 pares de ataque/fase testados passaram na tolerância de ±2 passos.
+Antes, o pico corporal podia atrasar 28 passos; agora antecede a primeira
+ativação em um passo (16,67 ms), respeitando a ordem real de combate/render.
+São 29 pares presentes nos movesets mais seis definições extras verificadas
+na fase 1; os chefes existentes têm duas, duas e três fases respectivamente.
+Não foram criados ataques para cumprir uma contagem artificial.
+As armas permanecem alinhadas aos pontos autoritativos durante contato.
+Dano, AttackDefinitions, tabelas dos chefes e passo fixo não mudaram.
+
+Panda3D 1.10.16: `premunge_scene` prepara as geometrias estáticas e UI;
+`prepare_scene` e os renders sob cobertura também incluem os buffers dinâmicos.
+O caminho de partículas preserva suas referências de Geom/vertices/índices;
+teste nativo verificou atualização dos dados no grafo após loading/transições.
+Snapshots, RNG e os 90 passos de transição do chefe foram preservados.
+Isso amplia a preparação; não demonstra a causa ou a eliminação do pico antigo.
+
+O usuário escolheu “Faça a sincronia e o preparo; GPU depois”. Nenhum novo
+benchmark de FPS/GPU foi executado após essa escolha. O custo de animação
+também aguarda a cena controlada: o medidor direto está pronto, sem resultado
+real de orçamento nesta entrega. O diagnóstico separado usa timer queries,
+com glFinish desligado; seu caminho completo ainda precisa ser executado.
+O CI comum não substitui o aceite da GPU. A fase 5 não foi iniciada.
+Critérios, comandos e evidências atuais:
+[revisão de aceite](docs/qa/animation-acceptance-2026-11-27.md).

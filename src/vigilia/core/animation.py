@@ -36,6 +36,8 @@ def smoothstep(value: float) -> float:
 
 def interpolate_pose(a: PoseChannels, b: PoseChannels, weight: float) -> PoseChannels:
     """Angles take the shortest route; translation remains linear."""
+    if weight==0:return a
+    if weight==1:return b
     values = [x + (y - x) * weight for x, y in zip(a, b)]
     for index in range(3):
         delta = (b[index] - a[index] + 180) % 360 - 180

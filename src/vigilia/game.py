@@ -410,7 +410,7 @@ class Game:
         if {actor.key for actor in data.actors} != expected or (data.bosses and {boss.id for boss in data.bosses} != bosses):
             raise SaveFormatError("O save pertence a uma composição de área incompatível.")
 
-    def _build_region(self, area_id, *, stress_enemies=None):
+    def _build_region(self, area_id, *, stress_enemies=None, stress_profiles=None):
         definition = self._regions[area_id]
         self._area_data = definition
         self._grid = definition.navigation()
@@ -436,7 +436,10 @@ class Game:
                         points.append(point)
             if stress_enemies > len(points):
                 raise ValueError("Não há células livres suficientes para o estresse.")
-            spawns = [(f"stress.{i}", ("salt_guard", "ossuary_acolyte", "bog_ghoul")[i % 3], point)
+            profiles=tuple(stress_profiles) if stress_profiles is not None else ("salt_guard", "ossuary_acolyte", "bog_ghoul")
+            if not profiles or any(profile not in ENEMIES for profile in profiles):
+                raise ValueError('Perfis de estresse inválidos.')
+            spawns = [(f"stress.{i}", profiles[i % len(profiles)], point)
                 for i, point in enumerate(points[:stress_enemies])]
         for key, profile_id, point in spawns:
             profile = ENEMIES[profile_id]
@@ -473,8 +476,11 @@ class Game:
                 self._physics.add_static_box("tide-fog", fog, size), self.world_state, self._bus)
             self._renderer.gate("fog", fog, size, fog=True)
 
-    def change_area(self, area_id, entry=None, *, stash=True, restore=True, stress_enemies=None):
+    def change_area(self, area_id, entry=None, *, stash=True, restore=True, stress_enemies=None, stress_profiles=None):
         """Descarrega a cena anterior; mantém só seus contratos serializados."""
+        if stress_profiles is not None and (stress_enemies is None or not stress_profiles
+                or any(profile not in ENEMIES for profile in stress_profiles)):
+            raise ValueError('Perfis de estresse precisam de uma população válida.')
         if self._player.advanced is not None:
             self._player.advanced.cancel()
         if area_id != "patio_da_vigilia" and area_id not in self._regions:
@@ -507,7 +513,9 @@ class Game:
             self._boss_path = self._data_root / "bosses/warden.toml"
             self._build_patio()
         else:
-            self._build_region(area_id, stress_enemies=stress_enemies)
+            region_options=dict(stress_enemies=stress_enemies)
+            if stress_profiles is not None:region_options['stress_profiles']=stress_profiles
+            self._build_region(area_id, **region_options)
         self._renderer.finish_scene()
         entry = entry or (SPAWN if self._area_data is None else self._area_data.spawn)
         self._player.body.teleport(entry)
