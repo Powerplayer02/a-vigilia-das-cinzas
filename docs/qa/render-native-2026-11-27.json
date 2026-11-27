@@ -1,0 +1,934 @@
+{
+  "date": "2026-11-27",
+  "panda3d": "1.10.16",
+  "purpose": "Native render diagnosis, not FPS or human balance certification",
+  "historical_capture": {
+    "path": "artifacts/balance/custodian_tempo_final/spikes/spike_20261127T141025_856476Z.frame.pstats",
+    "bytes": 38484,
+    "sha256": "3fd6aa27f404d7f578bd093226b7ab028927f255798b9020862f91e2d448b940"
+  },
+  "historical_capture_format": "CPython cProfile, no reconstructible native bars",
+  "historical_cause": "unresolved",
+  "phase4_started": false,
+  "balance_policy": "beta with feedback; current Custodian tables retained",
+  "runs": [
+    {
+      "name": "cold",
+      "experiment": {
+        "source_save_sha256": "7635d6e308e19f2b9ccdf90c6a14e8a2a272d032df5affb05cc1d53e5541bb76",
+        "cache": "artifacts/render-investigation/cache-a",
+        "cache_entries_before": [],
+        "gl_finish": false,
+        "purpose": "Render diagnostic replay, not human balance data",
+        "driver_cache": "NVIDIA driver cache not cleared; only Panda cache is isolated"
+      },
+      "evidence": [
+        {
+          "path": "artifacts/render-investigation/cold/experiment.json",
+          "bytes": 431,
+          "sha256": "31881db2dd6873f7598eda7470a58ff8a921877ed64aa628edfd366bb16ee22c"
+        },
+        {
+          "path": "artifacts/render-investigation/cold/events.jsonl",
+          "bytes": 180472,
+          "sha256": "3a516ef275feaeb8f19cb58839b5f08076e836d796bf60bd407cc431f5b11291"
+        },
+        {
+          "path": "artifacts/render-investigation/cold/driver.log",
+          "bytes": 31939,
+          "sha256": "00f3236cd824cdd772b1a8bf4a4c9a666a52f504e12cc6c14e5ed1e389a83aec"
+        },
+        {
+          "path": "artifacts/render-investigation/cold/native/native-summary.json",
+          "bytes": 359246,
+          "sha256": "707df5a01cd0dfd542c9f91e65c0f2948d9417ab91fabad96a13892ff50aa87f"
+        },
+        {
+          "path": "artifacts/render-investigation/cold/native/native-frames.jsonl.gz",
+          "bytes": 45190821,
+          "sha256": "5a0761aefb32a7f77f873ee2bd35edd58e0cb786fbe0b9121ad63b8f64fdf9bb"
+        },
+        {
+          "path": "artifacts/render-investigation/cold/spikes/spike_20261127T165129_273844Z.json",
+          "bytes": 63786,
+          "sha256": "895bdb324ee2c0cd74dd240407f9263e96f0a0d8bf0544175770d8efed56e763"
+        },
+        {
+          "path": "artifacts/render-investigation/cold/spikes/spike_20261127T165130_182817Z.json",
+          "bytes": 60057,
+          "sha256": "d6dffbd751420984f161c4bff8bf10e51003c9d96ab39dc843b0c553836e6546"
+        }
+      ],
+      "session": {
+        "client_date": "2026-11-27",
+        "started_utc": "2026-11-27T16:51:26.374521+00:00",
+        "commit": "97a877c9ff0d09b4189ce97616084c401ca8d72d",
+        "source_build_id": "c81c1030780f108b",
+        "driver": "Agent chooses logical keyboard/mouse input; real clock",
+        "production_tables": {
+          "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+          "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+          "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+          "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+          "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+          "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+          "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+          "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+        },
+        "agile_movement": false,
+        "fast_forward": false,
+        "window_type": "offscreen",
+        "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+        "manual_human_playthrough": false,
+        "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+      },
+      "phases_seen": [
+        1,
+        2,
+        3
+      ],
+      "stopped_normally": true,
+      "native_threads": {
+        "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2": {
+          "frames": 9864,
+          "missing_frame_ids": 58507,
+          "worst": {
+            "frame": 211,
+            "frame_ms": 558.397,
+            "root_bars_ms": {
+              "Draw": 558.393,
+              "Wait": 0.000238419
+            },
+            "levels": {}
+          },
+          "worst_gameplay": null
+        },
+        "Main": {
+          "frames": 5330,
+          "missing_frame_ids": 63044,
+          "worst": {
+            "frame": 211,
+            "frame_ms": 552.66,
+            "root_bars_ms": {
+              "Draw": 0.57292,
+              "*": 0.302792,
+              "Cull": 1.09625,
+              "App": 550.476,
+              "Wait": 0.209808
+            },
+            "levels": {
+              "QA clock frame": 212.0,
+              "QA playing": 0.0,
+              "QA boss phase": 0.0
+            }
+          },
+          "worst_gameplay": {
+            "frame": 26514,
+            "frame_ms": 33.0505,
+            "root_bars_ms": {
+              "Draw": 0.915527,
+              "*": 1.78528,
+              "Cull": 0.663757,
+              "App": 29.5105,
+              "Wait": 0.167847
+            },
+            "levels": {
+              "QA clock frame": 26515.0,
+              "QA playing": 1.0,
+              "QA boss phase": 1.0
+            }
+          }
+        }
+      },
+      "cprofile_profiles": [
+        {
+          "kind": "triggered_spike",
+          "path": "artifacts/render-investigation/cold/spikes/spike_20261127T165129_273844Z.frame.pstats",
+          "bytes": 37910,
+          "sha256": "892b0e32be7bb889183a9e61916d4b4429e76f0b3ca2a5e2aa7acaff97ac188e"
+        },
+        {
+          "kind": "triggered_spike",
+          "path": "artifacts/render-investigation/cold/spikes/spike_20261127T165130_182817Z.frame.pstats",
+          "bytes": 46225,
+          "sha256": "ea988eb233fa5684ee3eeefe96626f95d2edd552615e0b40b404f3aa76ccbf4f"
+        }
+      ]
+    },
+    {
+      "name": "warm",
+      "experiment": {
+        "source_save_sha256": "7635d6e308e19f2b9ccdf90c6a14e8a2a272d032df5affb05cc1d53e5541bb76",
+        "cache": "artifacts/render-investigation/cache-a",
+        "cache_entries_before": [],
+        "gl_finish": false,
+        "purpose": "Render diagnostic replay, not human balance data",
+        "driver_cache": "NVIDIA driver cache not cleared; only Panda cache is isolated"
+      },
+      "evidence": [
+        {
+          "path": "artifacts/render-investigation/warm/experiment.json",
+          "bytes": 431,
+          "sha256": "31881db2dd6873f7598eda7470a58ff8a921877ed64aa628edfd366bb16ee22c"
+        },
+        {
+          "path": "artifacts/render-investigation/warm/events.jsonl",
+          "bytes": 188454,
+          "sha256": "0287af7245c54f1915373030b5fa39c78f5adec32699a98e2ee9863a689214c8"
+        },
+        {
+          "path": "artifacts/render-investigation/warm/driver.log",
+          "bytes": 31903,
+          "sha256": "2f022c89f066b8ff78628b3bb509cb3ecd1e69f17173d8536087d90adb1106ed"
+        },
+        {
+          "path": "artifacts/render-investigation/warm/native/native-summary.json",
+          "bytes": 306570,
+          "sha256": "13b85f96ba3b2963f4eb522d782f33229ee7fbac42a0828330af1b1099aeda4d"
+        },
+        {
+          "path": "artifacts/render-investigation/warm/native/native-frames.jsonl.gz",
+          "bytes": 50192406,
+          "sha256": "b15204a44fc510fdd59c142e6ca5f55c541b74a9cbdbbda578f165a23f5a0576"
+        },
+        {
+          "path": "artifacts/render-investigation/warm/spikes/spike_20261127T165820_710535Z.json",
+          "bytes": 61983,
+          "sha256": "28586d54f34f2cc48f0adaacb15ae4f963589aefea9b344e4bbaa65fe5957d85"
+        }
+      ],
+      "session": {
+        "client_date": "2026-11-27",
+        "started_utc": "2026-11-27T16:58:13.497897+00:00",
+        "commit": "97a877c9ff0d09b4189ce97616084c401ca8d72d",
+        "source_build_id": "c81c1030780f108b",
+        "driver": "Agent chooses logical keyboard/mouse input; real clock",
+        "production_tables": {
+          "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+          "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+          "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+          "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+          "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+          "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+          "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+          "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+        },
+        "agile_movement": false,
+        "fast_forward": false,
+        "window_type": "offscreen",
+        "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+        "manual_human_playthrough": false,
+        "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+      },
+      "phases_seen": [
+        1,
+        2,
+        3
+      ],
+      "stopped_normally": true,
+      "native_threads": {
+        "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2": {
+          "frames": 12288,
+          "missing_frame_ids": 71316,
+          "worst": {
+            "frame": 2,
+            "frame_ms": 415.533,
+            "root_bars_ms": {
+              "Draw": 408.67,
+              "Wait": 6.86085
+            },
+            "levels": {}
+          },
+          "worst_gameplay": null
+        },
+        "Main": {
+          "frames": 5979,
+          "missing_frame_ids": 77625,
+          "worst": {
+            "frame": 2009,
+            "frame_ms": 259.201,
+            "root_bars_ms": {
+              "Draw": 2.12908,
+              "*": 3.5038,
+              "Cull": 0.414371,
+              "App": 253.087,
+              "Wait": 0.0638962
+            },
+            "levels": {
+              "QA clock frame": 2009.0,
+              "QA playing": 1.0,
+              "QA boss phase": 0.0
+            }
+          },
+          "worst_gameplay": {
+            "frame": 2011,
+            "frame_ms": 63.8447,
+            "root_bars_ms": {
+              "Draw": 0.671387,
+              "*": 0.445843,
+              "Cull": 0.405788,
+              "App": 62.1204,
+              "Wait": 0.196457
+            },
+            "levels": {
+              "QA clock frame": 2012.0,
+              "QA playing": 1.0,
+              "QA boss phase": 1.0
+            }
+          }
+        }
+      },
+      "cprofile_profiles": [
+        {
+          "kind": "triggered_spike",
+          "path": "artifacts/render-investigation/warm/spikes/spike_20261127T165820_710535Z.frame.pstats",
+          "bytes": 57485,
+          "sha256": "15afe38d9d67ea254fb68e2551a76f95a23bb352de1dc0037899013ca04de8c4"
+        }
+      ]
+    },
+    {
+      "name": "finish",
+      "experiment": {
+        "source_save_sha256": "7635d6e308e19f2b9ccdf90c6a14e8a2a272d032df5affb05cc1d53e5541bb76",
+        "cache": "artifacts/render-investigation/cache-b",
+        "cache_entries_before": [],
+        "gl_finish": true,
+        "purpose": "Render diagnostic replay, not human balance data",
+        "driver_cache": "NVIDIA driver cache not cleared; only Panda cache is isolated"
+      },
+      "evidence": [
+        {
+          "path": "artifacts/render-investigation/finish/experiment.json",
+          "bytes": 430,
+          "sha256": "73934f4b5cd96ee8dd47cc1b295bfa069db075245a65757f94a66f3732c4a152"
+        },
+        {
+          "path": "artifacts/render-investigation/finish/events.jsonl",
+          "bytes": 192642,
+          "sha256": "a6c77580e5764b2924d7c42888385a04e5c32b8bbdc90b80299f5b41a0125ac9"
+        },
+        {
+          "path": "artifacts/render-investigation/finish/driver.log",
+          "bytes": 32135,
+          "sha256": "c6283b74cc81042d82f12d29a8521c044bb4b86307a33ffaff8e7409d4b975f8"
+        },
+        {
+          "path": "artifacts/render-investigation/finish/native/native-summary.json",
+          "bytes": 505254,
+          "sha256": "aa285471613b8593572eed0e6d84303a9f4b959974bfa41696d1a9c11bcabbcc"
+        },
+        {
+          "path": "artifacts/render-investigation/finish/native/native-frames.jsonl.gz",
+          "bytes": 72380329,
+          "sha256": "49aea392e5d2b8d6f906156b091f7539cbe1f98e1cb7691e3fa26eee3d8feed1"
+        },
+        {
+          "path": "artifacts/render-investigation/finish/spikes/spike_20261127T170157_203229Z.json",
+          "bytes": 54465,
+          "sha256": "de0fc69f1f61aa9fcf617f6a378ce053ec77a61c3cbfc51266823c1b403641e5"
+        }
+      ],
+      "session": {
+        "client_date": "2026-11-27",
+        "started_utc": "2026-11-27T17:01:53.873103+00:00",
+        "commit": "97a877c9ff0d09b4189ce97616084c401ca8d72d",
+        "source_build_id": "c81c1030780f108b",
+        "driver": "Agent chooses logical keyboard/mouse input; real clock",
+        "production_tables": {
+          "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+          "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+          "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+          "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+          "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+          "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+          "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+          "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+        },
+        "agile_movement": false,
+        "fast_forward": false,
+        "window_type": "offscreen",
+        "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+        "manual_human_playthrough": false,
+        "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+      },
+      "phases_seen": [
+        1,
+        2,
+        3
+      ],
+      "stopped_normally": true,
+      "native_threads": {
+        "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2": {
+          "frames": 7560,
+          "missing_frame_ids": 1907,
+          "worst": {
+            "frame": 25,
+            "frame_ms": 479.445,
+            "root_bars_ms": {
+              "Draw": 384.354,
+              "Wait": 0.000238419
+            },
+            "levels": {}
+          },
+          "worst_gameplay": null
+        },
+        "Main": {
+          "frames": 7550,
+          "missing_frame_ids": 1917,
+          "worst": {
+            "frame": 24,
+            "frame_ms": 392.1,
+            "root_bars_ms": {
+              "Draw": 384.341,
+              "*": 4.65703,
+              "Cull": 0.667572,
+              "App": 2.27618,
+              "Wait": 0.151634
+            },
+            "levels": {
+              "QA clock frame": 25.0,
+              "QA playing": 0.0,
+              "QA boss phase": 0.0
+            }
+          },
+          "worst_gameplay": {
+            "frame": 8719,
+            "frame_ms": 122.711,
+            "root_bars_ms": {
+              "Draw": 30.1361,
+              "*": 0.656128,
+              "Cull": 0.640869,
+              "App": 91.1102,
+              "Wait": 0.137329
+            },
+            "levels": {
+              "QA clock frame": 8720.0,
+              "QA playing": 1.0,
+              "QA boss phase": 3.0
+            }
+          }
+        }
+      },
+      "cprofile_profiles": [
+        {
+          "kind": "triggered_spike",
+          "path": "artifacts/render-investigation/finish/spikes/spike_20261127T170157_203229Z.frame.pstats",
+          "bytes": 34093,
+          "sha256": "62f97dbb55363948e9376544ad1a82726b9978814b1276bf59972086ada9aa4e"
+        }
+      ]
+    },
+    {
+      "name": "buffered-control",
+      "experiment": {
+        "source_save_sha256": "7635d6e308e19f2b9ccdf90c6a14e8a2a272d032df5affb05cc1d53e5541bb76",
+        "cache": "artifacts/render-investigation/cache-d",
+        "cache_entries_before": [],
+        "gl_finish": false,
+        "purpose": "Render diagnostic replay, not human balance data",
+        "driver_cache": "NVIDIA driver cache not cleared; only Panda cache is isolated"
+      },
+      "evidence": [
+        {
+          "path": "artifacts/render-investigation/buffered-control/experiment.json",
+          "bytes": 431,
+          "sha256": "6b64f3b17c0b3fc30271818fdff33d47210165b4e25021f72149e70f4196ad69"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/runtime.json",
+          "bytes": 213,
+          "sha256": "624c652473dd891043ce79027898bf967f1421f83663d18cd1d6436f0d5d91bc"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/events.jsonl",
+          "bytes": 57468,
+          "sha256": "6554f8eedc58b99d03a9f59a0f76d5ab7e3c38ab2ddc646300e0986651991a07"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/driver.log",
+          "bytes": 28421,
+          "sha256": "fec68ea4d1d44cc21274cfc4fada34aa5a1bf50c98660fb7849c816cdcc4a7a5"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/native/native-summary.json",
+          "bytes": 529153,
+          "sha256": "6b76968d9ad3f286b51344c059917f4eece5d5660ad097df64f831cdef882b03"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/native/native-frames.jsonl.gz",
+          "bytes": 81778097,
+          "sha256": "d95319d1025ee3c6aedb73c83d655f2ff12e4db988a5945528d364bc32ebea45"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/native/native-text.log",
+          "bytes": 697239669,
+          "sha256": "4eacf6aa0511d0530c12da81d5c44404ed8d44f5d68b069bd51644f42d06dd97"
+        },
+        {
+          "path": "artifacts/render-investigation/buffered-control/spikes/worst_20261127T170933_969838Z.json",
+          "bytes": 63388,
+          "sha256": "cfe9ddac96e499c5d48f4b0bac412586dbd18a41fa8b252fb2446170f4bc6ac9"
+        }
+      ],
+      "session": {
+        "client_date": "2026-11-27",
+        "started_utc": "2026-11-27T17:08:23.578597+00:00",
+        "commit": "97a877c9ff0d09b4189ce97616084c401ca8d72d",
+        "source_build_id": "c81c1030780f108b",
+        "driver": "Agent chooses logical keyboard/mouse input; real clock",
+        "production_tables": {
+          "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+          "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+          "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+          "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+          "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+          "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+          "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+          "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+        },
+        "agile_movement": false,
+        "fast_forward": false,
+        "window_type": "offscreen",
+        "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+        "manual_human_playthrough": false,
+        "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+      },
+      "runtime": {
+        "clock_mode": 0,
+        "cache_root": "artifacts/render-investigation/cache-d",
+        "gpu_timer_supported": true,
+        "gpu_timers_active": false
+      },
+      "phases_seen": [
+        1
+      ],
+      "stopped_normally": true,
+      "native_threads": {
+        "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2": {
+          "frames": 14530,
+          "missing_frame_ids": 2838,
+          "worst": {
+            "frame": 2,
+            "frame_ms": 572.082,
+            "root_bars_ms": {
+              "Draw": 561.433,
+              "Wait": 10.6438
+            },
+            "levels": {}
+          },
+          "worst_gameplay": null
+        },
+        "Main": {
+          "frames": 8221,
+          "missing_frame_ids": 9149,
+          "worst": {
+            "frame": 73,
+            "frame_ms": 159.356,
+            "root_bars_ms": {
+              "Draw": 3.03674,
+              "*": 3.70812,
+              "Cull": 1.15323,
+              "App": 151.365,
+              "Wait": 0.087738
+            },
+            "levels": {
+              "QA clock frame": 74.0,
+              "QA playing": 0.0,
+              "QA boss phase": 0.0,
+              "QA clock mode": 0.0
+            }
+          },
+          "worst_gameplay": {
+            "frame": 1810,
+            "frame_ms": 67.4009,
+            "root_bars_ms": {
+              "Draw": 6.40678,
+              "*": 25.1312,
+              "Cull": 4.25625,
+              "App": 31.3816,
+              "Wait": 0.21553
+            },
+            "levels": {
+              "QA clock frame": 1811.0,
+              "QA playing": 1.0,
+              "QA boss phase": 1.0,
+              "QA clock mode": 0.0
+            }
+          }
+        }
+      },
+      "cprofile_profiles": [
+        {
+          "kind": "worst_below_threshold",
+          "path": "artifacts/render-investigation/buffered-control/spikes/worst_20261127T170933_969838Z.frame.pstats",
+          "bytes": 95658,
+          "sha256": "8b8e2fd19661bc497593eed4d247e510adbefce8fd11758447a5ae3089214143"
+        }
+      ]
+    },
+    {
+      "name": "traced-control",
+      "experiment": {
+        "source_save_sha256": "7635d6e308e19f2b9ccdf90c6a14e8a2a272d032df5affb05cc1d53e5541bb76",
+        "cache": "artifacts/render-investigation/cache-e",
+        "cache_entries_before": [],
+        "gl_finish": false,
+        "native_pstats": false,
+        "frida_trace": true,
+        "purpose": "Render diagnostic replay, not human balance data",
+        "driver_cache": "NVIDIA driver cache not cleared; only Panda cache is isolated"
+      },
+      "evidence": [
+        {
+          "path": "artifacts/render-investigation/traced-control/experiment.json",
+          "bytes": 482,
+          "sha256": "e4ce532c236d50ab0ab361b6ba88c7ed8937e6df9aed1e5a1ace1cd863b44b3e"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-control/runtime.json",
+          "bytes": 304,
+          "sha256": "1ca5ce327d7115ca35ee9cab76c3dd6f19fe6e9cf4243f93294de8c05ed8d48a"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-control/events.jsonl",
+          "bytes": 186565,
+          "sha256": "f0d618952ab75a1fe42b8d2ab881649ea2946ed7653351a9100a887857660001"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-control/driver.log",
+          "bytes": 31939,
+          "sha256": "6d9bd77406a94e2ef5ea2a9dca869f7339b7b6d0315871f5bea64fa9e1424eb0"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-control/native-calls.jsonl",
+          "bytes": 835,
+          "sha256": "a4f1610119ee46ca70136eab7ab73a3f83f45d62c02141eaa174ddfb2aff7196"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-control/native-call-summary.json",
+          "bytes": 1135,
+          "sha256": "d4dd8d824f816154de84b388bfbd86960bd85d15966f42ef67b52630eb90a42c"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-control/spikes/worst_20261127T192201_975844Z.json",
+          "bytes": 62587,
+          "sha256": "b679c9d83da6be9d36b2a817ba90a3f31eabbc95a2e7bfea6f23cf85ac33cacc"
+        }
+      ],
+      "session": {
+        "client_date": "2026-11-27",
+        "started_utc": "2026-11-27T19:18:23.788834+00:00",
+        "commit": "97a877c9ff0d09b4189ce97616084c401ca8d72d",
+        "source_build_id": "aef9962f8e9c9753",
+        "driver": "Agent chooses logical keyboard/mouse input; real clock",
+        "production_tables": {
+          "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+          "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+          "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+          "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+          "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+          "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+          "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+          "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+        },
+        "agile_movement": false,
+        "fast_forward": false,
+        "window_type": "offscreen",
+        "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+        "manual_human_playthrough": false,
+        "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+      },
+      "runtime": {
+        "pid": 2928,
+        "utc": "2026-11-27T19:18:38.816420+00:00",
+        "monotonic": 215.7189772,
+        "clock_mode": 0,
+        "cache_root": "artifacts/render-investigation/cache-e",
+        "gpu_timer_supported": true,
+        "gpu_timers_active": false
+      },
+      "phases_seen": [
+        1,
+        2,
+        3
+      ],
+      "stopped_normally": true,
+      "native_call_timings": {
+        "GDI32.dll!SwapBuffers": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "libpanda.dll!?client_main_tick@PStatClient@@QEAAXXZ": {
+          "calls": 87224,
+          "total_ms": 177.33460000591003,
+          "max_ms": 0.5311000000219792
+        },
+        "libpanda.dll!?force_yield@Thread@@SAXXZ": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "libpanda.dll!?main_tick@PStatClient@@SAXXZ": {
+          "calls": 87224,
+          "total_ms": 577.0591000064451,
+          "max_ms": 0.5375999999814667
+        },
+        "libpanda.dll!?render_frame@GraphicsEngine@@QEAAXXZ": {
+          "calls": 87224,
+          "total_ms": 64002.99250000846,
+          "max_ms": 104.00409999999101
+        },
+        "libpanda.dll!?tick@ClockObject@@QEAAXPEAVThread@@@Z": {
+          "calls": 87224,
+          "total_ms": 512.2121999917144,
+          "max_ms": 0.7748000000137836
+        },
+        "libpanda.dll!?transmit_control_data@PStatClientImpl@@AEAAXXZ": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "OPENGL32.dll!glFinish": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "OPENGL32.dll!wglMakeCurrent": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        }
+      },
+      "cprofile_profiles": [
+        {
+          "kind": "worst_below_threshold",
+          "path": "artifacts/render-investigation/traced-control/spikes/worst_20261127T192201_975844Z.frame.pstats",
+          "bytes": 95492,
+          "sha256": "911d5e7d3af613ea801f94179903b0535d3dd8fbdc48a4101cd313853b8b9553"
+        }
+      ]
+    },
+    {
+      "name": "traced-pstats",
+      "experiment": {
+        "source_save_sha256": "7635d6e308e19f2b9ccdf90c6a14e8a2a272d032df5affb05cc1d53e5541bb76",
+        "cache": "artifacts/render-investigation/cache-f",
+        "cache_entries_before": [],
+        "gl_finish": false,
+        "native_pstats": true,
+        "frida_trace": true,
+        "purpose": "Render diagnostic replay, not human balance data",
+        "driver_cache": "NVIDIA driver cache not cleared; only Panda cache is isolated"
+      },
+      "evidence": [
+        {
+          "path": "artifacts/render-investigation/traced-pstats/experiment.json",
+          "bytes": 481,
+          "sha256": "63ad0190f8166d911d124f1bb435016fd4e237bc8c16a43db4bce56f6d335cac"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/runtime.json",
+          "bytes": 305,
+          "sha256": "cade5fbaa26dcf1d44196e4732ed63cf44e9d9c9e4e5d2a239e58b19696459bb"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/events.jsonl",
+          "bytes": 59176,
+          "sha256": "3132783502ab819a0c26f71b41b6e3f4a4af1582239155c98ae862b83e12d93e"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/driver.log",
+          "bytes": 28588,
+          "sha256": "91210e817576b3173a068b39995817eb6f75db7a0a465422569be7d9b02b556f"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/native-calls.jsonl",
+          "bytes": 2291,
+          "sha256": "89fadefaae895e8ea505cca72385e134ea52cf32072103baef8be8b86d9097aa"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/native-call-summary.json",
+          "bytes": 1169,
+          "sha256": "0a1456eaf90378fde38bf8fc7f93acbf0f2b919a20dd3243026d9136fd867986"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/native/native-summary.json",
+          "bytes": 490489,
+          "sha256": "52fb2cb77d6950a4a4c31b32f2f071cb8acbf2002cd4c3a45bc432d827e067e1"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/native/native-frames.jsonl.gz",
+          "bytes": 23294286,
+          "sha256": "323b8d0004e3973b742f43ea30accec38e77bf3494fc8ea14b1be57d1ed3e34d"
+        },
+        {
+          "path": "artifacts/render-investigation/traced-pstats/spikes/worst_20261127T192328_637146Z.json",
+          "bytes": 60255,
+          "sha256": "40534dd2f5a6aed007b0426d1f87a0569cb2c9e3e8673aee248d4f130912db10"
+        }
+      ],
+      "session": {
+        "client_date": "2026-11-27",
+        "started_utc": "2026-11-27T19:22:18.499857+00:00",
+        "commit": "97a877c9ff0d09b4189ce97616084c401ca8d72d",
+        "source_build_id": "aef9962f8e9c9753",
+        "driver": "Agent chooses logical keyboard/mouse input; real clock",
+        "production_tables": {
+          "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+          "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+          "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+          "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+          "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+          "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+          "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+          "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f"
+        },
+        "agile_movement": false,
+        "fast_forward": false,
+        "window_type": "offscreen",
+        "pauses": "Normal Escape/menu pauses are logged; active time excludes menus",
+        "manual_human_playthrough": false,
+        "observation": "Rendered image plus own pose/action/resources and locked-target range; no AI state"
+      },
+      "runtime": {
+        "pid": 20228,
+        "utc": "2026-11-27T19:22:20.016007+00:00",
+        "monotonic": 436.9185628,
+        "clock_mode": 0,
+        "cache_root": "artifacts/render-investigation/cache-f",
+        "gpu_timer_supported": true,
+        "gpu_timers_active": false
+      },
+      "phases_seen": [
+        1
+      ],
+      "stopped_normally": true,
+      "native_threads": {
+        "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2": {
+          "frames": 4648,
+          "missing_frame_ids": 20467,
+          "worst": {
+            "frame": 2,
+            "frame_ms": 407.486,
+            "root_bars_ms": {
+              "Draw": 401.162,
+              "Wait": 6.32215
+            },
+            "levels": {}
+          },
+          "worst_gameplay": null
+        },
+        "Main": {
+          "frames": 2227,
+          "missing_frame_ids": 22890,
+          "worst": {
+            "frame": 1882,
+            "frame_ms": 85.134,
+            "root_bars_ms": {
+              "Draw": 1.88875,
+              "*": 3.29304,
+              "Cull": 0.397205,
+              "App": 79.4878,
+              "Wait": 0.0591278
+            },
+            "levels": {
+              "QA clock frame": 1882.0,
+              "QA playing": 1.0,
+              "QA boss phase": 0.0,
+              "QA clock mode": 0.0
+            }
+          },
+          "worst_gameplay": {
+            "frame": 2518,
+            "frame_ms": 32.7854,
+            "root_bars_ms": {
+              "Draw": 3.09658,
+              "*": 12.2528,
+              "Cull": 0.762939,
+              "App": 16.6159,
+              "Wait": 0.0448227
+            },
+            "levels": {
+              "QA clock frame": 2519.0,
+              "QA playing": 1.0,
+              "QA boss phase": 1.0,
+              "QA clock mode": 0.0
+            }
+          }
+        }
+      },
+      "native_call_timings": {
+        "GDI32.dll!SwapBuffers": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "libpanda.dll!?client_main_tick@PStatClient@@QEAAXXZ": {
+          "calls": 25163,
+          "total_ms": 714.3810999986017,
+          "max_ms": 65.9206000000122
+        },
+        "libpanda.dll!?force_yield@Thread@@SAXXZ": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "libpanda.dll!?main_tick@PStatClient@@SAXXZ": {
+          "calls": 25163,
+          "total_ms": 1828.510000004666,
+          "max_ms": 66.01029999996535
+        },
+        "libpanda.dll!?render_frame@GraphicsEngine@@QEAAXXZ": {
+          "calls": 25163,
+          "total_ms": 28364.958299994236,
+          "max_ms": 71.72489999997197
+        },
+        "libpanda.dll!?tick@ClockObject@@QEAAXPEAVThread@@@Z": {
+          "calls": 25163,
+          "total_ms": 161.35750000132248,
+          "max_ms": 0.08830000000307336
+        },
+        "libpanda.dll!?transmit_control_data@PStatClientImpl@@AEAAXXZ": {
+          "calls": 25163,
+          "total_ms": 319.7969000028097,
+          "max_ms": 65.79790000000503
+        },
+        "OPENGL32.dll!glFinish": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        },
+        "OPENGL32.dll!wglMakeCurrent": {
+          "calls": 0,
+          "total_ms": 0,
+          "max_ms": 0
+        }
+      },
+      "cprofile_profiles": [
+        {
+          "kind": "worst_below_threshold",
+          "path": "artifacts/render-investigation/traced-pstats/spikes/worst_20261127T192328_637146Z.frame.pstats",
+          "bytes": 96207,
+          "sha256": "67f6b38c6c12d287a5b910a05f8a6c478c3375c337480e991d6605be2730f2e3"
+        }
+      ]
+    }
+  ],
+  "prewarm": {
+    "milliseconds": 65.84409999959462,
+    "render_calls": 3,
+    "simulation_steps": 0,
+    "scope": "Already-created render/UI resources only",
+    "snapshot_unchanged": true
+  },
+  "limitations": [
+    "Only Panda model cache isolated; driver cache untouched; shader binary cache flag false.",
+    "Observer overhead and delivery gaps prevent FPS comparison or extrapolation to uncaptured frames.",
+    "gl-finish changes scheduling; query duration is not proof of continuous GPU activity.",
+    "New pre-arena spikes do not reproduce the historical active phase-2 event.",
+    "Frida hooks add overhead; no instrumentation run certifies release performance.",
+    "Prewarm covers already-created scene/UI only, not future uncreated resources."
+  ]
+}

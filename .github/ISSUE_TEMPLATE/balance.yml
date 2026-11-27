@@ -1,0 +1,52 @@
+name: Feedback de balanceamento beta
+description: Registre uma partida humana e o ritmo do combate.
+title: "[Balanceamento] "
+body:
+  - type: markdown
+    attributes:
+      value: "O balanceamento está em beta. Registre sua experiência; sessões de agente são analisadas separadamente."
+  - type: dropdown
+    id: session
+    attributes:
+      label: Tipo de sessão
+      options: [Partida humana, Sessão automatizada]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versão do jogo
+    validations:
+      required: true
+  - type: input
+    id: encounter
+    attributes:
+      label: Chefe ou área
+    validations:
+      required: true
+  - type: textarea
+    id: character
+    attributes:
+      label: Personagem e equipamento
+      description: "Classe, nível, arma/melhoria e Movimento Ágil ligado ou desligado."
+    validations:
+      required: true
+  - type: input
+    id: attempts
+    attributes:
+      label: Tentativas e duração da tentativa final
+      description: "Informe se já conhecia o chefe. Separe duração de uma tentativa e tempo total."
+    validations:
+      required: true
+  - type: textarea
+    id: feel
+    attributes:
+      label: Ritmo, leitura dos golpes e sensação de risco
+      description: "Quais golpes ficaram confusos? Houve espaço para reagir? Quantos recursos e HP restaram?"
+    validations:
+      required: true
+  - type: textarea
+    id: hitches
+    attributes:
+      label: Engasgos percebidos
+      description: "Área, fase e momento aproximado. Se houver gravação ou captura de diagnóstico, anexe-a."

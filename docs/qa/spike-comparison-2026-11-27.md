@@ -5,9 +5,11 @@
 | 24/11/2026 21:30:50.721330 | 333,680600 ms | Encerramento: `userExit → request_quit → _flush_save → save` | `sqlite3.Connection.__exit__`: 299,8825 ms |
 | 27/11/2026 14:10:25.856476 | 334,694500 ms | Combate no Forno, Custódio fase 2, sem minimização | `GraphicsEngine.renderFrame`: 313,426 ms |
 
-O registro `SessionStopped` da segunda sessão ocorreu em
-27/11/2026 **14:12:15.419157 UTC**, aproximadamente **109,56 segundos depois**
-da captura. O pico de 27/11 não é o save de encerramento de 24/11 com outro rótulo.
+O registro `SessionStopped` da segunda sessão é posterior ao pico e tem pilha
+distinta. A estimativa anterior de 14:12:15.419157 UTC / 109,56 segundos somava
+`started_utc` a `wall_s`, mas esses relógios começam em lados diferentes da
+inicialização da engine. Ela não oferece essa precisão e foi retirada.
+O pico de 27/11 não é o save de encerramento de 24/11 com outro rótulo.
 Tempos próximos, em dias e pilhas diferentes, não demonstram operação recorrente
 de duração fixa nem causa compartilhada.
 

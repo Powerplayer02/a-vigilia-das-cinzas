@@ -8,6 +8,11 @@ Galeria de QA: `python tools/verify_sprites.py --width 2560 --height 1440`.
 O teste percorre opções e aplica 150% pelo comando real; usa save temporário.
 Detalhes e limitações em [docs/audio_visual.md](docs/audio_visual.md).
 
+**Balanceamento beta:** as tabelas foram verificadas por testes e sessões de
+agente, mas a dificuldade humana ainda não foi medida. A vitória do agente
+no Custódio não é uma previsão de tentativas humanas. Para registrar uma
+partida humana, use o [formulário de balanceamento](https://github.com/Powerplayer02/a-vigilia-das-cinzas/issues/new?template=balance.yml).
+
 Jogo 3D em Python com Panda3D e Bullet: cinco áreas, cinco classes, três chefes, três desfechos e persistência por personagem. Inclui combate, magia, progressão, menus, mapa, áudio e recursos procedurais. A **5.4 foi aceita funcionalmente**; a **5.5 trata do fechamento de release**, sem adicionar conteúdo. A versão 1.0 tem como alvo teclado e mouse. O estado das verificações e os bloqueios restantes estão em [RELEASE_STATUS.md](RELEASE_STATUS.md). A campanha está no [GDD](GDD.md) e os contratos na [arquitetura](ARCHITECTURE.md).
 
 O pacote seguinte acrescenta a matriz pré-chefe dos três finais e as **etapas 1 a 3

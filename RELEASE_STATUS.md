@@ -260,3 +260,27 @@ máximo31,277ms, sem reproduzir334,6945ms. Não é prova de correção.
 **Pico nativo sem causa, dificuldade humana e escuta humana continuam pendentes.**
 Fase4 e lançamento não liberados por esta entrega. Custódio mantém sua tabela.
 Detalhes: `docs/qa/render-investigation-2026-11-27.md`.
+
+### Decisão editorial — balanceamento beta
+
+Escolha explícita: **(c), beta com feedback**. Não se declara balance OFF
+concluído nem se prevê número de tentativas humanas a partir de um agente.
+Mantêm-se as tabelas atuais, sem apresentar o Custódio como deliberadamente
+fácil/acessível. O formulário `.github/ISSUE_TEMPLATE/balance.yml` coleta
+tentativas, equipamento, ritmo e engasgos, separando partida humana de agente.
+Isso não publica um release nem remove o bloqueio de renderização existente.
+
+### Diagnóstico nativo e preparação inicial
+
+PStats nativo1.10.16 capturado em três percursos completos com save pré-chefe,
+cache Panda isolado e um controle gl-finish. Os maiores Main recebidos foram
+552,660 / 259,201 / 392,100ms; todos antes de o chefe ficar ativo. Durante
+chefe ativo, máximos recebidos33,051 /63,845 /122,711ms. Há lacunas de entrega
+e custo do profiler; não são resultados de FPS nem repetição do pico histórico.
+O `.frame.pstats` antigo é cProfile, sem barras nativas reconstruíveis.
+
+Boot agora submete recursos já construídos sob cobertura preta, sem rodar
+simulação. Teste nativo65,8441ms, snapshot preservado. A medida é defensiva;
+assets ainda não criados não são cobertos. 716 testes locais passaram.
+Detalhes, limitações e evidências: `docs/qa/render-investigation-2026-11-27.md`.
+O pico de combate continua sem causa; fase4 permanece pendente.

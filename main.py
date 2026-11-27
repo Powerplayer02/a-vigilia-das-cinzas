@@ -22,6 +22,7 @@ def main() -> None:
     sys.path.insert(0, str(ROOT / "src"))
     from vigilia.core.config import load_config
     from vigilia.engine.app import ArenaApp
+    from vigilia.engine.prewarm import prewarm_scene
     from vigilia.game import Game
     from vigilia.core.settings import SettingsStore
 
@@ -36,9 +37,8 @@ def main() -> None:
         game = Game(app, defaults, ROOT / "assets", save_path=args.save_file, enemy_count=args.enemies,
                     front_end=True, settings_path=options_path)
         app.start(game)
+        prewarm_scene(app)
         if not args.no_diagnostics:
-            app.graphicsEngine.render_frame()
-            app.graphicsEngine.render_frame()
             game.enable_diagnostics(args.diagnostics_dir)
         app.run()
     finally:
