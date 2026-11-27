@@ -17,6 +17,8 @@ from vigilia.engine.camera import CameraPose
 from vigilia.engine.physics import to_point
 from vigilia.engine.shadows import ContactShadows
 from vigilia.engine.shader_fallback import VERTEX, FRAGMENT
+from vigilia.engine.animation import AnimationMixer, WARMUP_CLIPS, sample
+from vigilia.engine.prewarm import prewarm_scene
 
 Color = tuple[float, float, float, float]
 
@@ -86,6 +88,14 @@ class ArenaRenderer:
         self._player = self.root.attach_new_node("vigia")
         self._rig = self._player.attach_new_node("pose")
         self._limbs = self._make_humanoid(self._rig, (.40, .12, .105, 1))
+        self._animation_mixers = {}
+        self._animation_nodes = {}
+        self._animation_props = {}
+        self._animation_applied = {}
+        self._phase_prepares = set()
+        self._phase_prepared = set()
+        self._frame_dt = 0.
+        self._register_animation(0,self._rig,self._limbs)
         self._elapsed = 0.0
         self._stride = 0.0
         self._locked: int | None = None
@@ -251,6 +261,12 @@ class ArenaRenderer:
         for root, _, _ in self._enemies.values():
             root.remove_node()
         self._enemies.clear()
+        self._animation_mixers = {0:AnimationMixer()}
+        self._animation_nodes = {0:self._animation_nodes[0]}
+        self._animation_props = {0:self._animation_props[0]}
+        self._animation_applied.clear()
+        self._phase_prepares.clear()
+        self._phase_prepared.clear()
         for identity, gear in list(self._combat_gear.items()):
             if identity != 0:
                 for node in gear:
@@ -362,20 +378,17 @@ class ArenaRenderer:
             root, rig, limbs = self._enemies[identifier]
             root.set_color_scale((1.8, .72, .5, 1) if hit else
                                  (1.6, 1.25, .65, 1) if telegraph else (1, 1, 1, 1))
-            rig.set_p(0 if alive else 82)
-            if alive:
+            if alive and not self._free_arms(identifier):
                 for limb, bone in ((limbs[0], "arm_left"), (limbs[2], "grip")):
-                    limb.look_at(self.root, to_point(bones[bone]))
-                    limb.set_p(limb, 90)
+                    self._align_arm(limb,bones[bone])
         else:
             self._player.set_color_scale((1.7, .6, .5, 1) if hit else (1, 1, 1, 1))
-            for limb, bone in ((self._limbs[0], "arm_left"), (self._limbs[2], "grip")):
-                limb.look_at(self.root, to_point(bones[bone]))
-                limb.set_p(limb, 90)
-            if not alive:
-                self._rig.set_p(82)
-            elif knocked_down:
-                self._rig.set_p(78)
+            if alive and not self._free_arms(identifier):
+                for limb, bone in ((self._limbs[0], "arm_left"), (self._limbs[2], "grip")):
+                    self._align_arm(limb,bones[bone])
+        mixer=self._animation_mixers.get(identifier)
+        if mixer is not None and mixer.action in ('drink','use_item','knockdown'):
+            weapon.hide();head.hide();shield.hide()
 
     def _make_humanoid(self, rig: NodePath, cloth: Color) -> tuple[NodePath, ...]:
         iron = (.39, .46, .49, 1)
@@ -394,8 +407,11 @@ class ArenaRenderer:
             self._box(arm, "manopla", Vec3(0, 0, -.29), Vec3(.15, .22, .41), edge)
             leg = rig.attach_new_node("perna")
             leg.set_pos(side * .147, 0, -.09)
-            self._box(leg, "greva", Vec3(0, 0, -.331), Vec3(.195, .229, .69), iron)
-            self._box(leg, "bota", Vec3(0, .074, -.70), Vec3(.2, .34, .155), leather)
+            self._box(leg, "coxa", Vec3(0, 0, -.17), Vec3(.195, .229, .34), iron)
+            knee=leg.attach_new_node('joelho')
+            knee.set_z(-.36)
+            self._box(knee, "greva", Vec3(0, 0, -.15), Vec3(.195, .229, .34), iron)
+            self._box(knee, "bota", Vec3(0, .074, -.34), Vec3(.2, .34, .155), leather)
             limbs.extend((arm, leg))
         return tuple(limbs)
 
@@ -407,6 +423,7 @@ class ArenaRenderer:
         rig = root.attach_new_node("pose")
         limbs = self._make_humanoid(rig, tint)
         self._enemies[identifier] = root, rig, limbs
+        self._register_animation(identifier,rig,limbs)
         marker = root.attach_new_node("alvo-travado")
         self._box(marker, "marca", Vec3(0, 0, 1.1), Vec3(.13, .13, .13), (.97, .80, .40, 1))
         marker.hide()
@@ -467,9 +484,109 @@ class ArenaRenderer:
         root, rig, limbs = self._enemies[identifier]
         root.set_pos(to_point(position))
         root.set_h(-math.degrees(yaw))
-        gait = math.sin(self._elapsed * speed * 4 + identifier) * min(1, speed / 3) * 33
-        limbs[1].set_p(gait)
-        limbs[3].set_p(-gait)
+
+    def _register_animation(self,identifier,rig,limbs):
+        self._animation_mixers[identifier]=AnimationMixer()
+        self._animation_nodes[identifier]=(rig,rig.find('**/peitoral'),rig.find('**/elmo'),
+            limbs,limbs[0],limbs[2],limbs[1].find('joelho'),limbs[3].find('joelho'))
+        flask=self._box(limbs[2],'frasco',Vec3(0,0,-.49),Vec3(.12,.12,.18),(1.,.63,.12,1))
+        flask.hide();self._animation_props[identifier]=flask
+
+    def _align_arm(self,limb,target):
+        limb.set_scale(1)
+        distance=limb.get_relative_point(self.root,to_point(target)).length()
+        limb.look_at(self.root,to_point(target));limb.set_p(limb,90)
+        limb.set_sz(max(.35,min(2.,distance/.5)))
+
+    def _free_arms(self,identifier):
+        mixer=self._animation_mixers.get(identifier)
+        return mixer is not None and (mixer.action.startswith('death_') or mixer.action in
+            ('drink','use_item','interact','intro','phase','wall_cling','knockdown'))
+
+    def _apply_animation(self,identifier,pose,*,free_arms=False):
+        rig,torso,head,limbs,left_arm,right_arm,left_knee,right_knee=self._animation_nodes[identifier]
+        crouched=identifier==0 and getattr(self,'_player_crouched',False)
+        height=pose.height
+        if height<-.4 and identifier in self._enemies:height/=self._enemies[identifier][0].get_sz()
+        height=-.445 if crouched else height
+        previous=self._animation_applied.get(identifier)
+        old=previous[0] if previous else None
+        if old is None or pose[:3]!=old[:3]:rig.set_hpr(pose.yaw,pose.pitch,pose.roll)
+        if previous is None or previous[1]!=crouched:rig.set_sz(.5 if crouched else 1)
+        if previous is None or previous[2]!=height:rig.set_z(height)
+        for node,index in ((torso,4),(head,5),(limbs[1],6),(limbs[3],7),(left_knee,10),(right_knee,11)):
+            if old is None or pose[index]!=old[index]:node.set_p(pose[index])
+        if free_arms:
+            for node,index in ((left_arm,8),(right_arm,9)):
+                if old is None or not previous[3] or pose[index]!=old[index]:
+                    node.set_hpr(0,pose[index],0);node.set_scale(1)
+        self._animation_applied[identifier]=(pose,crouched,height,free_arms)
+
+    def animate_actor(self,identifier,view):
+        mixer=self._animation_mixers.get(identifier)
+        if mixer is not None:
+            pose=mixer.step(view,self._frame_dt)
+            self._apply_animation(identifier,pose,free_arms=self._free_arms(identifier))
+            self._animation_props[identifier].show() if mixer.action=='drink' else self._animation_props[identifier].hide()
+
+    def animation_cue(self,identifier,action,duration=.4):
+        mixer=self._animation_mixers.get(identifier)
+        if mixer is not None:mixer.cue(action,duration)
+
+    def reset_animation_state(self):
+        self._animation_mixers={identifier:AnimationMixer() for identifier in self._animation_mixers}
+        self._animation_applied.clear()
+
+    def queue_phase_warmup(self,identifier,phase):
+        if (identifier,phase) not in self._phase_prepared:self._phase_prepares.add((identifier,phase))
+
+    def prepare_phase_resources(self):
+        """Submit phase resources to the ordinary transition render; no nested loop.
+
+        All clips share prepared geometry. This schedules existing buffers/shader
+        states, while the normal roar frame consumes the queue. No wait/IO here.
+        """
+        if not self._phase_prepares:return
+        gsg=self._app.win.get_gsg()
+        # Includes the shared particle buffers made visible by the phase event.
+        self._app.render.prepare_scene(gsg)
+        for identifier,phase in self._phase_prepares:
+            if identifier in self._enemies:self._enemies[identifier][0].prepare_scene(gsg)
+            for node in self._combat_gear.get(identifier,()):node.prepare_scene(gsg)
+            self._phase_prepared.add((identifier,phase))
+        self._phase_prepares.clear()
+
+    def warmup_animations(self):
+        """Render representative clip poses under loading, restoring visual state.
+
+        No Game.frame, ECS tick, RNG, attack age or physics call is made here.
+        The native render still has real cost; this is not a proof of stall cure.
+        """
+        actors=[self._player]+[row[0] for row in self._enemies.values()]
+        nodes=[]
+        for rig,torso,head,limbs,*extra in self._animation_nodes.values():
+            nodes.extend((rig,torso,head,*limbs,*extra))
+        saved=[(node,node.get_transform()) for node in (*actors,*nodes)]
+        camera=self._app.camera.get_transform()
+        try:
+            self._app.camera.set_pos(0,-6,2)
+            self._app.camera.look_at(0,0,.1)
+            for actor in actors:actor.set_pos(0,0,0)
+            def apply(clip):
+                for identity in self._animation_nodes:
+                    self._apply_animation(identity,sample(clip,.65,speed=5.8,phase=3),free_arms=True)
+                    self._animation_props[identity].show() if clip=='drink' else self._animation_props[identity].hide()
+            result=prewarm_scene(self._app,samples=(lambda clip=clip:apply(clip) for clip in WARMUP_CLIPS))
+            result['clips']=len(WARMUP_CLIPS)
+            result['actors']=len(actors)
+            return result
+        finally:
+            for node,transform in saved:node.set_transform(transform)
+            for identity,node in self._animation_props.items():
+                node.show() if self._animation_mixers[identity].action=='drink' else node.hide()
+            self._app.camera.set_transform(camera)
+            # Restored native transforms may differ from the last warm-up pose.
+            self._animation_applied.clear()
 
     def tracer(self, origin: Vec3, end: Vec3, *, color=(1, .65, .24, 1)) -> None:
         """Mostra o trajeto instantâneo da besta por um intervalo curto."""
@@ -536,16 +653,7 @@ class ArenaRenderer:
         self.root.set_shader_input("eye_pos", to_point(camera.position))
         self._player.set_pos(to_point(player))
         self._player.set_h(-math.degrees(yaw))
-        self._stride += dt * speed * 3.2
-        gait = math.sin(self._stride) * min(1.0, speed / 4.7) * 35
-        for index, limb in enumerate(self._limbs):
-            limb.set_p(gait * (1 if index in (0, 3) else -1) if not dodge else 0)
-        self._rig.set_p(-360 * dodge if rolling else 17 * math.sin(math.pi * dodge))
-        if getattr(self, '_player_air_state', '') == 'slamming':
-            self._rig.set_p(25)
-        crouched = getattr(self, "_player_crouched", False)
-        self._rig.set_sz(.5 if crouched else 1)
-        self._rig.set_z(-.22 * math.sin(math.pi * dodge) - (.445 if crouched else 0))
+        self._frame_dt=dt
 
         self._elapsed += dt
         if hasattr(self, '_slam_ring'):

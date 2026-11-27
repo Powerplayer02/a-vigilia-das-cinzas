@@ -38,3 +38,9 @@ def test_cap_or_uncapped_tail_regression_blocks_publication_gate():
             ('candidate_uncapped','median_frame_ms',4.1),('candidate_uncapped','p95_frame_ms',7.7)):
         data=reports(); data[key][field]=value
         assert not module.validate(data)['passed']
+
+
+def test_animation_budget_does_not_reuse_the_smaller_hud_only_budget():
+    data=reports();data['candidate_uncapped']['median_frame_ms']+=.75
+    assert not module.validate(data)['passed']
+    assert module.validate(data,hud_only=False)['passed']

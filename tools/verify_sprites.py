@@ -46,6 +46,9 @@ def verify(output, width, height, empty_assets=False):
 
             def capture(name):
                 b.root.set_alpha_scale(1)
+                # Settle presentation fades without ticking gameplay or menus.
+                for _ in range(12):b.tick(1/60)
+                assert not getattr(b,'_closing_panels',[])
                 for _ in range(3): app.graphicsEngine.render_frame()
                 path=output/(name+'.png')
                 assert app.win.save_screenshot(Filename.from_os_specific(str(path.resolve())))

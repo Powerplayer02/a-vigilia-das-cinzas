@@ -8,7 +8,7 @@ import time
 from panda3d.core import CardMaker
 
 
-def prewarm_scene(app):
+def prewarm_scene(app, *, samples=()):
     started=time.perf_counter()
     card=CardMaker('render-warmup-cover')
     aspect=app.get_aspect_ratio()
@@ -18,16 +18,23 @@ def prewarm_scene(app):
     cover.set_bin('fixed',2000)
     cover.set_depth_test(False)
     cover.set_depth_write(False)
+    render_calls=0
     try:
         app.graphicsEngine.render_frame()
+        render_calls+=1
         gsg=app.win.get_gsg()
         app.render.prepare_scene(gsg)
         app.aspect2d.prepare_scene(gsg)
         # prepare_scene enqueues resources in1.10.16; render consumes the queue.
         app.graphicsEngine.render_frame()
         app.graphicsEngine.render_frame()
+        render_calls+=2
+        for apply_sample in samples:
+            apply_sample()
+            app.graphicsEngine.render_frame()
+            render_calls+=1
         app.graphicsEngine.sync_frame()
     finally:
         cover.remove_node()
     return dict(milliseconds=(time.perf_counter()-started)*1000,
-        render_calls=3,simulation_steps=0,scope='Already-created render/UI resources only')
+        render_calls=render_calls,simulation_steps=0,scope='Already-created render/UI resources only')

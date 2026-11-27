@@ -6,9 +6,11 @@ import sqlite3
 import json
 import time
 from dataclasses import replace
+from contextlib import nullcontext
 from pathlib import Path
 
 from vigilia.core.config import Config
+from vigilia.core.animation import AnimationView
 from vigilia.core.events import (
     AreaEnteredEvent, EventBus, BonfireRestedEvent, SaveRequestedEvent, LevelUpRequestedEvent,
     BossArenaEnteredEvent, BossDefeatedEvent, MusicChangeRequestedEvent, AppStateChangedEvent,
@@ -21,6 +23,7 @@ from vigilia.core.timing import (
     FIXED_DT, FixedClock, TIMING_VERSION, RESPAWN_STEPS,
     TRAINING_COOLDOWN_STEPS, TRAINING_INITIAL_WAIT_STEPS,
     TARGET_SWITCH_STEPS,
+    PARRY_RECOVERY_STEPS,
 )
 from vigilia.core.types import Action, GameState, InputEdge, AppState
 from vigilia.core.app_state import AppStateMachine, CallbackController
@@ -227,7 +230,7 @@ class Game:
         self._bus.subscribe(MusicChangeRequestedEvent, self._on_music)
         self._bus.subscribe(SoulCollectedEvent, self._on_souls)
         self._bus.subscribe(LevelUpEvent, self._on_level_effect)
-        self._bus.subscribe(ItemUseStartedEvent, lambda event: self._sfx("drink", self._position(event.entity_id)))
+        self._bus.subscribe(ItemUseStartedEvent, self._on_item_visual)
         self.queries = GameQueries(self)
         self.ui_backend = None if legacy_hud else PandaUIBackend(app, assets / "fonts" / "ui.ttf",
             localizer=self.localizer, capture_text=self.input.set_text_capture,
@@ -278,6 +281,14 @@ class Game:
         self.flow.transition(AppState.MAIN_MENU)
         if not self._startup_frontend:
             self.flow.transition(AppState.PLAYING)
+        self._warmup_presentation()
+
+    def _warmup_presentation(self):
+        if hasattr(self._renderer,'warmup_animations'):
+            self._draw_combat()
+            with self._particles.warmup() if hasattr(self._particles,'warmup') else nullcontext():
+                result=self._renderer.warmup_animations()
+            self.presentation_warmups=getattr(self,'presentation_warmups',[])+[dict(area=self.active_area,**result)]
 
     def _build_patio(self):
         for block in blocks():
@@ -533,6 +544,7 @@ class Game:
         self.input.reset()
         self._clock.reset()
         self._bus.publish(AreaEnteredEvent(area_id))
+        self._warmup_presentation()
 
     def keyboard(self, name: str, pressed: bool) -> None:
         """Recebe uma alteração física de tecla ou botão do mouse."""
@@ -617,6 +629,8 @@ class Game:
             self._renderer.enemy_motion(entity.id, previous.position.lerp(transform.position, alpha),
                                          lerp_angle(previous.yaw, transform.yaw, alpha), intent.velocity.length())
         self._draw_combat()
+        if hasattr(self._renderer,'prepare_phase_resources'):
+            self._renderer.prepare_phase_resources()
         if getattr(self, "ui_backend", None) is not None:
             self.ui_backend.tick(dt)
 
@@ -787,6 +801,15 @@ class Game:
         logger.info(message)
 
     def _on_damage(self, event: DamageDealt) -> None:
+        renderer=getattr(self,'_renderer',None)
+        if renderer is not None and hasattr(renderer,'animation_cue'):
+            action='block_hit' if event.blocked else 'hit'
+            if event.remaining_hp<=0:
+                source=self._world.get(Entity(event.source),Transform)
+                target=self._world.get(Entity(event.target),Transform)
+                behind=source is not None and target is not None and target.forward().dot(source.position-target.position)<0
+                action='death_fire' if event.damage_type=='fire' else 'death_back' if behind else 'death_front'
+            renderer.animation_cue(event.target,action,.32)
         movement = getattr(getattr(self, '_player', None), 'advanced', None)
         if event.target == self._entity.id and event.amount > 0 and movement is not None:
             movement.on_damage()
@@ -855,7 +878,7 @@ class Game:
             self._respawn_remaining = RESPAWN_STEPS
             self._sfx("death_player", self._transform.position)
             if hasattr(self, "_polish"):
-                self._polish.fade(.15, hold=True)
+                self._polish.fade(.85, hold=True)
             self._notify("VOCÊ MORREU — suas almas aguardam no local da morte")
         else:
             tag = self._world.get(Entity(event.target), EnemyTag)
@@ -968,6 +991,8 @@ class Game:
                          ENEMIES[tag.profile_id].name if tag is not None else f"Manequim {entity.id}")
                 targets.append(f"{label}  {combatant.hp:.0f} / {combatant.max_hp:.0f}")
             pose = self._poses[entity.id]
+            if hasattr(self._renderer,'animate_actor'):
+                self._renderer.animate_actor(entity.id,self._animation_view(entity,combatant))
             self._renderer.combat_pose(
                 entity.id, pose.bones, axe=combatant.weapon.spec_id in ("axe", "forge_warden_weapon"),
                 weapon_style="staff" if combatant.weapon.spec_id in ("tide_crosier", "ossuary_lantern") else combatant.weapon.spec_id,
@@ -1014,6 +1039,49 @@ class Game:
                 phase_caption=self.localizer.t("boss." + self.boss.profile.id + ".phase" + str(self.boss.phase)),
             )
 
+    def _animation_view(self,entity,combatant):
+        is_player=entity==self._entity
+        tag=self._world.get(entity,EnemyTag)
+        is_boss=self.boss is not None and entity==self.boss.entity
+        profile='boss:'+self.boss.profile.id if is_boss else tag.profile_id if tag else 'player'
+        move=self._world.get(entity,MovementIntent)
+        velocity=self._player.velocity if is_player else move.velocity if move else Vec3()
+        speed=velocity.length();action='run' if speed>4 else 'walk' if speed>.1 else 'idle'
+        progress=None;direction=0.
+        if not combatant.alive:action='death'
+        elif combatant.knockdown_steps:action='knockdown'
+        elif combatant.stagger_steps:action='stagger'
+        elif is_boss and (self.boss.intro_remaining or self.boss.transition_remaining):
+            action='intro' if self.boss.intro_remaining else 'phase'
+            remaining=self.boss.intro_remaining or self.boss.transition_remaining
+            total=self.boss.profile.intro_steps if self.boss.intro_remaining else self.boss.profile.transition_steps
+            progress=1-remaining/max(1,total)
+        elif is_player and self._player.state not in (PlayerState.IDLE,PlayerState.WALKING,PlayerState.RUNNING):
+            action=self._player.state.value
+            if action in ('rolling','backstep'):
+                progress=self._player.dodge_progress
+                forward=self._transform.forward();right=Vec3(forward.y,-forward.x)
+                direction=math.atan2(velocity.dot(right),velocity.dot(forward))
+        elif combatant.attack is not None:
+            attack=combatant.attack;definition=attack.definition
+            if attack.age<definition.windup:
+                stage='windup';progress=attack.age/max(1,definition.windup)
+            elif attack.age<definition.windup+definition.active:
+                stage='active';progress=(attack.age-definition.windup)/max(1,definition.active-1)
+            else:
+                stage='recovery';progress=(attack.age-definition.windup-definition.active)/max(1,definition.recovery)
+            action=definition.kind.value+':'+stage
+        elif combatant.parry_step>=0:action='parry';progress=min(1,combatant.parry_step/PARRY_RECOVERY_STEPS)
+        elif combatant.blocking:action='block'
+        elif is_player and self._commands.charge:action='charging'
+        return AnimationView(action,progress,speed,direction,profile,self.boss.phase if is_boss else 1,
+            self._app.state==GameState.PAUSED and getattr(self,'_has_session',True))
+
+    def _on_item_visual(self,event):
+        self._sfx('drink',self._position(event.entity_id))
+        if hasattr(self._renderer,'animation_cue'):
+            self._renderer.animation_cue(event.entity_id,'drink' if event.item_id=='estus' else 'use_item',.8)
+
     def _actor_keys(self) -> dict[int, str]:
         keys = {entity.id: key for key, entity in self._actors.items()}
         if self.boss is not None:
@@ -1021,6 +1089,9 @@ class Game:
         return keys
 
     def _on_bonfire_rested(self, event: BonfireRestedEvent) -> None:
+        renderer=getattr(self,'_renderer',None)
+        if renderer is not None and hasattr(renderer,'animation_cue'):
+            renderer.animation_cue(self._entity.id,'interact',.7)
         if getattr(self, "_sfx_enabled", False) and event.bonfire_id not in self._sfx_lit_fires:
             self._sfx_lit_fires.add(event.bonfire_id)
             self._sfx("bonfire_light", BONFIRES[event.bonfire_id].position)
@@ -1233,6 +1304,9 @@ class Game:
             self._polish.reset()
             if self._respawn_remaining:
                 self._polish.fade(.15, hold=True, immediate=True)
+        renderer=getattr(self,'_renderer',None)
+        if renderer is not None and hasattr(renderer,'reset_animation_state'):
+            renderer.reset_animation_state()
 
     def _reset_enemies(self, *, restore=True) -> None:
         self.ai.reset(self._world, restore=restore)
@@ -1351,6 +1425,8 @@ class Game:
         self._notify(self.localizer.t("boss." + self.boss.profile.id + ".name"))
 
     def _on_phase_transition(self, event: PhaseTransitionEvent) -> None:
+        if self.boss is not None and hasattr(self._renderer,'queue_phase_warmup'):
+            self._renderer.queue_phase_warmup(self.boss.entity.id,event.phase)
         self.world_state.boss_phases[event.boss_id] = event.phase
         position = self._position(self.boss.entity.id) if self.boss else Vec3()
         self._sfx("boss_roar", position)

@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 
-def validate(reports):
+def validate(reports, *, hud_only=True):
     problems=[]
     expected=('baseline_capped','candidate_capped','baseline_uncapped','candidate_uncapped')
     for name in expected:
@@ -36,10 +36,11 @@ def validate(reports):
     delta_p95=round(candidate['p95_frame_ms']-base['p95_frame_ms'],4)
     if abs(delta_median)>1 or abs(delta_p95)>1:
         problems.append('Uncapped median/p95 outside +/-1.0ms of baseline')
-    if delta_median>.5:
+    if hud_only and delta_median>.5:
         problems.append('HUD-only median overhead exceeds0.5ms')
     return dict(passed=not problems,problems=problems,
         uncapped_delta_median_ms=delta_median,uncapped_delta_p95_ms=delta_p95,
+        comparison_scope='hud' if hud_only else 'animation',
         note='Local GPU comparison does not resolve historical stalls or human gameplay difficulty.')
 
 
@@ -48,10 +49,11 @@ if __name__=='__main__':
     for key in ('baseline-capped','candidate-capped','baseline-uncapped','candidate-uncapped'):
         parser.add_argument('--'+key,type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--animation',action='store_true',help='Use the animation +/-1ms budget; do not apply the HUD-only0.5ms budget')
     args=parser.parse_args()
     reports={key:json.loads(getattr(args,key).read_text()) for key in
         ('baseline_capped','candidate_capped','baseline_uncapped','candidate_uncapped')}
-    result=validate(reports)
+    result=validate(reports,hud_only=not args.animation)
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,indent=2),encoding='utf8')
     print(json.dumps(result,indent=2))

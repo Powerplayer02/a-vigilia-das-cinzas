@@ -57,7 +57,8 @@ Dados e hashes em `sprites-render-probe-2026-11-27.json`; perfil e log bruto
 ficam em `artifacts/sprites/render-probe/`. Esse controle força fase 3;
 não cobre todo o histórico da luta original, cuja captura era da fase 2.
 
-Estado: **causa nativa não identificada; bloqueador de lançamento e da fase 4**.
+Estado deste diagnóstico: **causa nativa não identificada; questão aberta de lançamento**.
+A fase4 foi posteriormente liberada pelo usuário, mantendo a causa aberta.
 A quarentena antiga permanece. Publicar a arte após seus controles de desempenho
 não é certificar o lançamento nem marcar esse problema como corrigido.
 O evento antigo de SQLite, de 24/11, está separado em
@@ -176,7 +177,8 @@ Referências primárias:
 
 Evidência bruta local: `artifacts/render-investigation/`; índice com hashes em
 `render-native-2026-11-27.json`. A causa do evento histórico continua aberta;
-a fase4 não foi iniciada e não há release novo.
+a fase4 foi posteriormente iniciada com autorização explícita, sem release novo.
+Implementação e pendências atuais: `animations-2026-11-27.md`.
 
 Para repetir com um save pré-chefe próprio, em diretório novo:
 

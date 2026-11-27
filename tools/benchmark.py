@@ -264,6 +264,8 @@ def main() -> None:
     parser.add_argument("--shadow-quality", choices=("off", "low", "medium", "high"), default="medium")
     parser.add_argument("--qa-diagnostics", action="store_true", help="Flight recorder do executável e gate por build; não usar como baseline FPS")
     parser.add_argument("--profile", action="store_true")
+    parser.add_argument("--animation-coverage",action="store_true",help="Catalog-pose stress over production combat, not an input playthrough")
+    parser.add_argument("--gl-finish",action="store_true",help="Synchronization diagnostic; excludes FPS baseline eligibility")
     parser.add_argument("--deep-profile", action="store_true")
     parser.add_argument("--freeze-gc", action="store_true")
     parser.add_argument("--disable-gc", action="store_true", help="Experimento isolado; não muda o jogo de produção")
@@ -304,6 +306,9 @@ def main() -> None:
             raise
     config = Config(vsync=args.vsync, shadow_quality=args.shadow_quality,
         procedural_music=args.procedural_music, procedural_sfx=args.procedural_sfx)
+    if args.gl_finish:
+        from panda3d.core import load_prc_file_data
+        load_prc_file_data('finish-reference','gl-finish true')
     if args.shader_log:
         from panda3d.core import load_prc_file_data
         load_prc_file_data("shader-diagnostic", "notify-level-glgsg debug\nnotify-timestamp true")
@@ -387,6 +392,10 @@ def main() -> None:
             game.keyboard("control", True)
             game.alert_enemies()
             app.taskMgr.remove("vigilia-update")
+            animation_workload=None
+            if args.animation_coverage:
+                from animation_workload import AnimationWorkload
+                animation_workload=AnimationWorkload(game._renderer)
             if args.profile or args.split_flip or args.hitch_directory or args.spike_directory:
                 profile = FrameProfile(game, split_flip=args.split_flip, hitch_directory=args.hitch_directory, deep=args.deep_profile, spike_directory=args.spike_directory)
                 app.taskMgr.add(profile.before_render, "profile-render-start", sort=49)
@@ -461,6 +470,7 @@ def main() -> None:
                     measuring = True
                     game.ai.tick_count = game.ai.path_count = 0
                     game.ai.tick_seconds = game.ai.path_seconds = 0.0
+                    if animation_workload:animation_workload.begin()
                     if profile is not None:
                         profile.measuring = True
                     return task.cont
@@ -482,7 +492,11 @@ def main() -> None:
                         "window_type": args.window_type,
                         "qa_diagnostics": args.qa_diagnostics,
                         "source_build_id": qa.build_id if qa else source_id,
-                        "eligible_fps_baseline": args.window_type == "onscreen" and not args.spike_directory and args.diagnostic_minimize_at is None and not args.qa_diagnostics,
+                        "eligible_fps_baseline": args.window_type == "onscreen" and not args.spike_directory and args.diagnostic_minimize_at is None and not args.qa_diagnostics and not args.gl_finish and not args.pstats_port and not args.split_flip and not args.profile and not args.hitch_directory,
+                        "pstats_connected":bool(args.pstats_port),
+                        "gl_finish":args.gl_finish,
+                        "animation_coverage_fixture":args.animation_coverage,
+                        "animation_warmups":getattr(game,'presentation_warmups',[]),
                         "valid_sample": minimized_frames == 0,
                         "minimized_frames": minimized_frames,
                         "excluded_samples": dict(count=minimized_frames, total_ms=round(minimized_seconds * 1000, 3), reason="window_minimized"),
@@ -543,6 +557,7 @@ def main() -> None:
                         if profile.recorder:
                             profile.recorder.discard()
                             result["spike_captures"] = [timestamp for timestamp, _ in profile.recorder.captures]
+                    if animation_workload:result['animation_workload']=animation_workload.report(len(samples))
                     if args.output:
                         args.output.parent.mkdir(parents=True, exist_ok=True)
                         args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

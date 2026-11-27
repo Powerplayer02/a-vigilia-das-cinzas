@@ -1,6 +1,8 @@
 """Pool visual de quads reutilizados; nenhum contato ou passo de gameplay."""
 
 from dataclasses import dataclass
+from dataclasses import replace
+from contextlib import contextmanager
 import math
 import random
 
@@ -195,3 +197,22 @@ class ParticleEmitter:
     def clear(self):
         self.pool.update(10)
         self.update(0)
+
+    @contextmanager
+    def warmup(self):
+        """Expose both existing particle draw states during loading, then restore.
+
+        Preserves particles, free-list order and visual RNG. No new preset mesh
+        is built: phase effects reuse these same alpha/additive buffers.
+        """
+        slots=[replace(slot) for slot in self.pool.slots]
+        free=self.pool._free.copy();rng=self.pool._rng.getstate()
+        try:
+            self.pool.update(10)
+            self.pool.spawn('boss_phase',Vec3(),count=min(12,len(slots)//2))
+            self.pool.spawn('blood',Vec3(),count=min(12,len(slots)//2))
+            self.update(0)
+            yield
+        finally:
+            self.pool.slots=slots;self.pool._free=free;self.pool._rng.setstate(rng)
+            self.update(0)

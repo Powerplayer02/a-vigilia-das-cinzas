@@ -1,7 +1,8 @@
 # Camada audiovisual — fase 1: música
 
-As fases 1 e 2 cobrem música e efeitos sonoros. Sprites, animações,
-partículas e acessibilidade aguardam as fases seguintes.
+As fases1/2 cobrem música/SFX e a fase3 cobre atlas/UI. A fase4 tem
+implementação para revisão e validação final de GPU adiada pelo usuário.
+As seções anteriores preservam o histórico de cada entrega.
 
 ## Partitura original
 
@@ -286,8 +287,40 @@ experiente não determina tentativas humanas; balance OFF continua pendente
 de playtest humano. A vitória terminou com 175,293/230 HP; os 121 HP citados
 num parecer pertenciam a uma sessão interrompida. Escuta humana também pendente.
 
-O pico nativo de 334,6945ms continua como bloqueador de lançamento e da fase 4.
+O pico nativo de334,6945ms continua como questão aberta de lançamento.
+A fase4 foi posteriormente liberada pelo usuário, sem declarar causa ou cura.
 A captura é de gameplay offscreen, fase 2, sem minimização; não é o commit
 de saída de 24/11. Ver `docs/qa/render-investigation-2026-11-27.md` com as cinco
 primeiras entradas, limites do cProfile e os novos contadores de recursos.
 Publicar a arte após seu gate de desempenho não declara esse pico corrigido.
+
+## Fase 4 — poses e mistura
+
+`core/animation.py` define entradas de apresentação e canais de transformação.
+`engine/animation.py` contém curvas procedurais e mixer por rig. A composição
+produz `AnimationView` a partir de estados existentes; idade de ataque,
+windup/active/recovery, parry, esquiva e transição continuam em60Hz autoritativos.
+O mixer apresenta crossfade, respiração e locomoção contínua por velocidade.
+Ele não recebe portas para física, dano, inventário ou persistência.
+
+Há quatro sentidos de roll, backstep, ataques dos movesets existentes,
+parry/guarda/impacto, críticos, beber com frasco, cast/uso de item, interação,
+reações, stagger, knockdown, mortes frontal/traseira/fogo/queda, mobilidade
+experimental e entrada/transição de chefe. As variantes de queda estão no
+catálogo visual; não foi criada uma nova regra de morte por queda.
+Ataques das fases2/3 recebem acentos de torso/cabeça. Não foram adicionados
+ataques ou alteradas janelas para cumprir uma contagem artística.
+
+O rig usa os modelos de blocos articulados existentes, agora com joelhos.
+Durante ataques/guarda, armas e mãos seguem os pontos de combate existentes.
+Respawn e invulnerabilidade mantêm seus timers; o fade de morte foi alongado
+somente na apresentação para tornar a queda visível. Menus usam fade150ms;
+cópias de saída têm seus PGItems desativados e são descartadas ao fim do fade.
+Barras suavizam alterações sem modificar os números ou os recursos do jogador.
+
+Cada área prepara99 entradas (incluindo etapas de ataques), mais o frasco e
+os estados alpha/additive compartilhados do pool, sob cobertura preta. Tudo
+é construído antes; não há malha, arquivo ou shader por nova pose. A transição
+de chefe apenas agenda `prepare_scene` e usa o frame normal do rugido.
+Isso amplia cobertura de preparação, sem provar eliminação de first-use ou
+da causa histórica. [QA, protocolo e pendências](qa/animations-2026-11-27.md).

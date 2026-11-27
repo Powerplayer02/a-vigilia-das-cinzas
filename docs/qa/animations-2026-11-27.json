@@ -1,0 +1,1152 @@
+{
+  "date": "2026-11-27",
+  "base_commit": "6d0797098111fb694963b5f423a388072ae816ab",
+  "source_build_id": "b80bde815bee1215",
+  "status": "Implementation ready for review; final GPU acceptance deferred by user",
+  "fixed_step_ast_unchanged": true,
+  "boss_tables_unchanged": true,
+  "runtime": {
+    "panda3d": "1.10.16",
+    "pygame": "2.6.1",
+    "numpy": "2.5.5"
+  },
+  "clips": [
+    "idle",
+    "walk",
+    "run",
+    "roll_forward",
+    "roll_back",
+    "roll_left",
+    "roll_right",
+    "backstep",
+    "block",
+    "block_hit",
+    "parry",
+    "hit",
+    "stagger",
+    "knockdown",
+    "drink",
+    "use_item",
+    "interact",
+    "death_front",
+    "death_back",
+    "death_fire",
+    "death_fall",
+    "wall_cling",
+    "airborne",
+    "slamming",
+    "slam_recovery",
+    "dashing",
+    "sliding",
+    "intro",
+    "phase",
+    "charging",
+    "light_1:windup",
+    "light_1:active",
+    "light_1:recovery",
+    "light_2:windup",
+    "light_2:active",
+    "light_2:recovery",
+    "light_3:windup",
+    "light_3:active",
+    "light_3:recovery",
+    "heavy:windup",
+    "heavy:active",
+    "heavy:recovery",
+    "running:windup",
+    "running:active",
+    "running:recovery",
+    "dash_attack:windup",
+    "dash_attack:active",
+    "dash_attack:recovery",
+    "sliding:windup",
+    "sliding:active",
+    "sliding:recovery",
+    "walking_attack:windup",
+    "walking_attack:active",
+    "walking_attack:recovery",
+    "riposte:windup",
+    "riposte:active",
+    "riposte:recovery",
+    "backstab:windup",
+    "backstab:active",
+    "backstab:recovery",
+    "slow_overhead:windup",
+    "slow_overhead:active",
+    "slow_overhead:recovery",
+    "wide_sweep:windup",
+    "wide_sweep:active",
+    "wide_sweep:recovery",
+    "backstep_punish:windup",
+    "backstep_punish:active",
+    "backstep_punish:recovery",
+    "forge_grab:windup",
+    "forge_grab:active",
+    "forge_grab:recovery",
+    "fire_aoe_ring:windup",
+    "fire_aoe_ring:active",
+    "fire_aoe_ring:recovery",
+    "tide_strike:windup",
+    "tide_strike:active",
+    "tide_strike:recovery",
+    "tide_sweep:windup",
+    "tide_sweep:active",
+    "tide_sweep:recovery",
+    "tide_bolt:windup",
+    "tide_bolt:active",
+    "tide_bolt:recovery",
+    "tide_grasp:windup",
+    "tide_grasp:active",
+    "tide_grasp:recovery",
+    "tide_nova:windup",
+    "tide_nova:active",
+    "tide_nova:recovery",
+    "arcane_bolt:windup",
+    "arcane_bolt:active",
+    "arcane_bolt:recovery",
+    "mending_light:windup",
+    "mending_light:active",
+    "mending_light:recovery",
+    "practice:windup",
+    "practice:active",
+    "practice:recovery"
+  ],
+  "clip_count": 99,
+  "local_tests": {
+    "result": "759 passed in 19.92s",
+    "evidence": {
+      "path": "artifacts/animations/tests-release.log",
+      "bytes": 913,
+      "sha256": "d89f411a484f6e4d6c549a68fece7d9610b3ded098f0e2908de0e3276994465f"
+    }
+  },
+  "native_galleries": [
+    {
+      "report": {
+        "kind": "Native visual fixture; no human gameplay claim",
+        "warmup": {
+          "milliseconds": 94.7277999994185,
+          "render_calls": 102,
+          "simulation_steps": 0,
+          "scope": "Already-created render/UI resources only",
+          "clips": 99,
+          "actors": 5
+        },
+        "source_build_id": "b80bde815bee1215",
+        "area": "patio_da_vigilia",
+        "boss": "warden_of_the_forge",
+        "snapshot_preserved": true,
+        "transforms_preserved": true,
+        "visual_rng_preserved": true,
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "roll_forward",
+          "roll_back",
+          "roll_left",
+          "roll_right",
+          "backstep",
+          "block",
+          "block_hit",
+          "parry",
+          "hit",
+          "stagger",
+          "knockdown",
+          "drink",
+          "use_item",
+          "interact",
+          "death_front",
+          "death_back",
+          "death_fire",
+          "death_fall",
+          "wall_cling",
+          "airborne",
+          "slamming",
+          "slam_recovery",
+          "dashing",
+          "sliding",
+          "intro",
+          "phase",
+          "charging",
+          "light_1:windup",
+          "light_1:active",
+          "light_1:recovery",
+          "light_2:windup",
+          "light_2:active",
+          "light_2:recovery",
+          "light_3:windup",
+          "light_3:active",
+          "light_3:recovery",
+          "heavy:windup",
+          "heavy:active",
+          "heavy:recovery",
+          "running:windup",
+          "running:active",
+          "running:recovery",
+          "dash_attack:windup",
+          "dash_attack:active",
+          "dash_attack:recovery",
+          "sliding:windup",
+          "sliding:active",
+          "sliding:recovery",
+          "walking_attack:windup",
+          "walking_attack:active",
+          "walking_attack:recovery",
+          "riposte:windup",
+          "riposte:active",
+          "riposte:recovery",
+          "backstab:windup",
+          "backstab:active",
+          "backstab:recovery",
+          "slow_overhead:windup",
+          "slow_overhead:active",
+          "slow_overhead:recovery",
+          "wide_sweep:windup",
+          "wide_sweep:active",
+          "wide_sweep:recovery",
+          "backstep_punish:windup",
+          "backstep_punish:active",
+          "backstep_punish:recovery",
+          "forge_grab:windup",
+          "forge_grab:active",
+          "forge_grab:recovery",
+          "fire_aoe_ring:windup",
+          "fire_aoe_ring:active",
+          "fire_aoe_ring:recovery",
+          "tide_strike:windup",
+          "tide_strike:active",
+          "tide_strike:recovery",
+          "tide_sweep:windup",
+          "tide_sweep:active",
+          "tide_sweep:recovery",
+          "tide_bolt:windup",
+          "tide_bolt:active",
+          "tide_bolt:recovery",
+          "tide_grasp:windup",
+          "tide_grasp:active",
+          "tide_grasp:recovery",
+          "tide_nova:windup",
+          "tide_nova:active",
+          "tide_nova:recovery",
+          "arcane_bolt:windup",
+          "arcane_bolt:active",
+          "arcane_bolt:recovery",
+          "mending_light:windup",
+          "mending_light:active",
+          "mending_light:recovery",
+          "practice:windup",
+          "practice:active",
+          "practice:recovery"
+        ],
+        "screenshots": [
+          "00-idle.png",
+          "01-walk.png",
+          "02-run.png",
+          "03-roll_left.png",
+          "04-roll_back.png",
+          "05-light_1-windup.png",
+          "06-light_1-active.png",
+          "07-heavy-active.png",
+          "08-parry.png",
+          "09-drink.png",
+          "10-wall_cling.png",
+          "11-slamming.png",
+          "12-phase.png",
+          "13-death_front.png",
+          "14-slow_overhead-active.png",
+          "15-wide_sweep-active.png",
+          "16-forge_grab-active.png",
+          "17-fire_aoe_ring-active.png"
+        ],
+        "snapshot_preserved_after_gallery": true,
+        "phase_preparation": [
+          {
+            "phase": 2,
+            "snapshot_preserved": true,
+            "transition_steps_remaining": 90,
+            "queued_native_resources": 0
+          }
+        ]
+      },
+      "evidence": {
+        "path": "artifacts/animations/gallery-shipped-patio/report.json",
+        "bytes": 3532,
+        "sha256": "6e13696ed574373dc5c679dcdaad74541ff22cbb18d38b0724e17e13fc431188"
+      },
+      "images": [
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/00-idle.png",
+          "bytes": 34009,
+          "sha256": "4fb3d2c3589807f5059f1b7d939590868b9e8f2254edc6a82065c56d1db757d1"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/01-walk.png",
+          "bytes": 35936,
+          "sha256": "c58381865c1090601d0292a2dccc60fb8f4d6145f4de68b1416f891f767ad71b"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/02-run.png",
+          "bytes": 35936,
+          "sha256": "c58381865c1090601d0292a2dccc60fb8f4d6145f4de68b1416f891f767ad71b"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/03-roll_left.png",
+          "bytes": 39238,
+          "sha256": "13aa7ea81e6b549e09a7b3b9f34a3560e2f7da9615a6581b99a25778b1b5f106"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/04-roll_back.png",
+          "bytes": 30688,
+          "sha256": "421b4de099ef812a28c95ccba6e29a5a7708eaf2829b32f592ccc5fbef42d454"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/05-light_1-windup.png",
+          "bytes": 37958,
+          "sha256": "6f5e7ce6a47772c24599f5934abf6f790eb608b66daac90f8c57bf14be3d0254"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/06-light_1-active.png",
+          "bytes": 38641,
+          "sha256": "4436b40cf2b710f52ec83557e7a0c552091b4909cefb55bc89359b327274656e"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/07-heavy-active.png",
+          "bytes": 37596,
+          "sha256": "a7182a3240ab71b02507c255bd50083c407244246a0415cacf7cc3175f9a881d"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/08-parry.png",
+          "bytes": 34768,
+          "sha256": "f12b24059aa380fcb4436d95ce9b3851f4eed34b97cb7cde17bf92dc951f2dfa"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/09-drink.png",
+          "bytes": 33175,
+          "sha256": "4180f8572556d53361c11ef9cdfc151bd58ac6810d5d37f23ad954dd5e82c41b"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/10-wall_cling.png",
+          "bytes": 35386,
+          "sha256": "03a36a2506f6f6eb30e3eb5a3bcfb87dad5e68b34566e014d16b5a157c49efd7"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/11-slamming.png",
+          "bytes": 35720,
+          "sha256": "4dbe266c58b72efbec91110d01ca62fa38209fc9594edef0a08f89ad7665a86f"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/12-phase.png",
+          "bytes": 35529,
+          "sha256": "17a99f7911d02f653d25f885e878a7b2b40c7f60595f4707211839d318700cb1"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/13-death_front.png",
+          "bytes": 25804,
+          "sha256": "b2dddf30b434b2d1cf3981c7de10d0952c9af99cb618eb337adbc692ed702a5b"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/14-slow_overhead-active.png",
+          "bytes": 37768,
+          "sha256": "adaa323fa68c32b07cd2e3bc353fc0566d5fa41cf5bc137ad037fafeff7d550f"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/15-wide_sweep-active.png",
+          "bytes": 38535,
+          "sha256": "def3d375daddc78ccd0114098f50a07ba24143d4496d1bcdb9fe3d16ce68bbf3"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/16-forge_grab-active.png",
+          "bytes": 37291,
+          "sha256": "63f7e61f7b77f8f6b37e4b657504483fe73825bb8183a1bb0fee5c7d51dbea85"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-patio/17-fire_aoe_ring-active.png",
+          "bytes": 37356,
+          "sha256": "3b82fc257ba785321a850dc6468e7a1600ae6383e218aab39eea1033268e29f3"
+        }
+      ]
+    },
+    {
+      "report": {
+        "kind": "Native visual fixture; no human gameplay claim",
+        "warmup": {
+          "milliseconds": 74.22560000031808,
+          "render_calls": 102,
+          "simulation_steps": 0,
+          "scope": "Already-created render/UI resources only",
+          "clips": 99,
+          "actors": 5
+        },
+        "source_build_id": "b80bde815bee1215",
+        "area": "pantano_das_cinzas",
+        "boss": "abbess_of_the_tide",
+        "snapshot_preserved": true,
+        "transforms_preserved": true,
+        "visual_rng_preserved": true,
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "roll_forward",
+          "roll_back",
+          "roll_left",
+          "roll_right",
+          "backstep",
+          "block",
+          "block_hit",
+          "parry",
+          "hit",
+          "stagger",
+          "knockdown",
+          "drink",
+          "use_item",
+          "interact",
+          "death_front",
+          "death_back",
+          "death_fire",
+          "death_fall",
+          "wall_cling",
+          "airborne",
+          "slamming",
+          "slam_recovery",
+          "dashing",
+          "sliding",
+          "intro",
+          "phase",
+          "charging",
+          "light_1:windup",
+          "light_1:active",
+          "light_1:recovery",
+          "light_2:windup",
+          "light_2:active",
+          "light_2:recovery",
+          "light_3:windup",
+          "light_3:active",
+          "light_3:recovery",
+          "heavy:windup",
+          "heavy:active",
+          "heavy:recovery",
+          "running:windup",
+          "running:active",
+          "running:recovery",
+          "dash_attack:windup",
+          "dash_attack:active",
+          "dash_attack:recovery",
+          "sliding:windup",
+          "sliding:active",
+          "sliding:recovery",
+          "walking_attack:windup",
+          "walking_attack:active",
+          "walking_attack:recovery",
+          "riposte:windup",
+          "riposte:active",
+          "riposte:recovery",
+          "backstab:windup",
+          "backstab:active",
+          "backstab:recovery",
+          "slow_overhead:windup",
+          "slow_overhead:active",
+          "slow_overhead:recovery",
+          "wide_sweep:windup",
+          "wide_sweep:active",
+          "wide_sweep:recovery",
+          "backstep_punish:windup",
+          "backstep_punish:active",
+          "backstep_punish:recovery",
+          "forge_grab:windup",
+          "forge_grab:active",
+          "forge_grab:recovery",
+          "fire_aoe_ring:windup",
+          "fire_aoe_ring:active",
+          "fire_aoe_ring:recovery",
+          "tide_strike:windup",
+          "tide_strike:active",
+          "tide_strike:recovery",
+          "tide_sweep:windup",
+          "tide_sweep:active",
+          "tide_sweep:recovery",
+          "tide_bolt:windup",
+          "tide_bolt:active",
+          "tide_bolt:recovery",
+          "tide_grasp:windup",
+          "tide_grasp:active",
+          "tide_grasp:recovery",
+          "tide_nova:windup",
+          "tide_nova:active",
+          "tide_nova:recovery",
+          "arcane_bolt:windup",
+          "arcane_bolt:active",
+          "arcane_bolt:recovery",
+          "mending_light:windup",
+          "mending_light:active",
+          "mending_light:recovery",
+          "practice:windup",
+          "practice:active",
+          "practice:recovery"
+        ],
+        "screenshots": [
+          "00-idle.png",
+          "01-walk.png",
+          "02-run.png",
+          "03-roll_left.png",
+          "04-roll_back.png",
+          "05-light_1-windup.png",
+          "06-light_1-active.png",
+          "07-heavy-active.png",
+          "08-parry.png",
+          "09-drink.png",
+          "10-wall_cling.png",
+          "11-slamming.png",
+          "12-phase.png",
+          "13-death_front.png",
+          "14-slow_overhead-active.png",
+          "15-wide_sweep-active.png",
+          "16-forge_grab-active.png",
+          "17-fire_aoe_ring-active.png"
+        ],
+        "snapshot_preserved_after_gallery": true,
+        "phase_preparation": [
+          {
+            "phase": 2,
+            "snapshot_preserved": true,
+            "transition_steps_remaining": 90,
+            "queued_native_resources": 0
+          }
+        ]
+      },
+      "evidence": {
+        "path": "artifacts/animations/gallery-shipped-abbess/report.json",
+        "bytes": 3534,
+        "sha256": "c5022f22937e8be94df6df6dc8e7b618a53c09d2de6ee75c2891c40441ff3360"
+      },
+      "images": [
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/00-idle.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/01-walk.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/02-run.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/03-roll_left.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/04-roll_back.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/05-light_1-windup.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/06-light_1-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/07-heavy-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/08-parry.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/09-drink.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/10-wall_cling.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/11-slamming.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/12-phase.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/13-death_front.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/14-slow_overhead-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/15-wide_sweep-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/16-forge_grab-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-abbess/17-fire_aoe_ring-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        }
+      ]
+    },
+    {
+      "report": {
+        "kind": "Native visual fixture; no human gameplay claim",
+        "warmup": {
+          "milliseconds": 85.85029999994731,
+          "render_calls": 102,
+          "simulation_steps": 0,
+          "scope": "Already-created render/UI resources only",
+          "clips": 99,
+          "actors": 5
+        },
+        "source_build_id": "b80bde815bee1215",
+        "area": "forno_da_vigilia",
+        "boss": "last_ember_custodian",
+        "snapshot_preserved": true,
+        "transforms_preserved": true,
+        "visual_rng_preserved": true,
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "roll_forward",
+          "roll_back",
+          "roll_left",
+          "roll_right",
+          "backstep",
+          "block",
+          "block_hit",
+          "parry",
+          "hit",
+          "stagger",
+          "knockdown",
+          "drink",
+          "use_item",
+          "interact",
+          "death_front",
+          "death_back",
+          "death_fire",
+          "death_fall",
+          "wall_cling",
+          "airborne",
+          "slamming",
+          "slam_recovery",
+          "dashing",
+          "sliding",
+          "intro",
+          "phase",
+          "charging",
+          "light_1:windup",
+          "light_1:active",
+          "light_1:recovery",
+          "light_2:windup",
+          "light_2:active",
+          "light_2:recovery",
+          "light_3:windup",
+          "light_3:active",
+          "light_3:recovery",
+          "heavy:windup",
+          "heavy:active",
+          "heavy:recovery",
+          "running:windup",
+          "running:active",
+          "running:recovery",
+          "dash_attack:windup",
+          "dash_attack:active",
+          "dash_attack:recovery",
+          "sliding:windup",
+          "sliding:active",
+          "sliding:recovery",
+          "walking_attack:windup",
+          "walking_attack:active",
+          "walking_attack:recovery",
+          "riposte:windup",
+          "riposte:active",
+          "riposte:recovery",
+          "backstab:windup",
+          "backstab:active",
+          "backstab:recovery",
+          "slow_overhead:windup",
+          "slow_overhead:active",
+          "slow_overhead:recovery",
+          "wide_sweep:windup",
+          "wide_sweep:active",
+          "wide_sweep:recovery",
+          "backstep_punish:windup",
+          "backstep_punish:active",
+          "backstep_punish:recovery",
+          "forge_grab:windup",
+          "forge_grab:active",
+          "forge_grab:recovery",
+          "fire_aoe_ring:windup",
+          "fire_aoe_ring:active",
+          "fire_aoe_ring:recovery",
+          "tide_strike:windup",
+          "tide_strike:active",
+          "tide_strike:recovery",
+          "tide_sweep:windup",
+          "tide_sweep:active",
+          "tide_sweep:recovery",
+          "tide_bolt:windup",
+          "tide_bolt:active",
+          "tide_bolt:recovery",
+          "tide_grasp:windup",
+          "tide_grasp:active",
+          "tide_grasp:recovery",
+          "tide_nova:windup",
+          "tide_nova:active",
+          "tide_nova:recovery",
+          "arcane_bolt:windup",
+          "arcane_bolt:active",
+          "arcane_bolt:recovery",
+          "mending_light:windup",
+          "mending_light:active",
+          "mending_light:recovery",
+          "practice:windup",
+          "practice:active",
+          "practice:recovery"
+        ],
+        "screenshots": [
+          "00-idle.png",
+          "01-walk.png",
+          "02-run.png",
+          "03-roll_left.png",
+          "04-roll_back.png",
+          "05-light_1-windup.png",
+          "06-light_1-active.png",
+          "07-heavy-active.png",
+          "08-parry.png",
+          "09-drink.png",
+          "10-wall_cling.png",
+          "11-slamming.png",
+          "12-phase.png",
+          "13-death_front.png",
+          "14-slow_overhead-active.png",
+          "15-wide_sweep-active.png",
+          "16-forge_grab-active.png",
+          "17-fire_aoe_ring-active.png"
+        ],
+        "snapshot_preserved_after_gallery": true,
+        "phase_preparation": [
+          {
+            "phase": 2,
+            "snapshot_preserved": true,
+            "transition_steps_remaining": 90,
+            "queued_native_resources": 0
+          },
+          {
+            "phase": 3,
+            "snapshot_preserved": true,
+            "transition_steps_remaining": 90,
+            "queued_native_resources": 0
+          }
+        ]
+      },
+      "evidence": {
+        "path": "artifacts/animations/gallery-shipped-custodian/report.json",
+        "bytes": 3680,
+        "sha256": "99108215116cdd755127ae9481bdbf4a8109ce1d5bf640fbe5d5d3b4ac2f2c8b"
+      },
+      "images": [
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/00-idle.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/01-walk.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/02-run.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/03-roll_left.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/04-roll_back.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/05-light_1-windup.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/06-light_1-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/07-heavy-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/08-parry.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/09-drink.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/10-wall_cling.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/11-slamming.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/12-phase.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/13-death_front.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/14-slow_overhead-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/15-wide_sweep-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/16-forge_grab-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        },
+        {
+          "path": "artifacts/animations/gallery-shipped-custodian/17-fire_aoe_ring-active.png",
+          "bytes": 1003,
+          "sha256": "5149f272793c27bce589907344e1068ed5b652a22b762be160243ad3df3bbcdb"
+        }
+      ]
+    }
+  ],
+  "ui_galleries": [
+    {
+      "resolution": [
+        1280,
+        720
+      ],
+      "screens": 26,
+      "overflows": 0,
+      "empty_assets": false,
+      "evidence": {
+        "path": "artifacts/animations/ui-shipped/report.json",
+        "bytes": 3117,
+        "sha256": "7e9265c65c4680a79a87ac9a214f07d01870a692d91f97123662a816da562022"
+      }
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "screens": 26,
+      "overflows": 0,
+      "empty_assets": false,
+      "evidence": {
+        "path": "artifacts/animations/ui-shipped-1440/report.json",
+        "bytes": 3118,
+        "sha256": "f3fe6edbd9621d180567a92bfe78ebaa070e0555fae4fb28e6d24f536ffd4417"
+      }
+    },
+    {
+      "resolution": [
+        1280,
+        720
+      ],
+      "screens": 26,
+      "overflows": 0,
+      "empty_assets": true,
+      "evidence": {
+        "path": "artifacts/animations/ui-shipped-empty/report.json",
+        "bytes": 3065,
+        "sha256": "68db1dc0c73e8968947ae345d66d6fafdab1caaf6d692a0b729ccf6bde99354e"
+      }
+    }
+  ],
+  "performance": {
+    "status": "deferred_by_user",
+    "final_source_measured": false,
+    "accepted": false,
+    "user_choice": "Deixar a medição final para depois",
+    "accepted_historical_reference_ms": {
+      "median": 3.665,
+      "p95": 7.0191
+    },
+    "partial_runs": [
+      {
+        "name": "baseline-capped",
+        "metrics": {
+          "source_build_id": "8eacb704cd2fc5c1",
+          "valid_sample": true,
+          "minimized_frames": 0,
+          "excluded_samples": {
+            "count": 0,
+            "total_ms": 0.0,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 60.01,
+          "fps_cap": 60,
+          "fps": 59.99,
+          "median_frame_ms": 16.6662,
+          "p95_frame_ms": 16.7268,
+          "max_frame_ms": 25.236,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/baseline-capped.json",
+          "bytes": 52234,
+          "sha256": "4f6301e118ca4bc050a1f29a4325e8e1b1cab2fe666cc214ed2ffc6da555b931"
+        }
+      },
+      {
+        "name": "baseline-uncapped",
+        "metrics": {
+          "source_build_id": "8eacb704cd2fc5c1",
+          "valid_sample": true,
+          "minimized_frames": 0,
+          "excluded_samples": {
+            "count": 0,
+            "total_ms": 0.0,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 60.003,
+          "fps_cap": 0,
+          "fps": 227.05,
+          "median_frame_ms": 3.68865,
+          "p95_frame_ms": 7.4246,
+          "max_frame_ms": 15.514,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/baseline-uncapped.json",
+          "bytes": 177885,
+          "sha256": "6f9aa1d184e881b534b3d58d8321ceaec694708d004ecc7501b0c501611c6c89"
+        }
+      },
+      {
+        "name": "candidate-first-capped",
+        "metrics": {
+          "source_build_id": "93ea1948f50a0992",
+          "valid_sample": true,
+          "minimized_frames": 0,
+          "excluded_samples": {
+            "count": 0,
+            "total_ms": 0.0,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 60.007,
+          "fps_cap": 60,
+          "fps": 58.36,
+          "median_frame_ms": 16.6717,
+          "p95_frame_ms": 19.52,
+          "max_frame_ms": 50.141,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/candidate-first-capped.json",
+          "bytes": 51546,
+          "sha256": "a2b4f7d70b717356295eafe856c1cabb427c0785e2e574b695ec413a6104033b"
+        }
+      },
+      {
+        "name": "candidate-first-uncapped",
+        "metrics": {
+          "source_build_id": "93ea1948f50a0992",
+          "valid_sample": false,
+          "minimized_frames": 333,
+          "excluded_samples": {
+            "count": 333,
+            "total_ms": 41556.86,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 60.113,
+          "fps_cap": 0,
+          "fps": 33.57,
+          "median_frame_ms": 11.1005,
+          "p95_frame_ms": 125.9335,
+          "max_frame_ms": 155.994,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/candidate-first-uncapped.json",
+          "bytes": 30475,
+          "sha256": "38c9c99e8fa2ee940bd66fa27676afeb50cbae5fce899f1dd5e85f6265bae3b8"
+        }
+      },
+      {
+        "name": "smoke",
+        "metrics": {
+          "source_build_id": "93ea1948f50a0992",
+          "valid_sample": true,
+          "minimized_frames": 0,
+          "excluded_samples": {
+            "count": 0,
+            "total_ms": 0.0,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 2.0,
+          "fps_cap": 0,
+          "fps": 164.98,
+          "median_frame_ms": 5.05195,
+          "p95_frame_ms": 9.8603,
+          "max_frame_ms": 36.187,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/smoke.json",
+          "bytes": 13406,
+          "sha256": "d6c2621afbc72064af14b1d0e4d34f5a5ed9ad7fcca13fd9810881d50b549a20"
+        }
+      },
+      {
+        "name": "diagnostic-cpu",
+        "metrics": {
+          "source_build_id": "93ea1948f50a0992",
+          "valid_sample": true,
+          "minimized_frames": 0,
+          "excluded_samples": {
+            "count": 0,
+            "total_ms": 0.0,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 10.007,
+          "fps_cap": 0,
+          "fps": 92.44,
+          "median_frame_ms": 10.5673,
+          "p95_frame_ms": 16.1585,
+          "max_frame_ms": 39.317,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/diagnostic-cpu.json",
+          "bytes": 17301,
+          "sha256": "e7cb701f6b92ee2dc4fac029eacdeefe61ffd84444595399a9b706e6eab96a9b"
+        }
+      },
+      {
+        "name": "baseline-diagnostic-cpu",
+        "metrics": {
+          "source_build_id": "8eacb704cd2fc5c1",
+          "valid_sample": true,
+          "minimized_frames": 0,
+          "excluded_samples": {
+            "count": 0,
+            "total_ms": 0.0,
+            "reason": "window_minimized"
+          },
+          "window_type": "onscreen",
+          "seconds": 10.007,
+          "fps_cap": 0,
+          "fps": 172.58,
+          "median_frame_ms": 4.7238,
+          "p95_frame_ms": 9.8305,
+          "max_frame_ms": 14.034,
+          "qa_diagnostics": false
+        },
+        "accepted": false,
+        "reason": "Exploratory, earlier source, short, minimized or contended; not final-source acceptance",
+        "evidence": {
+          "path": "artifacts/animations/baseline-diagnostic-cpu.json",
+          "bytes": 26333,
+          "sha256": "5c3efdcaaa6d568e60babda2c4f1646edc8eba0fbb96510ea8eedb0d451b4373"
+        }
+      }
+    ],
+    "baseline_zip": {
+      "path": "artifacts/animations/baseline.zip",
+      "bytes": 18414884,
+      "sha256": "badfc06a168511f989f0972e0753e29bf5f427125d7b048bcd3adb09dd4ed218"
+    },
+    "gpu_workflow_executed": false,
+    "gl_finish_final_references_executed": false
+  },
+  "balance": {
+    "policy": "Beta with feedback",
+    "human_difficulty_measured": false,
+    "custodian_hp": 4700,
+    "custodian_agent_victory": {
+      "complete_attempt": 1,
+      "seconds": 200.167913,
+      "hp": 175.293,
+      "max_hp": 230
+    },
+    "warden_hp": 2720,
+    "warden_hp_reduction_percent": 15
+  },
+  "historical_render_stall": {
+    "milliseconds": 334.6945,
+    "cause": "unresolved",
+    "new_cause_claim": false
+  },
+  "black_startup": {
+    "status": "Observed with prior prewarm active; not reproduced in two later controls",
+    "cause": "unconfirmed"
+  },
+  "user_save_sha256": "f0b24f3a502357b263055447fe0c4942efe55a66fd4e78ec826ed5974cc198c6",
+  "user_save_preserved": true
+}

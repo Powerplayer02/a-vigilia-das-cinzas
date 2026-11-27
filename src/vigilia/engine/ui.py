@@ -3,11 +3,12 @@
 from collections.abc import Callable
 from pathlib import Path
 import unicodedata
+import math
 
 from direct.gui.DirectGui import DirectFrame, DirectButton, DirectEntry, DirectSlider
 from direct.gui import DirectGuiGlobals as DGG
 from direct.showbase.DirectObject import DirectObject
-from panda3d.core import TextNode, Filename, LineSegs, Texture
+from panda3d.core import TextNode, Filename, LineSegs, Texture, TransparencyAttrib
 
 from vigilia.core.views import Rect, Color
 from vigilia.core.palette import PALETTE
@@ -33,6 +34,10 @@ class PandaUIBackend(DirectObject):
         self.sprites, self.sprite_names = {}, {}
         self.atlas = SpriteAtlas(font_path.parent.parent / "ui_atlas" if font_path else None)
         self._transition_age = .15
+        self._bar_targets = {}
+        self._bar_active = set()
+        self._panel_fades = {}
+        self._closing_panels = []
         self.localizer = localizer
         self.capture_text = capture_text or (lambda active: None)
         self._feedback = feedback
@@ -89,6 +94,10 @@ class PandaUIBackend(DirectObject):
             node = owner.attach_new_node(key)
             node.set_pos(x, 0, -y)
         self.nodes[key] = node
+        if kind=='panel' and parent is None and width>=600 and height>=300:
+            node.set_transparency(TransparencyAttrib.M_alpha)
+            node.set_alpha_scale(0)
+            self._panel_fades[key]=0.
         if kind == "sprite":
             self.sprites[key] = self.atlas.attach(node, sprite, (0, 0, width, height))
             self.sprite_names[key] = sprite
@@ -151,7 +160,10 @@ class PandaUIBackend(DirectObject):
         self.nodes[key].show() if value else self.nodes[key].hide()
 
     def fraction(self, key: str, value: float) -> None:
-        self.nodes[key].set_sx(max(.00001, min(1, value)))
+        value=max(.00001,min(1,value))
+        if key not in self._bar_targets:self.nodes[key].set_sx(value)
+        else:self._bar_active.add(key)
+        self._bar_targets[key]=value
 
     def color(self, key: str, value: Color) -> None:
         node = self.nodes[key]
@@ -167,6 +179,7 @@ class PandaUIBackend(DirectObject):
     def focus_outline(self, key, value):
         if key in self.outlines:
             self.outlines[key].show() if value else self.outlines[key].hide()
+            self.nodes[key].set_color_scale((1.08,1.06,1.02,1) if value else (1,1,1,1))
 
     def scale_at(self, key, value, anchor):
         x, y, width, height = self.rects[key]
@@ -191,8 +204,29 @@ class PandaUIBackend(DirectObject):
         if self._transition_age < .15:
             self._transition_age += max(0, dt)
             self.root.set_alpha_scale(min(1, self._transition_age / .15))
+        weight=1-math.exp(-max(0,dt)/.055)
+        for key in tuple(self._bar_active):
+            node=self.nodes[key];target=self._bar_targets[key]
+            value=node.get_sx()+(target-node.get_sx())*weight
+            if abs(value-target)<.001:value=target;self._bar_active.remove(key)
+            node.set_sx(value)
+        for key in tuple(self._panel_fades):
+            age=self._panel_fades[key]+max(0,dt);self._panel_fades[key]=age
+            t=min(1,age/.15);self.nodes[key].set_alpha_scale(t*t*(3-2*t))
+            if t==1:del self._panel_fades[key]
+        for entry in tuple(self._closing_panels):
+            entry[1]+=max(0,dt);t=min(1,entry[1]/.15)
+            entry[0].set_alpha_scale(entry[2]*(1-t*t*(3-2*t)))
+            if t==1:entry[0].remove_node();self._closing_panels.remove(entry)
 
     def destroy(self, key: str) -> None:
+        rect=self.rects.get(key)
+        if self.parents.get(key) is None and rect and rect[2]>=600 and rect[3]>=300 and not self.nodes[key].is_hidden():
+            copy=self.nodes[key].copy_to(self.root)
+            copy.set_transparency(TransparencyAttrib.M_alpha)
+            for item in copy.find_all_matches('**/+PGItem'):item.node().set_active(False)
+            if hasattr(copy.node(),'set_active'):copy.node().set_active(False)
+            self._closing_panels.append([copy,0.,copy.get_color_scale().w])
         for child in [name for name, parent in self.parents.items() if parent == key]:
             self.destroy(child)
         node = self.nodes.pop(key)
@@ -206,9 +240,12 @@ class PandaUIBackend(DirectObject):
         self.rects.pop(key, None)
         self.sprites.pop(key, None)
         self.sprite_names.pop(key, None)
+        self._bar_active.discard(key);self._bar_targets.pop(key,None);self._panel_fades.pop(key,None)
 
     def close(self) -> None:
         self.ignoreAll()
         for key in [name for name, parent in self.parents.items() if parent is None]:
             self.destroy(key)
         self.root.remove_node()
+        for node,*_ in self._closing_panels:node.remove_node()
+        self._closing_panels.clear()

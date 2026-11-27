@@ -284,3 +284,40 @@ simulação. Teste nativo65,8441ms, snapshot preservado. A medida é defensiva;
 assets ainda não criados não são cobertos. 716 testes locais passaram.
 Detalhes, limitações e evidências: `docs/qa/render-investigation-2026-11-27.md`.
 O pico de combate continua sem causa; fase4 permanece pendente.
+
+## Fase 4 — implementação para revisão, aceite de GPU pendente
+
+O usuário liberou o início das animações, mantendo a causa histórica aberta.
+O mixer agora apresenta jogador, seis perfis comuns e os três chefes, incluindo
+transições2/3 e variantes dos ataques existentes. São99 entradas de pose,
+incluindo windup/active/recovery; não são99 modelos, shaders ou movimentos novos.
+O passo fixo e as tabelas de chefes permanecem iguais à revisão6d079709.
+
+Carregamento prepara os rigs, o frasco e os dois estados do pool de partículas
+sob cobertura, preservando snapshot/transforms/RNG visual. Na transição, o
+evento enfileira recursos existentes; o render normal consome a fila sem
+rodar outro passo de combate. Testes nativos dos três chefes preservaram os
+90 passos de transição; a fila de preparação do Panda foi consumida no teste.
+
+A comparação de GPU não foi aceita: houve um controle livre minimizado e
+atividade concorrente de outro jogo. A primeira amostra limitada válida
+também não atingiu a média anterior de59,5FPS. Não se atribui essa diferença
+inteira ao ambiente ou ao código sem repetir o controle. Houve alterações
+posteriores para evitar setters redundantes, ainda sem benchmark final.
+O usuário escolheu **deixar a medição final para depois**. Não houve nova
+medição de FPS após essa decisão. O workflowGPU foi preparado, não executado.
+
+Política de balanceamento: beta com feedback. Custódio4.700HP, dano+10% e
+cadência atual preservados; vitória completa#1 do agente com175,293/230HP,
+em200,167913s. Vigia2.720HP após redução15%. Esses resultados não medem
+dificuldade humana, leitura dos telegraphs ou pressão percebida.
+O feedback deve orientar patches de HP/dano/cadência, inclusive a curva entre
+Vigia e Custódio, após partidas humanas. O formulário é o canal de calibração;
+patches de balanceamento pós-lançamento fazem parte desta política beta.
+Nenhum buff adicional foi aplicado sem novos dados.
+
+O pico histórico e a abertura preta não foram atribuídos a first-use. Esta
+última já ocorreu com o aquecimento anterior ativo e não se repetiu nos dois
+controles seguintes; fica registrada, sem nova perseguição nesta fase.
+Não há certificação de release1.0 nem de desempenho nesta entrega.
+Relatório: `docs/qa/animations-2026-11-27.md`.
