@@ -34,6 +34,7 @@ class VitalsView:
     spell_remaining: float = 0
     spell_duration: float = 0
     spell_ready: bool = False
+    weapon_icon: str = "sword"
 
 
 @dataclass(frozen=True, slots=True)

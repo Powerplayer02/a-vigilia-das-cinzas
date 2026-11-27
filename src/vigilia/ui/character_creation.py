@@ -4,7 +4,7 @@ import json
 
 from vigilia.core.views import UICommand, UICommandKind as C
 from vigilia.ui.main_menu import sheet
-from vigilia.ui.widgets import Label, Button, Grid, TextInput
+from vigilia.ui.widgets import Label, Button, Grid, TextInput, FOCUS
 from vigilia.ui.text_render import GOLD, MUTED, SECONDARY
 
 
@@ -31,7 +31,8 @@ class CharacterCreation:
         Label(b, "front.name.label", b.t("character.name"), (404, 118, 200, 26), parent="front", size=SECONDARY)
         self.entry = TextInput(b, "front.name", self.name, (402, 146, 300, 42), parent="front")
         self.buttons = [Button(b, f"front.class.{profile.id}", profile.name, (164, 146 + i * 66, 208, 54),
-            lambda index=i: self.select_class(index), parent="front") for i, profile in enumerate(self.classes)]
+            lambda index=i: self.select_class(index), parent="front",
+            icon={"knight":"shield","warrior":"axe","assassin":"katana","mage":"staff","cleric":"healing"}.get(profile.id,"helm")) for i, profile in enumerate(self.classes)]
         self.buttons.append(Button(b, "front.name.edit", b.t("character.name_edit"), (744, 146, 352, 42), self.entry.focus, parent="front", size=SECONDARY))
         profile = self.classes[self.class_index]
         Label(b, "front.points", b.t("character.points", points=self.remaining), (404, 202, 690, 30), parent="front", color=GOLD)
@@ -58,8 +59,8 @@ class CharacterCreation:
         self.buttons.append(Button(b, "front.start", b.t("character.start"), (816, 600, 280, 38), self.create, parent="front", size=SECONDARY))
         self.grid = Grid(self.buttons)
         self.grid.select(focus)
-        self.backend.color("front.class." + profile.id, (.24, .19, .105, 1))
-        self.backend.color(f"front.destination.{self.slot}", (.24, .19, .105, 1))
+        self.backend.color("front.class." + profile.id, FOCUS)
+        self.backend.color(f"front.destination.{self.slot}", FOCUS)
 
     def select_class(self, index):
         self.class_index = index % len(self.classes)

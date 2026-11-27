@@ -2,11 +2,12 @@
 
 from vigilia.core.protocols import IUIBackend
 from vigilia.core.views import Color, Rect
+from vigilia.core.palette import PALETTE
 
 SECONDARY, PRIMARY, TITLE, BOSS_NAME = 14, 20, 28, 44
-INK: Color = (.94, .90, .79, 1)
-MUTED: Color = (.64, .68, .68, 1)
-GOLD: Color = (.91, .69, .32, 1)
+INK: Color = PALETTE["ink"]
+MUTED: Color = PALETTE["muted"]
+GOLD: Color = PALETTE["gold"]
 
 
 def t(backend: IUIBackend, key: str, **values) -> str:

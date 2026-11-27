@@ -1,0 +1,747 @@
+{
+  "date": "2026-11-27",
+  "local_tests": {
+    "passed": 712,
+    "seconds": 17.9
+  },
+  "galleries": [
+    {
+      "resolution": [
+        1280,
+        720
+      ],
+      "screens": [
+        {
+          "screen": "main-menu",
+          "image": "main-menu.png",
+          "overflows": [],
+          "sha256": "4933b471766361d7003b6d1afa44b320d6041589bbfd0d474663b668ce8e38a9"
+        },
+        {
+          "screen": "slots",
+          "image": "slots.png",
+          "overflows": [],
+          "sha256": "276cc17a8e58a35a3067bdaf4fb631a89ef09101abe2427fcedec2cab6dffdc9"
+        },
+        {
+          "screen": "character-creation",
+          "image": "character-creation.png",
+          "overflows": [],
+          "sha256": "1e58bada03ad8caab25c2e575d5f4736f47caf284f1e8e0053f658e5222a6317"
+        },
+        {
+          "screen": "character-knight",
+          "image": "character-knight.png",
+          "overflows": [],
+          "sha256": "1f35ba07cdfa3960d666ba1c32ab24853a176c4a3ba7f6c303c802ece220360d"
+        },
+        {
+          "screen": "character-assassin",
+          "image": "character-assassin.png",
+          "overflows": [],
+          "sha256": "0b0758e177a128da5dd1ded1e7b724baebd9c126eb3f972396e9d7b36d879831"
+        },
+        {
+          "screen": "character-mage",
+          "image": "character-mage.png",
+          "overflows": [],
+          "sha256": "f7317f916ca6f6d9ac1c399e4f829d7a3fb54598bc4631ef75c9f9ae5a7a497c"
+        },
+        {
+          "screen": "character-cleric",
+          "image": "character-cleric.png",
+          "overflows": [],
+          "sha256": "a53cbeda0bf8136b2cf3a0d54405949bd78f934421cee57c60405aa4118b1db7"
+        },
+        {
+          "screen": "options-graphics",
+          "image": "options-graphics.png",
+          "overflows": [],
+          "sha256": "287223ee0a1c1f85d24a3fa61e2aed2d14a3d2305412c6fef92d32e1b7781621"
+        },
+        {
+          "screen": "options-audio",
+          "image": "options-audio.png",
+          "overflows": [],
+          "sha256": "4b57ba13a084361bdce311fed32928e43c7798142fdce65aeb52b9115cb89470"
+        },
+        {
+          "screen": "options-controls",
+          "image": "options-controls.png",
+          "overflows": [],
+          "sha256": "cd1ba33641f1fb06d640be60719d4ae14de0ea38461acc5ec5dcfec9cdd22099"
+        },
+        {
+          "screen": "options-language",
+          "image": "options-language.png",
+          "overflows": [],
+          "sha256": "922fbd7c54f700a8afa8475590bba5b8c3f35a007e367b654d37c6df03ec7e95"
+        },
+        {
+          "screen": "options-accessibility",
+          "image": "options-accessibility.png",
+          "overflows": [],
+          "sha256": "15da0888a358495f0d5a4f7781365d12214e28001954e56b8f1780078390fe19"
+        },
+        {
+          "screen": "options-hud-150",
+          "image": "options-hud-150.png",
+          "overflows": [],
+          "sha256": "e7d1f13ecaec5df884afa014b7d9008d16f5742402c60a15c0734e6003e8bc63"
+        },
+        {
+          "screen": "credits",
+          "image": "credits.png",
+          "overflows": [],
+          "sha256": "b60c7f25ef7189d7f9b4e486de9356fadad1304dcda7ed091ec6101069b69caa"
+        },
+        {
+          "screen": "dialog",
+          "image": "dialog.png",
+          "overflows": [],
+          "sha256": "4cb62990c9ea68ce9b21cde2f7a911ba6f4f6a518aa4518181fd4d267d742371"
+        },
+        {
+          "screen": "pause",
+          "image": "pause.png",
+          "overflows": [],
+          "sha256": "89bac50287e8a8534bf0bfa1654827775fce31fd03d9d47b78a1f632dd9c7954"
+        },
+        {
+          "screen": "status",
+          "image": "status.png",
+          "overflows": [],
+          "sha256": "89bac50287e8a8534bf0bfa1654827775fce31fd03d9d47b78a1f632dd9c7954"
+        },
+        {
+          "screen": "inventory",
+          "image": "inventory.png",
+          "overflows": [],
+          "sha256": "f45ebcf4fba4471d1da33f4325bdd1feb78b33aadcf6dc6b45d1e060e75802e9"
+        },
+        {
+          "screen": "equipment",
+          "image": "equipment.png",
+          "overflows": [],
+          "sha256": "06054eac3018449fba94ec0ce42dd9f2f775d3355a5637fcd27b8efad5233d2d"
+        },
+        {
+          "screen": "level",
+          "image": "level.png",
+          "overflows": [],
+          "sha256": "4aa22a5622a565ba557de2ad7a1245718da6fde7d21315349df2620c5352b7f3"
+        },
+        {
+          "screen": "map",
+          "image": "map.png",
+          "overflows": [],
+          "sha256": "2d94b2fd97929984cd7139db9ba94d43a55f572c235750011260a92882b0670f"
+        },
+        {
+          "screen": "ending",
+          "image": "ending.png",
+          "overflows": [],
+          "sha256": "8198068f33513d8a8a6fdd79870cdfe2d8f36ba18831e7be6ad9ae56c21d0067"
+        },
+        {
+          "screen": "ending-confirmation",
+          "image": "ending-confirmation.png",
+          "overflows": [],
+          "sha256": "762acbd3266d7304cf7a501ea4f52be7d4ebbcd0b26d5f97063ea63a28a08396"
+        },
+        {
+          "screen": "hud",
+          "image": "hud.png",
+          "overflows": [],
+          "sha256": "7683a5c94a39a7e8f2bf1865ce5d475d29d1afae1ebbe5767b30428864b6b03c"
+        },
+        {
+          "screen": "hud-boss",
+          "image": "hud-boss.png",
+          "overflows": [],
+          "sha256": "f9ff1dad659b70e9609f7c491a4324be77e5f9b1bca30579b3b317fa4628d6f9"
+        },
+        {
+          "screen": "hud-accessible",
+          "image": "hud-accessible.png",
+          "overflows": [],
+          "sha256": "c952f679b89bbcc6fa49fd064088a78014f77dc0694e814b42ffb59d359e389e"
+        }
+      ],
+      "atlas_source": "atlas",
+      "mipmaps": 0,
+      "shared_font": true,
+      "font_source": "assets/fonts/ui.ttf",
+      "font_sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "empty_assets": false,
+      "scope": "Presentation fixtures; not human perception or gameplay difficulty",
+      "raw_file": "artifacts/sprites/gallery-720/report.json",
+      "raw_sha256": "7e9265c65c4680a79a87ac9a214f07d01870a692d91f97123662a816da562022"
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "screens": [
+        {
+          "screen": "main-menu",
+          "image": "main-menu.png",
+          "overflows": [],
+          "sha256": "56fabd03f4f195f432aba984c1c6d49a0de2bec9eb344fa75baba1ec9883c950"
+        },
+        {
+          "screen": "slots",
+          "image": "slots.png",
+          "overflows": [],
+          "sha256": "50072a6a1e6d4062ac528227c0b625dbaef0447ef7e49e437e22ec400bfed370"
+        },
+        {
+          "screen": "character-creation",
+          "image": "character-creation.png",
+          "overflows": [],
+          "sha256": "e3c9ba91d560c95d270ba52db520452c3b7df26163ee624049ec3fef4f880918"
+        },
+        {
+          "screen": "character-knight",
+          "image": "character-knight.png",
+          "overflows": [],
+          "sha256": "62b65189a7dc8b3608e635160aa72a5c0b3b21f05247a59806f79a66a0997f15"
+        },
+        {
+          "screen": "character-assassin",
+          "image": "character-assassin.png",
+          "overflows": [],
+          "sha256": "aa914f30b6dc5d2a4b48df4c03fa229ff421646edf922a0efb320a72614314ba"
+        },
+        {
+          "screen": "character-mage",
+          "image": "character-mage.png",
+          "overflows": [],
+          "sha256": "2b1ec745f1e3ebc86209fcd188a7e9a632009c1d7b2e1dc1ceb26a3fced1f4a9"
+        },
+        {
+          "screen": "character-cleric",
+          "image": "character-cleric.png",
+          "overflows": [],
+          "sha256": "d6bf23bec399471631cde96f4d0df3a4a31f4df87dd4042f265b7c15f786174b"
+        },
+        {
+          "screen": "options-graphics",
+          "image": "options-graphics.png",
+          "overflows": [],
+          "sha256": "43148d7c3e630374af28fa5c908ee5865b39898c46c937c1bcdd0aded92b10bd"
+        },
+        {
+          "screen": "options-audio",
+          "image": "options-audio.png",
+          "overflows": [],
+          "sha256": "f8d95f425feec58e28f46148b3a294fda602495e6a0cd34b5df8397469c00f72"
+        },
+        {
+          "screen": "options-controls",
+          "image": "options-controls.png",
+          "overflows": [],
+          "sha256": "533f18767d33f9d13afd8572579291a8bebb2ad18b54d53d3161520dceee58bb"
+        },
+        {
+          "screen": "options-language",
+          "image": "options-language.png",
+          "overflows": [],
+          "sha256": "2f7412048db1c4039b85fac49c4b51198ec3265691a9112eaa7640194ab024c3"
+        },
+        {
+          "screen": "options-accessibility",
+          "image": "options-accessibility.png",
+          "overflows": [],
+          "sha256": "b466717e3e7380d5183946072f9c3be3c29f97f2084a38ae8bafc3612854f73c"
+        },
+        {
+          "screen": "options-hud-150",
+          "image": "options-hud-150.png",
+          "overflows": [],
+          "sha256": "118282acf0c1c9caeff36b1434a620d5fdae76f36e5b268f76a59c1be8c56a21"
+        },
+        {
+          "screen": "credits",
+          "image": "credits.png",
+          "overflows": [],
+          "sha256": "c1521deebf6d56425abb841aec794ed91e41fa6d49e1e052b6eda2781013e090"
+        },
+        {
+          "screen": "dialog",
+          "image": "dialog.png",
+          "overflows": [],
+          "sha256": "de63d0f22651d9b0250c0cb8e5bbe5c6ab7fcafedcebfbb97704d2e3f1338ce7"
+        },
+        {
+          "screen": "pause",
+          "image": "pause.png",
+          "overflows": [],
+          "sha256": "21cfee2f24f2b4029d51c375bdb2eadc4fb8c84a80e099f1f747a36f2c688614"
+        },
+        {
+          "screen": "status",
+          "image": "status.png",
+          "overflows": [],
+          "sha256": "21cfee2f24f2b4029d51c375bdb2eadc4fb8c84a80e099f1f747a36f2c688614"
+        },
+        {
+          "screen": "inventory",
+          "image": "inventory.png",
+          "overflows": [],
+          "sha256": "2a936ba928d5f2ba1b89ecf96078954086d5ee5ab19fdb58b187002de07506ad"
+        },
+        {
+          "screen": "equipment",
+          "image": "equipment.png",
+          "overflows": [],
+          "sha256": "779c03b8477a469a80e82a69fea9d038b43ded18ccc95b48a11ad27a25992cdc"
+        },
+        {
+          "screen": "level",
+          "image": "level.png",
+          "overflows": [],
+          "sha256": "548091370e528d062b5dc5aed4515a44235a4fd01b5933fee828f0124474f610"
+        },
+        {
+          "screen": "map",
+          "image": "map.png",
+          "overflows": [],
+          "sha256": "3ab70cc8cfb2cf9973145ceda3262826abffe1af585e31606eb193f437b42424"
+        },
+        {
+          "screen": "ending",
+          "image": "ending.png",
+          "overflows": [],
+          "sha256": "e14664907b6c8eab829ecde84611da10e9331150c26b08390ab745008f742907"
+        },
+        {
+          "screen": "ending-confirmation",
+          "image": "ending-confirmation.png",
+          "overflows": [],
+          "sha256": "73431aea91a1633c1c40735b46d38973b36758e4c04d5f2f1db47b9b65233847"
+        },
+        {
+          "screen": "hud",
+          "image": "hud.png",
+          "overflows": [],
+          "sha256": "51c63cd97adea30ed6f47b7c6061f89d5d80f2593d944fa167eafc10b3f8918c"
+        },
+        {
+          "screen": "hud-boss",
+          "image": "hud-boss.png",
+          "overflows": [],
+          "sha256": "530fce826df673321126f2bf27bbd779e7472b160b09666c6cdc74ae4e4e1f64"
+        },
+        {
+          "screen": "hud-accessible",
+          "image": "hud-accessible.png",
+          "overflows": [],
+          "sha256": "b00eb136dd79f9adec81b4cbea2b89553515fcdedc20eed7a64fb6ba8cf59681"
+        }
+      ],
+      "atlas_source": "atlas",
+      "mipmaps": 0,
+      "shared_font": true,
+      "font_source": "assets/fonts/ui.ttf",
+      "font_sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "empty_assets": false,
+      "scope": "Presentation fixtures; not human perception or gameplay difficulty",
+      "raw_file": "artifacts/sprites/gallery-1080/report.json",
+      "raw_sha256": "bba74d2a358fbd7c3493d019be6ab7dcb933dfc8901414f4baf0d97a07a8a972"
+    },
+    {
+      "resolution": [
+        2560,
+        1440
+      ],
+      "screens": [
+        {
+          "screen": "main-menu",
+          "image": "main-menu.png",
+          "overflows": [],
+          "sha256": "a1083abc3903f1c046332bd3de7eea7ed2312eb335bf9eb115eda2b1467e8c61"
+        },
+        {
+          "screen": "slots",
+          "image": "slots.png",
+          "overflows": [],
+          "sha256": "151710a0466791bac5f5672b209a6605cb72cc50501ea0f063d29d94d75000e1"
+        },
+        {
+          "screen": "character-creation",
+          "image": "character-creation.png",
+          "overflows": [],
+          "sha256": "a137c4f0c4f33f5f83ad5f1523f412e8d369819db42bb1e3c3d59e6f9b8fe72b"
+        },
+        {
+          "screen": "character-knight",
+          "image": "character-knight.png",
+          "overflows": [],
+          "sha256": "14104f5f8874c2fb010fec8405d20947eb651a81c32917c2e774c2fba8cc8f4e"
+        },
+        {
+          "screen": "character-assassin",
+          "image": "character-assassin.png",
+          "overflows": [],
+          "sha256": "8d65d533073c1259d80f32fd36acb8a968c5a98bc0025bc3e26912d196e7c19e"
+        },
+        {
+          "screen": "character-mage",
+          "image": "character-mage.png",
+          "overflows": [],
+          "sha256": "429dc37904c2261c14a0109fd886772b840b690e4ecfeb2ed3f35f452041f2ec"
+        },
+        {
+          "screen": "character-cleric",
+          "image": "character-cleric.png",
+          "overflows": [],
+          "sha256": "c9630eae9c4719f14ddc822d6105c58fe504b75a7fe505a749555ed03cc81c0b"
+        },
+        {
+          "screen": "options-graphics",
+          "image": "options-graphics.png",
+          "overflows": [],
+          "sha256": "133b04c410c8de8702c83e35f8748b81ff0ecec046c4ef8b9c7fbb901f4f8d01"
+        },
+        {
+          "screen": "options-audio",
+          "image": "options-audio.png",
+          "overflows": [],
+          "sha256": "7c4ce6b76208cf15ef3b15501ec115e508d3ff1486ebc156c19991a244607a41"
+        },
+        {
+          "screen": "options-controls",
+          "image": "options-controls.png",
+          "overflows": [],
+          "sha256": "8b312579f8736ae58beef283801142f7ff34e13f18772d124456d4c3e590769c"
+        },
+        {
+          "screen": "options-language",
+          "image": "options-language.png",
+          "overflows": [],
+          "sha256": "e1d1129f95e995cfb2245b5c690493c4aadb0683391d1c34ef0cdba5b6ba6682"
+        },
+        {
+          "screen": "options-accessibility",
+          "image": "options-accessibility.png",
+          "overflows": [],
+          "sha256": "f6b92fca707ccf4b4a74617045e2798608e2d51b3cd867054481d4f38ef3dc6e"
+        },
+        {
+          "screen": "options-hud-150",
+          "image": "options-hud-150.png",
+          "overflows": [],
+          "sha256": "b9e65ab08700a22b15aa2fb9bd91188e99d7fe248821328900e6af8d237933bb"
+        },
+        {
+          "screen": "credits",
+          "image": "credits.png",
+          "overflows": [],
+          "sha256": "ff0293f523a15256985997c09733d1e32c03d6e1dc2ff6a9d50cbdcab8249065"
+        },
+        {
+          "screen": "dialog",
+          "image": "dialog.png",
+          "overflows": [],
+          "sha256": "d7d5d5e04b11d06cc479d959d812412acc3a0b32382ded0c5fc96e85b2c54499"
+        },
+        {
+          "screen": "pause",
+          "image": "pause.png",
+          "overflows": [],
+          "sha256": "fc579baa9d5d1d1097e05d4d5334465c28990870e9f640af0273572a00cf8dfd"
+        },
+        {
+          "screen": "status",
+          "image": "status.png",
+          "overflows": [],
+          "sha256": "fc579baa9d5d1d1097e05d4d5334465c28990870e9f640af0273572a00cf8dfd"
+        },
+        {
+          "screen": "inventory",
+          "image": "inventory.png",
+          "overflows": [],
+          "sha256": "f323b97d9a0118f0c70f9e363be697507e233dbb30edc9a0439d7f8524a56b93"
+        },
+        {
+          "screen": "equipment",
+          "image": "equipment.png",
+          "overflows": [],
+          "sha256": "003cc399a945f6d1bc49ad62157955a888ff48b1615caa63632d6c9f29606e2a"
+        },
+        {
+          "screen": "level",
+          "image": "level.png",
+          "overflows": [],
+          "sha256": "d89f730bdcf6a3087a7f6bc60a67ccc9915f815fe9f4ae6d74259c5254461502"
+        },
+        {
+          "screen": "map",
+          "image": "map.png",
+          "overflows": [],
+          "sha256": "91bbfb9fdd713ae9c883b4c67d5456573a2e8946ec923af05a20592bb6c6f73e"
+        },
+        {
+          "screen": "ending",
+          "image": "ending.png",
+          "overflows": [],
+          "sha256": "8ab4e5eaf3cf20beb3961611d4514e3a5beb9165f3b5fdd0a2d8c40c5b6e9eba"
+        },
+        {
+          "screen": "ending-confirmation",
+          "image": "ending-confirmation.png",
+          "overflows": [],
+          "sha256": "d7aac4964b03f4e08658fd6ff614cbc6320beeb5059d41f475e249a6abd2b52b"
+        },
+        {
+          "screen": "hud",
+          "image": "hud.png",
+          "overflows": [],
+          "sha256": "d5695e83324c1e3aa5a34833974d2b4135e164f1ca6b3b67212d82cd1c697d30"
+        },
+        {
+          "screen": "hud-boss",
+          "image": "hud-boss.png",
+          "overflows": [],
+          "sha256": "23574d9e1008eb024a2ff3e36de6e098bb3e1fdeaf9d73159a86bc865d20b748"
+        },
+        {
+          "screen": "hud-accessible",
+          "image": "hud-accessible.png",
+          "overflows": [],
+          "sha256": "a36c9ec662571724e104f817a204ec22367329f57a8cde78d8367628548a45b9"
+        }
+      ],
+      "atlas_source": "atlas",
+      "mipmaps": 0,
+      "shared_font": true,
+      "font_source": "assets/fonts/ui.ttf",
+      "font_sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "empty_assets": false,
+      "scope": "Presentation fixtures; not human perception or gameplay difficulty",
+      "raw_file": "artifacts/sprites/gallery-1440/report.json",
+      "raw_sha256": "f3fe6edbd9621d180567a92bfe78ebaa070e0555fae4fb28e6d24f536ffd4417"
+    },
+    {
+      "resolution": [
+        1280,
+        720
+      ],
+      "screens": [
+        {
+          "screen": "main-menu",
+          "image": "main-menu.png",
+          "overflows": [],
+          "sha256": "0a6327dc8298f80310aa9622bdbcd54bd974e2d272ce78028e95dba932023bdc"
+        },
+        {
+          "screen": "slots",
+          "image": "slots.png",
+          "overflows": [],
+          "sha256": "7cff59a90b75721840d5c7401b766d885b88313d37c708a1ba0fafc840d40599"
+        },
+        {
+          "screen": "character-creation",
+          "image": "character-creation.png",
+          "overflows": [],
+          "sha256": "aea4bba234bd079a6903c891313aca5cd8179280925b81017d07912d6dbcd730"
+        },
+        {
+          "screen": "character-knight",
+          "image": "character-knight.png",
+          "overflows": [],
+          "sha256": "4167763d3c03a843cf858534c8d78daf3791438430d2b0ebe7f6c33f6bb13530"
+        },
+        {
+          "screen": "character-assassin",
+          "image": "character-assassin.png",
+          "overflows": [],
+          "sha256": "f91f866654b9931d48f2e33d35f0f622ea3ed28dd9b017cb19180e6b650572f3"
+        },
+        {
+          "screen": "character-mage",
+          "image": "character-mage.png",
+          "overflows": [],
+          "sha256": "c36b215821e267761737e7c42853745991c5ebcb2a6d42daba85c04b55506982"
+        },
+        {
+          "screen": "character-cleric",
+          "image": "character-cleric.png",
+          "overflows": [],
+          "sha256": "f8953dd708dd2906e73038584fad32483f918c8c0bf2b4b526b12394f8b084ef"
+        },
+        {
+          "screen": "options-graphics",
+          "image": "options-graphics.png",
+          "overflows": [],
+          "sha256": "55daa34d613a60b33201930fcca6e2cacd789c821c6b99d4126106d99634f1e5"
+        },
+        {
+          "screen": "options-audio",
+          "image": "options-audio.png",
+          "overflows": [],
+          "sha256": "ab91180d16da241f6b8455bfe156584d5fc6f4179868d7816c31b74a6e353f27"
+        },
+        {
+          "screen": "options-controls",
+          "image": "options-controls.png",
+          "overflows": [],
+          "sha256": "ca4763f6d2665af8ad408b806f1583e6426639caf8c1f8c7b0543734aba2f7fa"
+        },
+        {
+          "screen": "options-language",
+          "image": "options-language.png",
+          "overflows": [],
+          "sha256": "34fd293440383bc4fea124c8b18cbb60c0e3303d8cf3605744ae56a0a3f319e0"
+        },
+        {
+          "screen": "options-accessibility",
+          "image": "options-accessibility.png",
+          "overflows": [],
+          "sha256": "f1579b7dcc040a349ab5bb8e132665d72189bcf88deed2d2cac8e7e9cdfeb104"
+        },
+        {
+          "screen": "options-hud-150",
+          "image": "options-hud-150.png",
+          "overflows": [],
+          "sha256": "0f10766c00943f89655fb5d3eb8ce9eece3b2c9a355a3ee5965bafc14238272d"
+        },
+        {
+          "screen": "credits",
+          "image": "credits.png",
+          "overflows": [],
+          "sha256": "d58dfb5f07d32614a0ec6b4b4c1863ef49b87accdf436c068423ae9e9fd67ff9"
+        },
+        {
+          "screen": "dialog",
+          "image": "dialog.png",
+          "overflows": [],
+          "sha256": "42deaf51c0909c55f0d6f4e0c4748e13049a3a396f8910ef2e89b2cab31ae7d6"
+        },
+        {
+          "screen": "pause",
+          "image": "pause.png",
+          "overflows": [],
+          "sha256": "c18315a24f73f9416fb0ac49fe7c47f4748ba573f76b9b8493f6436a81d6b955"
+        },
+        {
+          "screen": "status",
+          "image": "status.png",
+          "overflows": [],
+          "sha256": "c18315a24f73f9416fb0ac49fe7c47f4748ba573f76b9b8493f6436a81d6b955"
+        },
+        {
+          "screen": "inventory",
+          "image": "inventory.png",
+          "overflows": [],
+          "sha256": "0290b8ea83e5a4706d64a91b0faea6fbdd416720a5c525a9b999782e8d811e6f"
+        },
+        {
+          "screen": "equipment",
+          "image": "equipment.png",
+          "overflows": [],
+          "sha256": "63ef5a1c93a94688bc61a298d1961735a27c79f21bf73386ab2b34189adc9ac6"
+        },
+        {
+          "screen": "level",
+          "image": "level.png",
+          "overflows": [],
+          "sha256": "e70673826ef54e230d096425b29e6dee084f3de2fe0b3fed18109228b6b17ea8"
+        },
+        {
+          "screen": "map",
+          "image": "map.png",
+          "overflows": [],
+          "sha256": "ac41cafe0acf20a587839d86ea4a9448dd882051cb7a35ebf84ecc09c323f580"
+        },
+        {
+          "screen": "ending",
+          "image": "ending.png",
+          "overflows": [],
+          "sha256": "7c6636084f1618f9e804985a9ddb35ad07f2f39a2dd9f6cef57d93b53c4aa58f"
+        },
+        {
+          "screen": "ending-confirmation",
+          "image": "ending-confirmation.png",
+          "overflows": [],
+          "sha256": "cc27094be4e118d2a04357cf58d0aa486eddc7a568f7d7119103c13c995f0b5e"
+        },
+        {
+          "screen": "hud",
+          "image": "hud.png",
+          "overflows": [],
+          "sha256": "adf2a61e313ccf3fbf72cd0df7e45b8ea3ef5b2814589f98eca51682b125c93b"
+        },
+        {
+          "screen": "hud-boss",
+          "image": "hud-boss.png",
+          "overflows": [],
+          "sha256": "68ff680b5110dce320253c497cff14b6c13db75ecefbfc83c6d724d5e0efb962"
+        },
+        {
+          "screen": "hud-accessible",
+          "image": "hud-accessible.png",
+          "overflows": [],
+          "sha256": "3704c9a9b375d84824d3ed31bd4645c625bdea05278d8f58adcfd9ab77beb3a7"
+        }
+      ],
+      "atlas_source": "procedural",
+      "mipmaps": 11,
+      "shared_font": true,
+      "font_source": "cmss12 (engine fallback)",
+      "font_sha256": null,
+      "empty_assets": true,
+      "scope": "Presentation fixtures; not human perception or gameplay difficulty",
+      "raw_file": "artifacts/sprites/gallery-empty/report.json",
+      "raw_sha256": "68db1dc0c73e8968947ae345d66d6fafdab1caaf6d692a0b729ccf6bde99354e"
+    }
+  ],
+  "atlas": {
+    "revision": 1,
+    "size": 1024,
+    "cell": 128,
+    "gutter": 8,
+    "names": [
+      "panel",
+      "button",
+      "ember",
+      "sword",
+      "axe",
+      "katana",
+      "staff",
+      "mace",
+      "shield",
+      "helm",
+      "armor",
+      "ring",
+      "flask",
+      "shard",
+      "heart",
+      "stamina",
+      "soul",
+      "bleed",
+      "poison",
+      "frost",
+      "curse",
+      "healing",
+      "spell",
+      "map",
+      "bonfire",
+      "player",
+      "settings",
+      "volume",
+      "controls",
+      "save",
+      "exit",
+      "back",
+      "confirm",
+      "chevron",
+      "levels",
+      "credits"
+    ],
+    "palette_sha256": "a1cf64205c55b24c02d864536ea3db6ae9c0c41f94f45dfeea9a11e1bcc55208",
+    "png_sha256": "ca13b61b1118558dc15c62793261536c24653dd360a45b772e2f3fb35e1173f5"
+  }
+}

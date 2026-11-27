@@ -272,6 +272,7 @@ def main() -> None:
     parser.add_argument("--ready-file", type=Path)
     parser.add_argument("--particles", type=int, choices=(0, 500), default=0)
     parser.add_argument("--fps-cap", type=int, default=0)
+    parser.add_argument("--seed", type=int, default=37, help="Fixed boss selection for comparable render controls")
     parser.add_argument("--procedural-music", action="store_true", help="Gera/pré-carrega a nova partitura antes da medição")
     parser.add_argument("--procedural-sfx", action="store_true", help="Ativa os novos SFX, buses, reserva de UI e proteção de pico")
     parser.add_argument("--warmup-seconds", type=float, default=2.)
@@ -328,6 +329,7 @@ def main() -> None:
         from panda3d.core import WindowProperties
         restore_window = WindowProperties()
         restore_window.set_minimized(False)
+        restore_window.set_foreground(True)
         if args.window_type == "onscreen":
             app.win.request_properties(restore_window)
         profile = None
@@ -371,6 +373,7 @@ def main() -> None:
                 entry = Vec3(240, 25.7, 1.02) if args.final_boss else Vec3(120, 27.7, 1.02)
                 game.change_area("forno_da_vigilia" if args.final_boss else "pantano_das_cinzas", entry, stress_enemies=args.enemies)
                 boss = game.boss
+                boss._rng.seed(args.seed)
                 game._bus.publish(BossArenaEnteredEvent(boss.profile.id, boss.profile.arena, entry))
                 boss.fighter.hp = 1500 if args.final_boss else 1800
                 game._bus.publish(HPChangedEvent(boss.entity.id, boss.profile.max_hp, boss.fighter.hp, boss.profile.max_hp, "self"))
@@ -508,6 +511,7 @@ def main() -> None:
                         "gc_mode": "disabled" if args.disable_gc else "frozen" if args.freeze_gc else "normal",
                         "enemies": args.enemies,
                         "boss_phase": game.boss.phase if args.boss or args.tide_boss or args.final_boss else None,
+                        "benchmark_seed": args.seed,
                         "boss_moves_started": boss_moves if args.boss or args.tide_boss or args.final_boss else None,
                         "live_enemy_bodies": sum(body.body.active for entity, (body,) in game._world.query(BodyRef)
                                                  if entity != game._entity),

@@ -70,6 +70,26 @@ def test_fingerprint_changes_with_code_and_ignores_local_options(tmp_path):
     assert build_fingerprint(tmp_path) != before
 
 
+def test_native_render_stage_retains_resource_counts_on_both_sides(tmp_path):
+    sample = monitor(tmp_path, "native-counters-test")
+    task = SimpleNamespace(cont="continue")
+    count = [2]
+    sample.prepared = SimpleNamespace(get_num_prepared_textures=lambda: count[0],
+        get_num_queued_shaders=lambda: 0)
+    try:
+        sample.begin(task)
+        sample.before_render(task)
+        count[0] = 3
+        sample.finish(task)
+        row = sample.recorder.ring[-1][0]
+        assert row["native_resources_before"]["prepared_textures"] == 2
+        assert row["native_resources_after"]["prepared_textures"] == 3
+        assert row["native_resources_after"]["queued_shaders"] == 0
+        assert row["stages"]["native_render_and_swap"]["calls"] == 1
+    finally:
+        sample.close()
+
+
 def test_interaction_key_is_a_format_value_not_catalog_lookup_argument():
     from pathlib import Path
     from vigilia.core.locale import Localizer

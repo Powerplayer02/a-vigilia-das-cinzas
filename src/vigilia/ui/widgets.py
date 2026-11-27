@@ -4,11 +4,12 @@ from collections.abc import Callable
 
 from vigilia.core.protocols import IUIBackend
 from vigilia.core.views import Rect
+from vigilia.core.palette import PALETTE
 from vigilia.ui.text_render import make_text, INK, GOLD, PRIMARY
 
-DARK = (.035, .047, .055, .94)
-SURFACE = (.075, .09, .10, .97)
-FOCUS = (.24, .19, .105, 1)
+DARK = PALETTE["panel"]
+SURFACE = PALETTE["surface"]
+FOCUS = PALETTE["focus"]
 
 
 class Widget:
@@ -43,13 +44,25 @@ class Label(Widget):
             self.value = value
 
 
+class Sprite(Widget):
+    def __init__(self, backend, key, sprite: str, rect: Rect, *, parent=None):
+        super().__init__(backend, key)
+        self.value = sprite
+        backend.create(key, "sprite", rect, parent=parent, sprite=sprite)
+
+    def set(self, sprite):
+        if self.value != sprite:
+            self.backend.set_sprite(self.key, sprite)
+            self.value = sprite
+
+
 class Button(Widget):
-    def __init__(self, backend, key, text: str, rect: Rect, command: Callable[[], None], *, parent=None, size=PRIMARY, danger=False):
+    def __init__(self, backend, key, text: str, rect: Rect, command: Callable[[], None], *, parent=None, size=PRIMARY, danger=False, icon="chevron"):
         super().__init__(backend, key)
         self._command = command
         self.enabled, self.focused = True, False
-        self.surface, self.highlight = ((.34, .055, .04, 1), (.56, .10, .065, 1)) if danger else (SURFACE, FOCUS)
-        backend.create(key, "button", rect, text=text, size=size, parent=parent, color=self.surface, command=self.activate)
+        self.surface, self.highlight = (PALETTE["danger"], PALETTE["danger_focus"]) if danger else (SURFACE, FOCUS)
+        backend.create(key, "button", rect, text=text, size=size, parent=parent, color=self.surface, command=self.activate, sprite=icon)
 
     def activate(self) -> None:
         if self.enabled:

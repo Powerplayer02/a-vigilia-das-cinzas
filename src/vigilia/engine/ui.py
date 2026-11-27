@@ -2,13 +2,22 @@
 
 from collections.abc import Callable
 from pathlib import Path
+import unicodedata
 
 from direct.gui.DirectGui import DirectFrame, DirectButton, DirectEntry, DirectSlider
 from direct.gui import DirectGuiGlobals as DGG
 from direct.showbase.DirectObject import DirectObject
-from panda3d.core import TextNode, Filename, LineSegs
+from panda3d.core import TextNode, Filename, LineSegs, Texture
 
 from vigilia.core.views import Rect, Color
+from vigilia.core.palette import PALETTE
+from vigilia.engine.sprite_atlas import SpriteAtlas
+
+
+def fallback_text(value: str) -> str:
+    """Display-only ASCII equivalents for the engine's limited built-in font."""
+    value = value.translate(str.maketrans({"×":"x", "·":"/", "—":"-", "–":"-", "→":"->", "←":"<-", "…":"..."}))
+    return unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
 
 
 class PandaUIBackend(DirectObject):
@@ -18,15 +27,21 @@ class PandaUIBackend(DirectObject):
         self.root.set_bin("fixed", 30)
         self.nodes = {}
         self.labels = {}
+        self.label_paths = {}
         self.parents = {}
         self.rects, self.outlines = {}, {}
+        self.sprites, self.sprite_names = {}, {}
+        self.atlas = SpriteAtlas(font_path.parent.parent / "ui_atlas" if font_path else None)
         self._transition_age = .15
         self.localizer = localizer
         self.capture_text = capture_text or (lambda active: None)
         self._feedback = feedback
-        self.font = app.loader.loadFont(Filename.from_os_specific(str(font_path)).get_fullpath()) if font_path and font_path.is_file() else app.loader.loadFont("cmss12")
+        self._fallback_font = not (font_path and font_path.is_file())
+        self.font = app.loader.loadFont(Filename.from_os_specific(str(font_path)).get_fullpath()) if not self._fallback_font else app.loader.loadFont("cmss12")
         if hasattr(self.font, "set_pixels_per_unit"):
-            self.font.set_pixels_per_unit(48)
+            self.font.set_pixels_per_unit(96)
+            self.font.set_minfilter(Texture.FT_linear_mipmap_linear)
+            self.font.set_magfilter(Texture.FT_linear)
         self.accept("aspectRatioChanged", self._layout)
         self._layout()
 
@@ -44,7 +59,7 @@ class PandaUIBackend(DirectObject):
 
     def create(self, key: str, kind: str, rect: Rect, *, parent=None, text="", size=20,
                color: Color = (1, 1, 1, 1), command: Callable[..., None] | None = None,
-               value=0., minimum=0., maximum=1.) -> None:
+               value=0., minimum=0., maximum=1., sprite="") -> None:
         if key in self.nodes:
             raise ValueError(f"Widget duplicado: {key}")
         x, y, width, height = rect
@@ -58,13 +73,13 @@ class PandaUIBackend(DirectObject):
         elif kind == "slider":
             node = DirectSlider(parent=owner, range=(minimum, maximum), value=value, pageSize=(maximum - minimum) / 10,
                 frameSize=(0, width, -height, 0), pos=(x, 0, -y), scale=1,
-                frameColor=(.15, .17, .19, 1), thumb_frameColor=(.9, .7, .3, 1),
+                frameColor=PALETTE["surface"], thumb_frameColor=PALETTE["gold"],
                 thumb_frameSize=(-7, 7, -height, 0), thumb_relief=DGG.FLAT)
             node["command"] = lambda: command(float(node["value"])) if command else None
         elif kind == "entry":
             node = DirectEntry(parent=owner, initialText=text, text_font=self.font,
-                text_fg=(.94, .88, .75, 1), width=max(1, (width - 20) / size), numLines=1, focus=0,
-                scale=size, pos=(x + 8, 0, -y - size), frameColor=(.08, .10, .12, 1),
+                text_fg=PALETTE["ink"], width=max(1, (width - 20) / size), numLines=1, focus=0,
+                scale=size, pos=(x + 8, 0, -y - size), frameColor=PALETTE["surface"],
                 relief=DGG.FLAT, command=lambda value: self.focus_text(key, False),
                 focusInCommand=lambda: self.capture_text(True), focusOutCommand=lambda: self.capture_text(False))
         elif kind == "panel":
@@ -74,9 +89,17 @@ class PandaUIBackend(DirectObject):
             node = owner.attach_new_node(key)
             node.set_pos(x, 0, -y)
         self.nodes[key] = node
+        if kind == "sprite":
+            self.sprites[key] = self.atlas.attach(node, sprite, (0, 0, width, height))
+            self.sprite_names[key] = sprite
+        elif kind in ("panel", "button") and width >= 96 and height >= 32 and color[3] >= .9:
+            self.atlas.attach(node, "button" if kind == "button" else "panel", (0, 0, width, height), frame=True)
+        if kind == "button" and sprite and width >= 120 and height >= 40:
+            side = min(26, height - 8)
+            self.atlas.attach(node, sprite, (10, (height-side)/2, side, side))
         if kind == "button":
             line = LineSegs("focus-outline")
-            line.set_color(.95, .72, .3, 1)
+            line.set_color(*PALETTE["gold"])
             line.set_thickness(2)
             line.move_to(0, -.03, 0)
             for point in ((width, -.03, 0), (width, -.03, -height), (0, -.03, -height), (0, -.03, 0)):
@@ -87,22 +110,32 @@ class PandaUIBackend(DirectObject):
         if kind in ("label", "button"):
             label = TextNode(key + "-text")
             label.set_font(self.font)
-            label.set_text(text)
+            label.set_text(fallback_text(text) if self._fallback_font else text)
             label.set_align(TextNode.A_left)
-            label.set_wordwrap(max(1, (width - 12) / size))
-            label.set_text_color(*(color if kind == "label" else (.94, .88, .75, 1)))
+            inset = 44 if kind == "button" and sprite and width >= 120 and height >= 40 else 10 if kind == "button" else 0
+            label.set_wordwrap(max(1, (width - inset - 8) / size))
+            label.set_text_color(*(color if kind == "label" else PALETTE["ink"]))
             label.set_shadow(.05, .07)
             label.set_shadow_color(0, 0, 0, .7)
             path = node.attach_new_node(label)
             path.set_scale(size)
-            path.set_pos(10 if kind == "button" else 0, -.01, -size)
+            path.set_pos(inset, -.01, -size)
             self.labels[key] = label
+            self.label_paths[key] = path
 
     def text(self, key: str, value: str) -> None:
         if isinstance(self.nodes[key], DirectEntry):
             self.nodes[key].enterText(value)
         else:
-            self.labels[key].set_text(value)
+            self.labels[key].set_text(fallback_text(value) if self._fallback_font else value)
+
+    def set_sprite(self, key, sprite):
+        if self.sprite_names.get(key) == sprite:
+            return
+        self.sprites[key].remove_node()
+        width, height = self.rects[key][2:]
+        self.sprites[key] = self.atlas.attach(self.nodes[key], sprite, (0, 0, width, height))
+        self.sprite_names[key] = sprite
 
     def read_text(self, key):
         return self.nodes[key].get()
@@ -168,8 +201,11 @@ class PandaUIBackend(DirectObject):
         node.destroy() if isinstance(node, (DirectFrame, DirectButton, DirectEntry, DirectSlider)) else node.remove_node()
         self.parents.pop(key)
         self.labels.pop(key, None)
+        self.label_paths.pop(key, None)
         self.outlines.pop(key, None)
         self.rects.pop(key, None)
+        self.sprites.pop(key, None)
+        self.sprite_names.pop(key, None)
 
     def close(self) -> None:
         self.ignoreAll()

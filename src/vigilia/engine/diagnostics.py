@@ -64,9 +64,14 @@ class QADiagnostics:
         self.session_spikes = []
         self.recorder = FrameRecorder(Path(directory), sample_contacts, on_capture=self._capture)
         self.previous = None
+        window = getattr(app, "win", None)
+        gsg = window.get_gsg() if window is not None else None
+        self.prepared = gsg.get_prepared_objects() if gsg is not None else None
+        self.render_started = None
         self.gc_started = {}
         gc.callbacks.append(self._gc)
         app.taskMgr.add(self.begin, "qa-frame-start", sort=9)
+        app.taskMgr.add(self.before_render, "qa-render-start", sort=49)
         app.taskMgr.add(self.finish, "qa-frame-end", sort=51)
 
     def wrap(self, owner, name, label):
@@ -87,9 +92,31 @@ class QADiagnostics:
         self.previous = now
         self.recorder.begin(self.app._clock.get_frame_count(), bool(self.app.mainWinMinimized), interval)
         self.recorder.current["context"] = self.context()
+        self.render_started = None
+        window = getattr(self.app, "win", None)
+        self.recorder.current["window_type"] = type(window).__name__ if window is not None else "unavailable"
+        return task.cont
+
+    def _resources(self):
+        result = {}
+        for state in ("prepared", "queued"):
+            for resource in ("textures", "shaders", "geoms", "vertex_buffers", "index_buffers"):
+                name = f"get_num_{state}_{resource}"
+                getter = getattr(self.prepared, name, None)
+                if getter is not None:
+                    result[f"{state}_{resource}"] = getter()
+        return result
+
+    def before_render(self, task):
+        if self.recorder.current is not None:
+            self.recorder.current["native_resources_before"] = self._resources()
+            self.render_started = (time.perf_counter(), time.thread_time())
         return task.cont
 
     def finish(self, task):
+        if self.recorder.current is not None and self.render_started is not None:
+            self.recorder.stage("native_render_and_swap", *self.render_started)
+            self.recorder.current["native_resources_after"] = self._resources()
         self.recorder.finish(bool(self.app.mainWinMinimized))
         return task.cont
 
@@ -140,6 +167,7 @@ class QADiagnostics:
         self.closed = True
         self.recorder.discard()
         self.app.taskMgr.remove("qa-frame-start")
+        self.app.taskMgr.remove("qa-render-start")
         self.app.taskMgr.remove("qa-frame-end")
         gc.callbacks.remove(self._gc)
         for owner, name, original in reversed(self.originals):

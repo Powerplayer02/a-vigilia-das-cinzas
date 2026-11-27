@@ -30,7 +30,8 @@ class OptionsUI:
         self.root = sheet(b, "options.title")
         for i, category in enumerate(CATEGORIES):
             button = Button(b, "front.tab." + category, b.t("options." + category), (164 + i * 188, 126, 176, 42),
-                            lambda index=i: self.select_category(index), parent="front", size=SECONDARY)
+                            lambda index=i: self.select_category(index), parent="front", size=SECONDARY,
+                            icon={"graphics":"spell","audio":"volume","controls":"controls","language":"credits","accessibility":"heart"}[category])
             button.focus(i == self.category)
         all_rows = self.rows_query()
         self.page_count = max(1, (len(all_rows) + 7) // 8)

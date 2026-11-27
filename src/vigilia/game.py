@@ -1708,7 +1708,7 @@ class Game:
         elif key in ("master_volume", "music_volume", "sfx_volume"):
             self.settings.set(key, max(0, min(1, round(data.get("value", getattr(options, key) + delta * .1), 2))))
         elif key in ("hud_scale", "shake_strength"):
-            low, high, step = (.8, 1.4, .1) if key == "hud_scale" else (0., 1., .25)
+            low, high, step = (.8, 1.5, .1) if key == "hud_scale" else (0., 1., .25)
             self.settings.set(key, max(low, min(high, round(data.get("value", getattr(options, key) + delta * step), 2))))
         elif key == "high_contrast":
             self.settings.set(key, not options.high_contrast)
@@ -1940,7 +1940,7 @@ class GameQueries:
             return sensitivity + tuple(OptionView(action.value, tr("control." + action.value), binding.upper() if binding else tr("options.unbound"))
                 for action, binding in mapping.items())
         if category == "accessibility":
-            return (OptionView("hud_scale", tr("options.hud_scale"), f"{options.hud_scale * 100:.0f}%", options.hud_scale, .8, 1.4),
+            return (OptionView("hud_scale", tr("options.hud_scale"), f"{options.hud_scale * 100:.0f}%", options.hud_scale, .8, 1.5),
                 OptionView("shake_strength", tr("options.shake"), f"{options.shake_strength * 100:.0f}%", options.shake_strength),
                 OptionView("high_contrast", tr("options.contrast"), tr("options.on" if options.high_contrast else "options.off")))
         return (OptionView("language", tr("options.language_label"), tr("language." + options.language)),)
@@ -1961,6 +1961,7 @@ class GameQueries:
             spell_kind="healing" if definition and definition.healing else "arcane" if spell else "",
             spell_stamina=definition.stamina if definition else 0,
             spell_remaining=remaining if spell else 0, spell_duration=active.definition.duration / 60 if active else 0,
+            weapon_icon="sword" if fighter.weapon.spec_id == "longsword" else fighter.weapon.spec_id,
             spell_ready=bool(spell and fighter.alive and fighter.stamina >= definition.stamina and
                 not remaining and not fighter.stagger_steps and fighter.parry_step < 0 and not game._player.dodging and not game._commands.charge))
 

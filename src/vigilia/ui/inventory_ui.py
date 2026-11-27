@@ -2,7 +2,7 @@
 
 from vigilia.core.protocols import IInventoryQuery, IUIActions
 from vigilia.core.views import ItemCategory, UICommand, UICommandKind
-from vigilia.ui.widgets import Label, Button, Grid, Tooltip, Panel
+from vigilia.ui.widgets import Label, Button, Grid, Tooltip, Panel, Sprite
 from vigilia.ui.text_render import TITLE, SECONDARY, GOLD, MUTED
 
 
@@ -34,7 +34,9 @@ class InventoryUI:
             name = item.name + ("  [E]" if item.equipped else f"  ×{item.quantity}")
             buttons.append(Button(self.backend, f"menu.inventory.item.{item.id}", name,
                 ((index % 2) * 166, (index // 2) * 82, 156, 72),
-                lambda index=index: self.select(index), parent=self.list_panel.key, size=SECONDARY))
+                lambda index=index: self.select(index), parent=self.list_panel.key, size=SECONDARY, icon=""))
+            Sprite(self.backend, f"menu.inventory.icon.{item.id}", self.icon(item),
+                ((index % 2)*166+126, (index//2)*82+44, 24, 24), parent=self.list_panel.key)
         self.grid = Grid(buttons, 2)
         if not self.items:
             Label(self.backend, "menu.inventory.empty", self.backend.t("inventory.empty"), (0, 10, 320, 80), parent=self.list_panel.key, size=SECONDARY, color=MUTED)
@@ -49,7 +51,8 @@ class InventoryUI:
             return
         item = self.items[self.grid.index]
         current = self.query.equipped().weapon
-        Label(self.backend, "menu.inventory.name", item.name, (14, 10, 262, 54), parent=self.detail_panel.key, color=GOLD)
+        Sprite(self.backend, "menu.inventory.detail_icon", self.icon(item), (14, 12, 42, 42), parent=self.detail_panel.key)
+        Label(self.backend, "menu.inventory.name", item.name, (64, 10, 212, 54), parent=self.detail_panel.key, color=GOLD)
         if item.category == ItemCategory.WEAPON:
             text = self.backend.t("inventory.compare", damage=f"{item.damage:.1f}", delta=f"{item.damage-current.damage:+.1f}",
                 current=f"{current.damage:.1f}", scaling=item.scaling, requirements=item.requirements, weight=f"{item.weight:.1f}")
@@ -64,6 +67,15 @@ class InventoryUI:
 
     def move(self, dx=0, dy=0):
         self.select(self.grid.index + dx + dy * 2)
+
+    @staticmethod
+    def icon(item):
+        weapons = {"longsword":"sword", "axe":"axe", "katana":"katana", "staff":"staff", "mace":"mace"}
+        if item.category == ItemCategory.WEAPON:
+            return weapons.get(item.id, "sword")
+        if item.category == ItemCategory.GEAR:
+            return "shield" if "shield" in item.id else "ring" if "ring" in item.id else "armor"
+        return {"consumable":"flask", "material":"shard", "magic":"spell"}.get(item.category.value, "shard")
 
     def change_category(self, delta):
         self.category = self.categories[(self.categories.index(self.category) + delta) % len(self.categories)]

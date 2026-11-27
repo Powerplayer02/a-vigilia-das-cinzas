@@ -1,5 +1,13 @@
 # A Vigília das Cinzas
 
+Interface da fase 3: atlas original com 36 símbolos e molduras, cores em
+`data/palette.toml`, uma fonte compartilhada e escala de HUD até 150%.
+Ícones e material da arena têm reserva procedural se `assets/` estiver vazio.
+Geração opcional: `python tools/sprite_gen.py`.
+Galeria de QA: `python tools/verify_sprites.py --width 2560 --height 1440`.
+O teste percorre opções e aplica 150% pelo comando real; usa save temporário.
+Detalhes e limitações em [docs/audio_visual.md](docs/audio_visual.md).
+
 Jogo 3D em Python com Panda3D e Bullet: cinco áreas, cinco classes, três chefes, três desfechos e persistência por personagem. Inclui combate, magia, progressão, menus, mapa, áudio e recursos procedurais. A **5.4 foi aceita funcionalmente**; a **5.5 trata do fechamento de release**, sem adicionar conteúdo. A versão 1.0 tem como alvo teclado e mouse. O estado das verificações e os bloqueios restantes estão em [RELEASE_STATUS.md](RELEASE_STATUS.md). A campanha está no [GDD](GDD.md) e os contratos na [arquitetura](ARCHITECTURE.md).
 
 O pacote seguinte acrescenta a matriz pré-chefe dos três finais e as **etapas 1 a 3

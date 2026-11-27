@@ -97,6 +97,21 @@ def test_live_mix_bound_at_full_sliders_includes_music_and_eight_voices(audio):
     assert all(max(v.channel.volume) <= .5 for v in audio.voices)
 
 
+def test_five_future_ambient_loops_cannot_displace_combat_feedback_or_ui(audio):
+    for _ in range(5):
+        assert audio.play_sfx("bonfire_ambient", bus="ambient", priority=15)
+    assert audio.play_sfx("longsword_heavy", bus="combat", priority=40)
+    assert audio.play_sfx("ui_confirm", bus="ui", priority=60)
+    combat = next(v for v in audio.voices if v.bus == "combat" and v.channel.get_busy())
+    ui = next(v for v in audio.voices if v.bus == "ui" and v.channel.get_busy())
+    for _ in range(8):
+        audio.play_sfx("bonfire_ambient", bus="ambient", priority=1000)
+    assert combat.channel.sound == "longsword_heavy" and combat.channel.stops == 0
+    assert ui.channel.sound == "ui_confirm" and ui.channel.stops == 0
+    assert audio.play_sfx("parry", bus="combat", priority=70)
+    assert combat.channel.sound == "longsword_heavy"
+
+
 def test_weapon_variants_cycle_instead_of_playing_all_at_once(audio):
     bus = EventBus()
     AudioEventRouter(bus, audio, ROOT / "data/audio/sfx.toml")

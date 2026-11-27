@@ -32,6 +32,10 @@ class BackendFake:
         self.nodes[key]["text"] = value
         self.updates.append(("text", key, value))
 
+    def set_sprite(self, key, sprite):
+        self.nodes[key]["sprite"] = sprite
+        self.updates.append(("sprite", key, sprite))
+
     def visible(self, key, value):
         self.nodes[key]["visible"] = value
 

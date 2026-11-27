@@ -19,6 +19,15 @@ from vigilia.engine.input import InputManager, InputMode
 from vigilia.ui.options_ui import OptionsUI
 
 
+def test_hud_scale_150_percent_persists_and_larger_values_are_rejected(tmp_path):
+    path = tmp_path / "settings.toml"
+    store = SettingsStore(path, Config())
+    store.set("hud_scale", 1.5)
+    assert SettingsStore(path, Config()).options.hud_scale == 1.5
+    with pytest.raises(ValueError):
+        store.set("hud_scale", 1.51)
+
+
 def test_options_reopen_with_locale_graphics_volumes_and_rebound_key(tmp_path):
     path = tmp_path / "options.json"
     store = SettingsStore(path, Config())

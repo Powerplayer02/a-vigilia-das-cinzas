@@ -124,6 +124,8 @@ def main():
                 "next_attack_uses_equipped_moveset": True,
                 "physical_gamepads_detected": len(app.devices.get_devices(InputDevice.DeviceClass.gamepad)),
                 "screenshots": 6}, indent=2))
+            # Release Windows slot locks before TemporaryDirectory removes its files.
+            game._save.close()
     finally:
         app.destroy()
 

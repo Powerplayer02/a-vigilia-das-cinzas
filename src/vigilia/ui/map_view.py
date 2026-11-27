@@ -2,7 +2,7 @@
 
 from vigilia.core.protocols import IMapDataProvider
 from vigilia.core.mathx import Vec3
-from vigilia.ui.widgets import Panel, Label
+from vigilia.ui.widgets import Panel, Label, Sprite
 from vigilia.ui.text_render import TITLE, GOLD, MUTED, SECONDARY
 
 
@@ -57,9 +57,9 @@ class MapView:
             if not (min_x <= marker.position.x <= max_x and min_y <= marker.position.y <= max_y):
                 continue
             x, y = self.project(marker.position)
-            Label(b, "menu.map.bonfire." + marker.id, "[F]", (x - 10, y - 8, 40, 24), parent=self.content.key, size=SECONDARY, color=GOLD)
+            Sprite(b, "menu.map.bonfire." + marker.id, "bonfire", (x - 10, y - 12, 24, 24), parent=self.content.key)
         x, y = self.project(state[2])
-        Label(b, "menu.map.player", "[P]", (x + 12, y - 8, 42, 24), parent=self.content.key, size=SECONDARY)
+        Sprite(b, "menu.map.player", "player", (x + 12, y - 8, 24, 24), parent=self.content.key)
         if not (min_x <= state[2].x <= max_x and min_y <= state[2].y <= max_y):
             b.visible("menu.map.player", False)
         Label(b, "menu.map.legend", b.t("map.legend"), (14, 354, 630, 76), parent=self.content.key, size=SECONDARY, color=MUTED)

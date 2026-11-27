@@ -16,6 +16,7 @@ from vigilia.core.types import Action
 from vigilia.engine.camera import CameraPose
 from vigilia.engine.physics import to_point
 from vigilia.engine.shadows import ContactShadows
+from vigilia.engine.shader_fallback import VERTEX, FRAGMENT
 
 Color = tuple[float, float, float, float]
 
@@ -61,7 +62,9 @@ class ArenaRenderer:
         shader = Shader.load(
             Shader.SL_GLSL, Filename.from_os_specific(str(directory / "stone.vert")),
             Filename.from_os_specific(str(directory / "stone.frag")),
-        )
+        ) if (directory / "stone.vert").is_file() and (directory / "stone.frag").is_file() else None
+        if shader is None:
+            shader = Shader.make(Shader.SL_GLSL, VERTEX, FRAGMENT)
         self.root.set_shader(shader)
         self.root.set_shader_input("eye_pos", to_point(Vec3()))
         self.root.set_shader_input("masonry", 0.0)

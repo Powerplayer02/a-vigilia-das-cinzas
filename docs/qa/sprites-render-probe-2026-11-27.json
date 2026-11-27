@@ -1,0 +1,296 @@
+{
+  "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+  "window_type": "offscreen",
+  "qa_diagnostics": true,
+  "source_build_id": "e83bfcde3abe02c1",
+  "eligible_fps_baseline": false,
+  "valid_sample": true,
+  "minimized_frames": 0,
+  "excluded_samples": {
+    "count": 0,
+    "total_ms": 0.0,
+    "reason": "window_minimized"
+  },
+  "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+  "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+  "scenario": "final_boss_20",
+  "hud": "full",
+  "contact_shadow_quality": "medium",
+  "static_geometry_batched": true,
+  "static_render_nodes": 4,
+  "draw_distance": 100.0,
+  "nav_grid": [
+    38,
+    75
+  ],
+  "patio_training_dummies": 0,
+  "static_bullet_bodies": 24,
+  "resolution": [
+    1280,
+    720
+  ],
+  "vsync": false,
+  "fps_cap": 0,
+  "warmup_seconds": 5.0,
+  "agile_movement_enabled": false,
+  "audio_enabled": true,
+  "logging_handlers": [
+    "QueueHandler"
+  ],
+  "diagnostic_minimization_injected": false,
+  "audio_track": "cinder_boss_phase3",
+  "particles_requested": 500,
+  "particles_min_max": [
+    500,
+    500
+  ],
+  "gc_mode": "normal",
+  "enemies": 20,
+  "boss_phase": 3,
+  "benchmark_seed": 37,
+  "boss_moves_started": {
+    "wide_sweep": 16,
+    "slow_overhead": 19
+  },
+  "live_enemy_bodies": 21,
+  "fsm_states": {
+    "recover": 15,
+    "attack_windup": 5
+  },
+  "player_hp": 36518,
+  "frames": 8466,
+  "seconds": 60.008,
+  "fps": 141.08,
+  "one_percent_low_fps": 61.21,
+  "max_frame_ms": 31.277,
+  "median_frame_ms": 5.0571,
+  "p99_frame_ms": 13.7986,
+  "p95_frame_ms": 11.7527,
+  "percentile_method": "nearest rank",
+  "ai_steps": 3600,
+  "ai_tick_mean_ms": 0.5382,
+  "path_queries_live": 0,
+  "path_live_mean_ms": 0.0,
+  "path_isolated": {
+    "queries": 200,
+    "attempted_queries": 200,
+    "mode": "reachable_only",
+    "mean_ms": 0.7064,
+    "grid": [
+      38,
+      75
+    ],
+    "reachable": 200,
+    "unreachable": 0,
+    "reachable_mean_ms": 0.7064,
+    "unreachable_mean_ms": 0
+  },
+  "profile": {
+    "stages": {
+      "cull_draw_before_flip": {
+        "count": 8466,
+        "mean_ms": 2.0976,
+        "max_ms": 9.4162
+      },
+      "flip_wait": {
+        "count": 8466,
+        "mean_ms": 0.0075,
+        "max_ms": 0.1827
+      },
+      "render_and_swap": {
+        "count": 8466,
+        "mean_ms": 2.1051,
+        "max_ms": 9.4391
+      },
+      "combat_presentation": {
+        "count": 8466,
+        "mean_ms": 1.0796,
+        "max_ms": 3.6205
+      },
+      "bullet_step": {
+        "count": 3600,
+        "mean_ms": 0.4362,
+        "max_ms": 1.1856
+      },
+      "pose": {
+        "count": 3600,
+        "mean_ms": 1.9491,
+        "max_ms": 4.6439
+      },
+      "hitbox_sync": {
+        "count": 3600,
+        "mean_ms": 0.5169,
+        "max_ms": 2.5534
+      },
+      "combat": {
+        "count": 3600,
+        "mean_ms": 0.2355,
+        "max_ms": 8.4765
+      },
+      "fixed_step": {
+        "count": 3600,
+        "mean_ms": 4.5383,
+        "max_ms": 15.9213
+      }
+    },
+    "gc": {
+      "0": {
+        "count": 4,
+        "mean_ms": 0.1455,
+        "max_ms": 0.1703
+      }
+    },
+    "frame_interval_by_previous_steps": {
+      "0": {
+        "count": 4869,
+        "mean_ms": 4.7218,
+        "max_ms": 10.5646
+      },
+      "1": {
+        "count": 3594,
+        "mean_ms": 10.2803,
+        "max_ms": 31.2769
+      },
+      "2": {
+        "count": 3,
+        "mean_ms": 23.4663,
+        "max_ms": 26.8179
+      }
+    },
+    "max_path_queries_per_step": 0,
+    "split_flip": true,
+    "profiled_hitches": 0,
+    "render_hitches": [],
+    "gc_timeline": [
+      {
+        "generation": 0,
+        "start": 8800.8957121,
+        "end": 8800.8958138
+      },
+      {
+        "generation": 0,
+        "start": 8801.433227,
+        "end": 8801.4333923
+      },
+      {
+        "generation": 0,
+        "start": 8802.0957814,
+        "end": 8802.0959162
+      },
+      {
+        "generation": 0,
+        "start": 8821.3624545,
+        "end": 8821.3626174
+      }
+    ],
+    "ui_created_during_measurement": 0,
+    "ui_text_changes": 2434,
+    "save_calls": 0
+  },
+  "raw_file": "artifacts/sprites/render-probe/probe.json",
+  "raw_sha256": "560ea27b62dc91d3147bc88ced345792d1fa62c19059d5d365513cc08458e37b",
+  "diagnostics": {
+    "build_id": "e83bfcde3abe02c1",
+    "diagnostics": true,
+    "format": "CPython cProfile/pstats binary",
+    "quarantined": false,
+    "spikes": [],
+    "capture_errors": [],
+    "session_spikes": [],
+    "triaged_profiles": {},
+    "trigger_count": 0,
+    "dropped_captures": 0,
+    "excluded_samples": {
+      "count": 0,
+      "total_ms": 0.0,
+      "reason": "window_minimized"
+    },
+    "gate": "Any >200ms QA spike quarantines this build until evidence is triaged; shared spikes do not establish engine/driver causality."
+  },
+  "scope": "Instrumented offscreen stress, split flip, native resource counters and GLSL log; not an FPS baseline or proof of historical hitch resolution",
+  "worst_recorded_frame": {
+    "frame": 3,
+    "minimized": false,
+    "start": 8795.7740762,
+    "stages": {
+      "game_frame": {
+        "calls": 1,
+        "wall_ms": 4.760999998325133,
+        "cpu_ms": 0.0,
+        "max_ms": 4.760999998325133
+      },
+      "native_render_and_swap": {
+        "calls": 1,
+        "wall_ms": 31.321899999966263,
+        "cpu_ms": 31.25,
+        "max_ms": 31.321899999966263
+      }
+    },
+    "slow_calls": [
+      {
+        "label": "game_frame",
+        "start": 8795.7741655,
+        "wall_ms": 4.760999998325133,
+        "cpu_ms": 0.0
+      },
+      {
+        "label": "native_render_and_swap",
+        "start": 8795.7820647,
+        "wall_ms": 31.321899999966263,
+        "cpu_ms": 31.25
+      }
+    ],
+    "gc": [],
+    "context": {
+      "state": "playing",
+      "area": "forno_da_vigilia",
+      "boss": "last_ember_custodian",
+      "phase": 3,
+      "ending": "",
+      "agile_movement": false
+    },
+    "window_type": "GraphicsBuffer",
+    "native_resources_before": {
+      "prepared_textures": 2,
+      "prepared_shaders": 1,
+      "prepared_geoms": 0,
+      "prepared_vertex_buffers": 26,
+      "prepared_index_buffers": 13,
+      "queued_textures": 0,
+      "queued_shaders": 0,
+      "queued_geoms": 0,
+      "queued_vertex_buffers": 0,
+      "queued_index_buffers": 0
+    },
+    "native_resources_after": {
+      "prepared_textures": 6,
+      "prepared_shaders": 1,
+      "prepared_geoms": 0,
+      "prepared_vertex_buffers": 53,
+      "prepared_index_buffers": 38,
+      "queued_textures": 0,
+      "queued_shaders": 0,
+      "queued_geoms": 0,
+      "queued_vertex_buffers": 0,
+      "queued_index_buffers": 0
+    },
+    "end": 8795.8134691,
+    "wall_ms": 39.392900000166264,
+    "cpu_ms": 46.875,
+    "bullet": {
+      "manifolds": 0,
+      "contacts": 0
+    },
+    "interval_ms": 39.5198000005621
+  },
+  "worst_profile": {
+    "file": "artifacts/sprites/render-probe/spikes/worst_20261127T161722_926307Z.frame.pstats",
+    "sha256": "78abd31a94dcabe59b14fc9e55eeba0a7630f1152623f8ceec8575eb132056af"
+  },
+  "glsl_log_sha256": "f31043d59798a8c1a3b9ae751ffe4e655b7faba2096df871295ab79c42900d88",
+  "glsl_compile_entries": [
+    "Compiling GLSL vertex shader assets/shaders/stone.vert",
+    "Compiling GLSL fragment shader assets/shaders/stone.frag"
+  ],
+  "historical_stall_status": "Unresolved; originalfa69491794b4eaeb quarantine retained; release/phase4 blocker"
+}

@@ -230,3 +230,33 @@ Medições finais dos SFX, todas com música ON, sem minimização:
 Delta livre +0,0708ms; margem de ±0,5ms atendida. A amostra atual usa a
 mesma tabela de chefe nas duas condições, separada da comparação histórica.
 [Brutos e hashes](docs/qa/sfx-performance-2026-11-27.json).
+
+## Fase 3 — interface validada, lançamento pendente
+
+Atlas original de 36 células, 1024²/11 mipmaps, paleta única, fonte compartilhada,
+HUD/menus/inventário/mapa integrados, fallback com assets vazios e escala até150%.
+26 estados em720p/1080p/1440p e emassets vazios720p: sem transbordamento nas
+medições de texto; slider150% e HUD ampliado conferidos em1440p.
+712 testes locais passaram (17,90s), incluindo os700 anteriores.
+Relatório: `docs/qa/sprites-ui-2026-11-27.json`.
+
+Após remover o centro transparente das molduras e usar o mesmo programa de
+medição/seed37 nas duas revisões, o gate passou: mediana cap60 16,6656ms,
+delta livre de mediana +0,1473ms e de p95 +0,2231ms. Sem minimização nas quatro
+execuções60s/5s-warmup. A primeira comparação havia falhado no p95 e foi
+preservada, assim como controles minimizados/interrompidos, sem aproveitá-los
+como aprovação. `docs/qa/sprites-performance-2026-11-27.json`.
+
+O CI comum roda testes, não FPS. O novo workflow manual/reutilizável de
+pré-release exige runnerGPU Windows interativo com etiqueta `vigilia-gpu`;
+ele ainda não foi provisionado/executado nesta sessão. Não certificar o FPS
+por um runner de software compartilhado.
+
+Investigação do pico: a chamadaC++ `renderFrame` domina a captura antiga;
+não há evidência suficiente para aplicar um fix específico de shader/textura/GC.
+Novos contadores de recursos antes/depois do render e teste de retenção foram
+adicionados apenas ao modo de diagnóstico. Uma execução separada60s teve
+máximo31,277ms, sem reproduzir334,6945ms. Não é prova de correção.
+**Pico nativo sem causa, dificuldade humana e escuta humana continuam pendentes.**
+Fase4 e lançamento não liberados por esta entrega. Custódio mantém sua tabela.
+Detalhes: `docs/qa/render-investigation-2026-11-27.md`.

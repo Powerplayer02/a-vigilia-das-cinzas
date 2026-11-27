@@ -1,0 +1,55 @@
+name: Performance de release (GPU)
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_ref:
+        description: Revision before UI art
+        required: true
+        default: 9d43d670e9ead572fc53ca419c41714ec8b922d1
+  workflow_call:
+    inputs:
+      baseline_ref:
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  render:
+    # Requires an interactive Windows desktop on a dedicated GPU runner.
+    # Hosted software renderers cannot certify the GTX1660Ti budget.
+    runs-on: [self-hosted, Windows, X64, vigilia-gpu]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: candidate
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.baseline_ref }}
+          path: baseline
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r candidate/requirements.txt
+      - name: Use the same seeded harness for both production revisions
+        shell: pwsh
+        run: Copy-Item -LiteralPath candidate/tools/benchmark.py -Destination baseline/tools/benchmark.py
+      - name: Four sequential native 60s controls (5s warmup)
+        shell: pwsh
+        run: |
+          python baseline/tools/benchmark.py --seconds 60 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --fps-cap 60 --output perf/baseline-capped.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python baseline/tools/benchmark.py --seconds 60 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --output perf/baseline-uncapped.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python candidate/tools/benchmark.py --seconds 60 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --fps-cap 60 --output perf/candidate-capped.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python candidate/tools/benchmark.py --seconds 60 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --output perf/candidate-uncapped.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Reject minimized samples and frame-time regressions
+        run: python candidate/tools/check_render_performance.py --baseline-capped perf/baseline-capped.json --candidate-capped perf/candidate-capped.json --baseline-uncapped perf/baseline-uncapped.json --candidate-uncapped perf/candidate-uncapped.json --output perf/gate.json
+      - name: Preserve GPU measurements even on failure
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: gpu-performance-${{ github.run_id }}
+          path: perf/

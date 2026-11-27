@@ -1,29 +1,33 @@
 """Entrada do jogo e créditos, com dados lidos por protocolos."""
 
 from vigilia.core.views import UICommand, UICommandKind as C
-from vigilia.ui.widgets import Panel, Label, Button, Grid
+from vigilia.core.palette import PALETTE
+from vigilia.ui.widgets import Panel, Label, Button, Grid, Sprite
 from vigilia.ui.text_render import GOLD, MUTED, SECONDARY, TITLE, BOSS_NAME
 
 
 def sheet(backend, title):
-    root = Panel(backend, "front", (0, 0, 1280, 720), color=(.012, .018, .025, .65))
+    root = Panel(backend, "front", (0, 0, 1280, 720), color=(*PALETTE["veil"][:3], .65))
     Panel(backend, "front.sheet", (136, 36, 1008, 648), parent="front")
     Panel(backend, "front.line", (136, 36, 1008, 3), parent="front", color=GOLD)
     Label(backend, "front.title", backend.t(title), (164, 60, 920, 56), parent="front", size=TITLE, color=GOLD)
+    Sprite(backend, "front.seal", "ember", (1064, 50, 48, 48), parent="front")
     Label(backend, "front.hint", backend.t("common.menu_hint"), (164, 642, 920, 28), parent="front", size=SECONDARY, color=MUTED)
     return root
 
 
 class MainMenu:
     def __init__(self, backend, query, actions):
-        self.root = Panel(backend, "front", (0, 0, 1280, 720), color=(.012, .018, .025, .38))
+        self.root = Panel(backend, "front", (0, 0, 1280, 720), color=(*PALETTE["veil"][:3], .38))
         Label(backend, "front.title", backend.t("game.title"), (80, 84, 1120, 72), parent="front", size=BOSS_NAME, color=GOLD)
         Label(backend, "front.subtitle", backend.t("game.subtitle"), (84, 168, 1000, 40), parent="front")
         Panel(backend, "front.line", (84, 220, 400, 2), parent="front", color=GOLD)
+        Sprite(backend, "front.crest", "ember", (976, 490, 156, 156), parent="front")
         entries = (("main.new", C.NEW_GAME), ("main.continue", C.CONTINUE), ("main.options", C.OPEN_OPTIONS),
                    ("main.credits", C.OPEN_CREDITS), ("main.quit", C.QUIT))
         self.buttons = [Button(backend, f"front.action.{command.value}", backend.t(key), (84, 252 + i * 65, 400, 52),
-                               lambda command=command: actions.execute(UICommand(command)), parent="front")
+                               lambda command=command: actions.execute(UICommand(command)), parent="front",
+                               icon={C.NEW_GAME:"ember", C.CONTINUE:"save", C.OPEN_OPTIONS:"settings", C.OPEN_CREDITS:"credits", C.QUIT:"exit"}[command])
                         for i, (key, command) in enumerate(entries)]
         slots = query.slots()
         self.buttons[0].enable(any(not slot.occupied for slot in slots))

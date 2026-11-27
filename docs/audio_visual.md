@@ -210,3 +210,84 @@ No reteste de balanceamento o gravador ativo registrou 334,6945ms: cerca de
 foi triado, mas a causa nativa permanece não identificada e a quarentena foi
 mantida. Os benchmarks leves não usam gravador. As duas modalidades não
 podem ser combinadas para afirmar que o pico foi resolvido.
+
+## Fase 3 — atlas e interface
+
+Arte original desenhada por código: 36 células de ícones/molduras em um PNG
+RGBA de 1024², com margem extrudada de 8px e 11 níveis de mipmap. A textura
+é compartilhada pelo HUD, inventário, classes, mapa e menus. As molduras
+preservam os cantos ao redimensionar; seu centro transparente não é desenhado.
+Um arquivo TOML, `data/palette.toml`, controla os papéis de cor. A fonte existente
+`assets/fonts/ui.ttf` é usada em todos os widgets; rasterização a 96 pixels/unidade
+e filtro de mipmap mantêm a mesma família em títulos, corpo e botões.
+
+O PNG e o manifesto são versionados; `python tools/sprite_gen.py` os regenera.
+Ausência, corrupção ou paleta diferente acionam geração em memória, antes
+do gameplay. Com `assets/` vazio, a interface usa a fonte da engine com
+equivalentes legíveis para glifos ausentes e a arena usa seu shader embutido.
+Dados de jogo continuam necessários em `data/`. Nenhuma dependência nova.
+
+Os símbolos não substituem valores ou legendas: barras mantêm seus números,
+status mantêm códigos e acúmulos, itens mantêm nomes e descrições. A escala
+de HUD passa a admitir 80–150%; ela não aumenta a tipografia dos menus.
+O QA de 1440p altera 150% pelo slider real das opções e verifica o texto
+renderizado e os limites dos widgets, além do HUD ampliado com chefe e magia.
+`tools/verify_ui.py` também exercita foco, pausa, equipar, level up e autosave;
+o lock de slot é liberado antes da limpeza do save temporário no Windows.
+
+O limite de prioridade de combate do áudio foi preservado. A regressão com
+cinco vozes ambientes verifica que elas não tomam uma voz de combate nem
+os canais exclusivos de UI. Isso não substitui escuta humana dos windups.
+
+### Performance e CI de release
+
+`tools/check_render_performance.py` bloqueia controles minimizados, curtos,
+sem áudio ou com cenário incorreto. Exige 60s após 5s de warmup, 20 inimigos,
+Custódio fase 3, 500 partículas, HUD completo, mobilidade OFF e a mesma semente
+de escolha de golpes nas duas revisões. A cena não contém menu aberto.
+Critérios: mediana limitada ≤16,7ms, média ≥59,5 FPS; deltas livres de mediana/p95
+em ±1ms, com custo de mediana do HUD ≤0,5ms.
+
+A primeira comparação falhou no p95: +1,0141ms, mesmo com mediana +0,1822ms.
+Dados e fonte foram preservados em `artifacts/sprites/first-comparison/`.
+Não foram considerados aprovação. Depois foi removido o quadrado central
+transparente de cada moldura e a comparação passou a usar uma semente comum
+no mesmo programa de medição. Os controles anteriores não são misturados
+com os novos para escolher o melhor resultado.
+
+Controle final local, mesma GTX1660Ti, 1280×720 médio, sem minimização:
+
+| Revisão | Cap | Mediana ms | p95 ms |
+| --- | --- | ---: | ---: |
+| Fase 2 | 60Hz | 16,6656 | 16,7191 |
+| Fase 3 | 60Hz | 16,6656 | 16,7060 |
+| Fase 2 | Livre | 3,517650 | 6,7960 |
+| Fase 3 | Livre | 3,665000 | 7,0191 |
+
+Gate aprovado: delta livre +0,1473ms na mediana e +0,2231ms no p95.
+As quatro execuções iniciaram 16 varreduras e 19 golpes verticais do chefe.
+Dados, hashes, exclusões e primeira falha:
+`docs/qa/sprites-performance-2026-11-27.json`.
+
+O CI comum executa testes nas três plataformas; não possui baseline de GPU.
+`.github/workflows/render-performance.yml` acrescenta o job manual/reutilizável
+de pré-release: quatro controles sequenciais de 60s, validador e upload dos dados.
+Requer runner dedicado com etiquetas `self-hosted`, `Windows`, `X64`,
+`vigilia-gpu`, desktop interativo, driver e saída de áudio. Esse runner ainda
+não foi provisionado nesta sessão; o job não é anunciado como executado.
+Não substituir por renderizador de software em runner compartilhado para
+certificar o orçamento da GTX1660Ti. O workflow pode ser chamado pela futura
+pipeline de release antes da publicação do pacote.
+
+### Pendências de lançamento
+
+O Custódio mantém 4.700 HP e as tabelas já publicadas. Uma vitória do agente
+experiente não determina tentativas humanas; balance OFF continua pendente
+de playtest humano. A vitória terminou com 175,293/230 HP; os 121 HP citados
+num parecer pertenciam a uma sessão interrompida. Escuta humana também pendente.
+
+O pico nativo de 334,6945ms continua como bloqueador de lançamento e da fase 4.
+A captura é de gameplay offscreen, fase 2, sem minimização; não é o commit
+de saída de 24/11. Ver `docs/qa/render-investigation-2026-11-27.md` com as cinco
+primeiras entradas, limites do cProfile e os novos contadores de recursos.
+Publicar a arte após seu gate de desempenho não declara esse pico corrigido.
