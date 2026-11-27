@@ -15,6 +15,8 @@ parser.add_argument('--interval',type=float,default=.25)
 parser.add_argument('--seconds',type=float,default=0)
 parser.add_argument('--settle',type=float,default=0)
 parser.add_argument('--encounter-seconds',type=float,default=0)
+parser.add_argument('--encounter-blocks',type=int,choices=range(1,4),default=1,
+    help='Consecutive bounded blocks, each at most 20 real seconds')
 parser.add_argument('--look',nargs=2,type=float)
 parser.add_argument('--pause',action='store_true')
 parser.add_argument('--resume-first',action='store_true')
@@ -37,7 +39,8 @@ for _ in range(args.repeat):
         steps.extend((dict(keys=[*args.keys,key],seconds=.07),dict(keys=args.keys,seconds=max(.05,args.interval-.07))))
 if args.seconds:steps.append(dict(keys=args.keys,seconds=args.seconds))
 if args.settle:steps.append(dict(keys=[],seconds=args.settle))
-if args.encounter_seconds:steps.append(dict(encounter_seconds=args.encounter_seconds))
+if args.encounter_seconds:
+    steps.extend(dict(encounter_seconds=args.encounter_seconds) for _ in range(args.encounter_blocks))
 command=dict(id=identity,steps=steps,pause_after=args.pause,note=args.note,quit=args.quit)
 directory=args.directory.resolve();path=directory/'commands'/(identity+'.json')
 if args.encounter_seconds:

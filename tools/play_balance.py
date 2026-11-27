@@ -45,7 +45,7 @@ def main():
     assert not config.ultrakill_style
     tables={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
         for d in ('data/bosses','data/enemies','data/classes') for p in (ROOT/d).glob('*.toml')}
-    metadata=dict(client_date='2026-11-26',started_utc=datetime.now(timezone.utc).isoformat(),
+    metadata=dict(client_date='2026-11-27',started_utc=datetime.now(timezone.utc).isoformat(),
         commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),
         source_build_id=build_fingerprint(ROOT),driver='Agent chooses logical keyboard/mouse input; real clock',
         production_tables=tables,agile_movement=False,fast_forward=False,window_type=args.window_type,
