@@ -1,0 +1,92 @@
+{
+  "real_mixer": true,
+  "actual_channels": [
+    {
+      "index": 2,
+      "priority": 60,
+      "bus": "ui",
+      "ui_reserved": true,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 3,
+      "priority": 60,
+      "bus": "ui",
+      "ui_reserved": true,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 4,
+      "priority": 70,
+      "bus": "combat",
+      "ui_reserved": false,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 5,
+      "priority": 80,
+      "bus": "combat",
+      "ui_reserved": false,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 6,
+      "priority": 95,
+      "bus": "combat",
+      "ui_reserved": false,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 7,
+      "priority": 65,
+      "bus": "combat",
+      "ui_reserved": false,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 8,
+      "priority": 40,
+      "bus": "combat",
+      "ui_reserved": false,
+      "playing": true,
+      "sound_matches_catalogue": true
+    },
+    {
+      "index": 9,
+      "priority": 10,
+      "bus": "combat",
+      "ui_reserved": false,
+      "playing": true,
+      "sound_matches_catalogue": true
+    }
+  ],
+  "quarantined": true,
+  "diagnostics": {
+    "build_id": "fa69491794b4eaeb",
+    "diagnostics": true,
+    "format": "CPython cProfile/pstats binary",
+    "quarantined": true,
+    "spikes": [
+      "artifacts/balance/custodian_tempo_final/spikes/spike_20261127T141025_856476Z.pstats"
+    ],
+    "capture_errors": [],
+    "session_spikes": [],
+    "triaged_profiles": {},
+    "trigger_count": 0,
+    "dropped_captures": 0,
+    "excluded_samples": {
+      "count": 0,
+      "total_ms": 0.0,
+      "reason": "window_minimized"
+    },
+    "gate": "Any >200ms QA spike quarantines this build until evidence is triaged; shared spikes do not establish engine/driver causality."
+  },
+  "scope": "Canonical event injection inside a live boss arena; audio stress fixture, not a balance playthrough",
+  "functional_passed": true
+}

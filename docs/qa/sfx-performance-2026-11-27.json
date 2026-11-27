@@ -1,0 +1,394 @@
+{
+  "date": "2026-11-27",
+  "source_build_id": "fa69491794b4eaeb",
+  "production_commit": "c64c4c1cc84b3a6618fe524495bf2ed48996b88c",
+  "benchmark_helper_sha256": "cead7d6e87ce89c55d082ff63037bcc0fdc114c04a51791bf8cf0a215a934613",
+  "protocol": {
+    "seconds": 60,
+    "warmup_seconds": 5,
+    "capped_hz": 60,
+    "vsync": false,
+    "window_type": "onscreen",
+    "cprofile": false,
+    "workload": "Custodian phase3 +20 commons +500 particles, 1280x720 medium, movementOFF, musicON",
+    "hardware": "GTX1660Ti / Windows / Python3.13.14 / Panda3D1.10.16",
+    "note": "Same current Custodian table for OFF/ON. Native keys ignored; event HP matches actual stress setup."
+  },
+  "trials": [
+    {
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "window_type": "onscreen",
+      "qa_diagnostics": false,
+      "source_build_id": "fa69491794b4eaeb",
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+      "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+      "scenario": "final_boss_20",
+      "hud": "full",
+      "contact_shadow_quality": "medium",
+      "static_geometry_batched": true,
+      "static_render_nodes": 4,
+      "draw_distance": 100.0,
+      "nav_grid": [
+        38,
+        75
+      ],
+      "patio_training_dummies": 0,
+      "static_bullet_bodies": 24,
+      "resolution": [
+        1280,
+        720
+      ],
+      "vsync": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "agile_movement_enabled": false,
+      "audio_enabled": true,
+      "logging_handlers": [
+        "QueueHandler"
+      ],
+      "diagnostic_minimization_injected": false,
+      "audio_track": "cinder_boss_phase3",
+      "particles_requested": 500,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "gc_mode": "normal",
+      "enemies": 20,
+      "boss_phase": 3,
+      "boss_moves_started": {
+        "slow_overhead": 20,
+        "wide_sweep": 15
+      },
+      "live_enemy_bodies": 21,
+      "fsm_states": {
+        "recover": 14,
+        "attack_windup": 5,
+        "chase": 1
+      },
+      "player_hp": 36526,
+      "frames": 3601,
+      "seconds": 60.005,
+      "fps": 60.01,
+      "one_percent_low_fps": 59.37,
+      "max_frame_ms": 17.579,
+      "median_frame_ms": 16.6644,
+      "p99_frame_ms": 16.7653,
+      "p95_frame_ms": 16.7348,
+      "percentile_method": "nearest rank",
+      "ai_steps": 3601,
+      "ai_tick_mean_ms": 0.1839,
+      "path_queries_live": 0,
+      "path_live_mean_ms": 0.0,
+      "path_isolated": {
+        "queries": 200,
+        "attempted_queries": 200,
+        "mode": "reachable_only",
+        "mean_ms": 0.6738,
+        "grid": [
+          38,
+          75
+        ],
+        "reachable": 200,
+        "unreachable": 0,
+        "reachable_mean_ms": 0.6738,
+        "unreachable_mean_ms": 0
+      },
+      "label": "off-capped",
+      "raw_file": "artifacts/sfx/off-capped.json",
+      "raw_sha256": "36f13005d44e259a85d6acbcece70fe191c72d9aa72e9a3f29f09291fc0f1c42",
+      "valid_for_comparison": true
+    },
+    {
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "window_type": "onscreen",
+      "qa_diagnostics": false,
+      "source_build_id": "fa69491794b4eaeb",
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+      "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+      "scenario": "final_boss_20",
+      "hud": "full",
+      "contact_shadow_quality": "medium",
+      "static_geometry_batched": true,
+      "static_render_nodes": 4,
+      "draw_distance": 100.0,
+      "nav_grid": [
+        38,
+        75
+      ],
+      "patio_training_dummies": 0,
+      "static_bullet_bodies": 24,
+      "resolution": [
+        1280,
+        720
+      ],
+      "vsync": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "agile_movement_enabled": false,
+      "audio_enabled": true,
+      "logging_handlers": [
+        "QueueHandler"
+      ],
+      "diagnostic_minimization_injected": false,
+      "audio_track": "cinder_boss_phase3",
+      "particles_requested": 500,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "gc_mode": "normal",
+      "enemies": 20,
+      "boss_phase": 3,
+      "boss_moves_started": {
+        "slow_overhead": 16,
+        "wide_sweep": 19
+      },
+      "live_enemy_bodies": 21,
+      "fsm_states": {
+        "recover": 15,
+        "attack_windup": 5
+      },
+      "player_hp": 36676,
+      "frames": 3600,
+      "seconds": 60.003,
+      "fps": 60.0,
+      "one_percent_low_fps": 57.99,
+      "max_frame_ms": 26.002,
+      "median_frame_ms": 16.6653,
+      "p99_frame_ms": 16.7718,
+      "p95_frame_ms": 16.7159,
+      "percentile_method": "nearest rank",
+      "ai_steps": 3600,
+      "ai_tick_mean_ms": 0.1815,
+      "path_queries_live": 0,
+      "path_live_mean_ms": 0.0,
+      "path_isolated": {
+        "queries": 200,
+        "attempted_queries": 200,
+        "mode": "reachable_only",
+        "mean_ms": 0.6704,
+        "grid": [
+          38,
+          75
+        ],
+        "reachable": 200,
+        "unreachable": 0,
+        "reachable_mean_ms": 0.6704,
+        "unreachable_mean_ms": 0
+      },
+      "label": "on-capped",
+      "raw_file": "artifacts/sfx/on-capped.json",
+      "raw_sha256": "0b21f44dcfda11e2ba58bca427e94a5bd082292117ad945bfdc58c9bd86853cb",
+      "valid_for_comparison": true
+    },
+    {
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "window_type": "onscreen",
+      "qa_diagnostics": false,
+      "source_build_id": "fa69491794b4eaeb",
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+      "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+      "scenario": "final_boss_20",
+      "hud": "full",
+      "contact_shadow_quality": "medium",
+      "static_geometry_batched": true,
+      "static_render_nodes": 4,
+      "draw_distance": 100.0,
+      "nav_grid": [
+        38,
+        75
+      ],
+      "patio_training_dummies": 0,
+      "static_bullet_bodies": 24,
+      "resolution": [
+        1280,
+        720
+      ],
+      "vsync": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "agile_movement_enabled": false,
+      "audio_enabled": true,
+      "logging_handlers": [
+        "QueueHandler"
+      ],
+      "diagnostic_minimization_injected": false,
+      "audio_track": "cinder_boss_phase3",
+      "particles_requested": 500,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "gc_mode": "normal",
+      "enemies": 20,
+      "boss_phase": 3,
+      "boss_moves_started": {
+        "wide_sweep": 13,
+        "slow_overhead": 19
+      },
+      "live_enemy_bodies": 21,
+      "fsm_states": {
+        "recover": 15,
+        "attack_windup": 5
+      },
+      "player_hp": 36718,
+      "frames": 14928,
+      "seconds": 60.001,
+      "fps": 248.79,
+      "one_percent_low_fps": 108.89,
+      "max_frame_ms": 22.982,
+      "median_frame_ms": 3.4393,
+      "p99_frame_ms": 7.7915,
+      "p95_frame_ms": 6.4992,
+      "percentile_method": "nearest rank",
+      "ai_steps": 3600,
+      "ai_tick_mean_ms": 0.1971,
+      "path_queries_live": 0,
+      "path_live_mean_ms": 0.0,
+      "path_isolated": {
+        "queries": 200,
+        "attempted_queries": 200,
+        "mode": "reachable_only",
+        "mean_ms": 0.6744,
+        "grid": [
+          38,
+          75
+        ],
+        "reachable": 200,
+        "unreachable": 0,
+        "reachable_mean_ms": 0.6744,
+        "unreachable_mean_ms": 0
+      },
+      "label": "off-uncapped",
+      "raw_file": "artifacts/sfx/off-uncapped.json",
+      "raw_sha256": "024a4df1367c3cf68197f6c05d956a4b7f355962302631a4616c4d35ddfd4a23",
+      "valid_for_comparison": true
+    },
+    {
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "window_type": "onscreen",
+      "qa_diagnostics": false,
+      "source_build_id": "fa69491794b4eaeb",
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "excluded_samples": {
+        "count": 0,
+        "total_ms": 0.0,
+        "reason": "window_minimized"
+      },
+      "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+      "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
+      "scenario": "final_boss_20",
+      "hud": "full",
+      "contact_shadow_quality": "medium",
+      "static_geometry_batched": true,
+      "static_render_nodes": 4,
+      "draw_distance": 100.0,
+      "nav_grid": [
+        38,
+        75
+      ],
+      "patio_training_dummies": 0,
+      "static_bullet_bodies": 24,
+      "resolution": [
+        1280,
+        720
+      ],
+      "vsync": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "agile_movement_enabled": false,
+      "audio_enabled": true,
+      "logging_handlers": [
+        "QueueHandler"
+      ],
+      "diagnostic_minimization_injected": false,
+      "audio_track": "cinder_boss_phase3",
+      "particles_requested": 500,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "gc_mode": "normal",
+      "enemies": 20,
+      "boss_phase": 3,
+      "boss_moves_started": {
+        "wide_sweep": 20,
+        "slow_overhead": 15
+      },
+      "live_enemy_bodies": 21,
+      "fsm_states": {
+        "recover": 15,
+        "attack_windup": 5
+      },
+      "player_hp": 36768,
+      "frames": 14483,
+      "seconds": 60.006,
+      "fps": 241.36,
+      "one_percent_low_fps": 102.14,
+      "max_frame_ms": 14.72,
+      "median_frame_ms": 3.5101,
+      "p99_frame_ms": 8.6436,
+      "p95_frame_ms": 6.7743,
+      "percentile_method": "nearest rank",
+      "ai_steps": 3600,
+      "ai_tick_mean_ms": 0.1998,
+      "path_queries_live": 0,
+      "path_live_mean_ms": 0.0,
+      "path_isolated": {
+        "queries": 200,
+        "attempted_queries": 200,
+        "mode": "reachable_only",
+        "mean_ms": 0.685,
+        "grid": [
+          38,
+          75
+        ],
+        "reachable": 200,
+        "unreachable": 0,
+        "reachable_mean_ms": 0.685,
+        "unreachable_mean_ms": 0
+      },
+      "label": "on-uncapped",
+      "raw_file": "artifacts/sfx/on-uncapped.json",
+      "raw_sha256": "10f77160dfbd4b8f3f5f1176fc9ae5fda68b73c985ad8c3bf3bc580b46e8c06e",
+      "valid_for_comparison": true
+    }
+  ],
+  "delta_sfx_on_minus_off_uncapped_median_ms": 0.0708,
+  "delta_sfx_on_minus_off_capped_median_ms": 0.0009,
+  "tolerance_ms": 0.5,
+  "passed": true,
+  "limitations": [
+    "Lightweight 60s controls have no flight recorder.",
+    "Do not infer elimination of the recorded334.7ms native render hitch.",
+    "One sequential pair per cap condition is not causal proof of improvement.",
+    "Earlier phase1 profile/benchmark workload differs; current OFF/ON pair isolates SFX under the final table."
+  ]
+}

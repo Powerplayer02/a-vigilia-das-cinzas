@@ -717,3 +717,23 @@ Exemplo com seed explícita:
 A campanha do agente chegou ao final Transformar; avaliação humana e
 comparação ON/OFF da mobilidade seguem pendentes. Próxima fase audiovisual:
 efeitos sonoros, após aceite da música.
+
+
+## Efeitos sonoros e ritmo — 27/11/2026
+
+A fase 2 adiciona 106 efeitos originais, variantes por arma, feedback de
+parry/impacto/condições, quatro superfícies, menus e chefes. Canais exclusivos
+protegem a interface; a mixagem distribui margem entre efeitos e música.
+O cache ausente é gerado no boot; também pode ser preparado com
+`python tools/sfx_gen.py --all`. Oito vozes simultâneas com música foram
+verificadas em mixer real e numa soma PCM sem recorte.
+
+O Custódio usa menos vida e golpes mais fortes, com pausas menores. O
+reteste do agente durou 3min20,168s, preservando sinais de preparação e
+janelas de parry. [Tuning e limites do teste](docs/qa/custodian-tempo-2026-11-27.md).
+
+[700 testes nas três plataformas](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45909336947) ·
+[Mixagem e geração](docs/audio_visual.md) ·
+[Pico de render reproduzido e triado](docs/qa/sfx-spike-triage-2026-11-27.json).
+A causa nativa do pico segue não identificada. Testes automatizados não
+substituem avaliação humana de dificuldade ou oitiva do conjunto.

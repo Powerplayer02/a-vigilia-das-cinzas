@@ -1,0 +1,156 @@
+{
+  "date": "2026-11-27",
+  "build_id": "fa69491794b4eaeb",
+  "profile": "artifacts/balance/custodian_tempo_final/spikes/spike_20261127T141025_856476Z.frame.pstats",
+  "sha256": "3fd6aa27f404d7f578bd093226b7ab028927f255798b9020862f91e2d448b940",
+  "trigger": {
+    "frame": 83052,
+    "minimized": false,
+    "start": 1243.4225458,
+    "stages": {
+      "raycast": {
+        "calls": 1,
+        "wall_ms": 0.011300000096525764,
+        "cpu_ms": 0.0,
+        "max_ms": 0.011300000096525764
+      },
+      "bullet_step": {
+        "calls": 1,
+        "wall_ms": 0.15489999987039482,
+        "cpu_ms": 0.0,
+        "max_ms": 0.15489999987039482
+      },
+      "combat": {
+        "calls": 1,
+        "wall_ms": 0.02199999994445534,
+        "cpu_ms": 0.0,
+        "max_ms": 0.02199999994445534
+      },
+      "fixed_step": {
+        "calls": 1,
+        "wall_ms": 19.52949999986231,
+        "cpu_ms": 15.625,
+        "max_ms": 19.52949999986231
+      },
+      "game_frame": {
+        "calls": 1,
+        "wall_ms": 20.750499999849126,
+        "cpu_ms": 15.625,
+        "max_ms": 20.750499999849126
+      }
+    },
+    "slow_calls": [
+      {
+        "label": "fixed_step",
+        "start": 1243.4226839,
+        "wall_ms": 19.52949999986231,
+        "cpu_ms": 15.625
+      },
+      {
+        "label": "game_frame",
+        "start": 1243.4226742,
+        "wall_ms": 20.750499999849126,
+        "cpu_ms": 15.625
+      }
+    ],
+    "gc": [],
+    "context": {
+      "state": "playing",
+      "area": "forno_da_vigilia",
+      "boss": "last_ember_custodian",
+      "phase": 2,
+      "ending": "",
+      "agile_movement": false
+    },
+    "end": 1243.7572403,
+    "wall_ms": 334.69449999984136,
+    "cpu_ms": 15.625,
+    "bullet": {
+      "manifolds": 9,
+      "contacts": 9
+    },
+    "trigger": "frame_body"
+  },
+  "top": [
+    {
+      "function": "__igLoop",
+      "file": "ShowBase.py",
+      "line": 2148,
+      "cumulative_ms": 313.474
+    },
+    {
+      "function": "<method 'renderFrame' of 'panda3d.core.GraphicsEngine' objects>",
+      "file": "~",
+      "line": 0,
+      "cumulative_ms": 313.426
+    },
+    {
+      "function": "update",
+      "file": "play_balance.py",
+      "line": 139,
+      "cumulative_ms": 20.854
+    },
+    {
+      "function": "measured",
+      "file": "diagnostics.py",
+      "line": 74,
+      "cumulative_ms": 20.758
+    },
+    {
+      "function": "frame",
+      "file": "game.py",
+      "line": 552,
+      "cumulative_ms": 20.744
+    },
+    {
+      "function": "advance",
+      "file": "timing.py",
+      "line": 77,
+      "cumulative_ms": 19.538
+    },
+    {
+      "function": "_fixed_step",
+      "file": "game.py",
+      "line": 623,
+      "cumulative_ms": 19.526
+    },
+    {
+      "function": "tick",
+      "file": "ai_system.py",
+      "line": 38,
+      "cumulative_ms": 18.497
+    },
+    {
+      "function": "tick",
+      "file": "fsm.py",
+      "line": 30,
+      "cumulative_ms": 18.397
+    },
+    {
+      "function": "move",
+      "file": "ai_system.py",
+      "line": 66,
+      "cumulative_ms": 18.333
+    },
+    {
+      "function": "tick",
+      "file": "behaviors.py",
+      "line": 85,
+      "cumulative_ms": 18.287
+    },
+    {
+      "function": "a_star",
+      "file": "pathfinding.py",
+      "line": 29,
+      "cumulative_ms": 18.208
+    }
+  ],
+  "classification": "Reproduced non-minimized native render stall during phase2, cause not identified. Audio, I/O, SQLite, GC and shader hypotheses are not generally eliminated.",
+  "quarantine_retained": true,
+  "notes": [
+    "No GC entry or SQLite commit on this trigger stack.",
+    "313ms renderFrame, about21ms Game.frame and19.5ms fixed_step, including18ms A*.",
+    "Low thread CPU versus wall time does not identify driver, GPU, scheduler or shader cause.",
+    "Native eight-voice audio verification added no session spike and inherited quarantine."
+  ]
+}

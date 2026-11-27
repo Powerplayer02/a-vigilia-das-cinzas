@@ -323,6 +323,8 @@ def main() -> None:
         isolated = isolated_pathfinding(solvable_only=True)
     with tempfile.TemporaryDirectory(prefix="vigilia-benchmark-") as temporary:
         app = ArenaApp(config, window_type=args.window_type)
+        app.ignore("vigilia-button-down")
+        app.ignore("vigilia-button-up")
         from panda3d.core import WindowProperties
         restore_window = WindowProperties()
         restore_window.set_minimized(False)
@@ -371,7 +373,7 @@ def main() -> None:
                 boss = game.boss
                 game._bus.publish(BossArenaEnteredEvent(boss.profile.id, boss.profile.arena, entry))
                 boss.fighter.hp = 1500 if args.final_boss else 1800
-                game._bus.publish(HPChangedEvent(boss.entity.id, boss.profile.max_hp, 1800, boss.profile.max_hp, "self"))
+                game._bus.publish(HPChangedEvent(boss.entity.id, boss.profile.max_hp, boss.fighter.hp, boss.profile.max_hp, "self"))
                 boss.close_steps = boss.profile.close_trigger_steps - 1
                 game._target = boss.entity
                 game.alert_enemies()

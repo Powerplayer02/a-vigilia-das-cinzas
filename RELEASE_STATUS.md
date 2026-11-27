@@ -1,18 +1,18 @@
 # Fechamento da 1.0 — Etapa 5.5
 
-Estado em 26/11/2026: campanha OFF conduzida pelo agente concluída; fase 1
-de música implementada. Release ainda não certificada; avaliação humana e
+Estado em 27/11/2026: campanha OFF conduzida pelo agente concluída; fases 1
+e 2 de música e efeitos implementadas. Release ainda não certificada; avaliação humana e
 comparação ON/OFF dos chefes permanecem pendentes. As seções antigas abaixo
 preservam a cronologia, e a atualização atual está no fim deste documento.
 
 | Verificação | Estado |
 | --- | --- |
-| Testes locais de regras e contratos | 466 passaram no Windows, Python 3.13; os 438 anteriores preservados |
+| Testes locais de regras e contratos | 700 passaram no Windows; os 466 anteriores preservados |
 | Fechar a janela sem salvar | Corrigido e verificado por Alt+F4 real: zero commits no fechamento |
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
 | Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Aprovado: 466 testes em cada plataforma, [fase 1 de música](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45903934895) |
+| CI remoto Linux/macOS/Windows | Aprovado: 700 testes em cada plataforma, [fase 2 de efeitos](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45909336947) |
 | Três desfechos a partir de saves anteriores ao chefe final | Aprovado: três fixtures versionadas, combate/epílogo/pós-créditos; repetido com Bullet/UI nativos |
 | Campanha com números de produção | Percurso principal e final Transformar concluídos por comandos do agente; não é avaliação humana |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
@@ -190,3 +190,43 @@ acidental entre execuções foram invalidadas, preservadas e repetidas.
 SFX novos e demais fases audiovisuais aguardam confirmação. A comparação
 ON/OFF da mobilidade ainda está pendente. Nenhuma tag de release 1.0 foi
 criada. Gamepad continua fora dos recursos validados.
+
+
+## Atualização de 27/11 — efeitos e Custódio
+
+106 efeitos e 93 presets, geração original NumPy + wave, variantes de armas,
+feedback de condições/UI/magia e superfícies. Grupos de ganho separados:
+combate 1,0; interface 0,9; ambiente 0,6; música 0,7. Duas vozes de UI ficam
+protegidas; teste de saturação com oito vozes passou no mixer real. Soma PCM
+com oito efeitos + música e sliders em 100%: pico −8,7261dBFS, sem recorte.
+Maior pico individual: −4,0001dBFS. Não é avaliação auditiva.
+
+Custódio final: HP 4.700, dano +10%, aproximação mais agressiva e pausas/
+cooldowns menores. Windups, janelas de parry e fórmulas preservados.
+Reteste completo: 200,167913s, 175,293/230HP. Pilotos minimizado/interrompido
+foram invalidados e preservados. A condução é experiente e instrumentada;
+nenhuma certificação de dificuldade humana é inferida dessa vitória.
+
+O pico foi REPRODUZIDO: 334,6945ms em combate, fase 2, sem minimização;
+313ms em renderFrame, 20,75ms em Game.frame. Sem GC registrado ou commit
+SQLite na pilha desse quadro. Causa nativa em aberto, quarentena preservada.
+O teste nativo de oito vozes não adicionou novos picos; herdou a quarentena.
+Não eliminar I/O/SQLite/GC/shader das hipóteses históricas sem evidência.
+
+700 testes passaram nas três plataformas. Dados em docs/qa/sfx-ci-2026-11-26.json.
+Comparação de mobilidade ON/OFF e avaliação humana seguem pendentes.
+Sprites/animações/partículas permanecem para fases futuras.
+
+
+Medições finais dos SFX, todas com música ON, sem minimização:
+
+| Efeitos | Cap | Mediana ms | p95 ms | FPS médio | 1% low |
+| --- | --- | ---: | ---: | ---: | ---: |
+| OFF | 60Hz | 16,6644 | 16,7348 | 60,01 | 59,37 |
+| ON | 60Hz | 16,6653 | 16,7159 | 60,00 | 57,99 |
+| OFF | Livre | 3,4393 | 6,4992 | 248,79 | 108,89 |
+| ON | Livre | 3,5101 | 6,7743 | 241,36 | 102,14 |
+
+Delta livre +0,0708ms; margem de ±0,5ms atendida. A amostra atual usa a
+mesma tabela de chefe nas duas condições, separada da comparação histórica.
+[Brutos e hashes](docs/qa/sfx-performance-2026-11-27.json).

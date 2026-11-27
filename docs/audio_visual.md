@@ -179,3 +179,34 @@ seus bons percentis não eliminam carregamento, SQLite, GC ou compilação de
 shader como causas históricas. Os perfis observados localizam parte do atraso
 em renderização, sem identificar a causa nativa. Registros e quarentena
 permanecem preservados; não foi aplicado `gc.freeze()` como suposta correção.
+
+
+### Verificação final de 27/11
+
+700 testes passaram em Linux, macOS e Windows na revisão dos efeitos
+(`00658c5e`, CI 45909336947). Mixer real: oito vozes de SFX ocupadas, duas
+reservadas para interface, mais dois canais de música; a interface continuou
+com seu som. `docs/qa/sfx-native-2026-11-27.json` registra o resultado funcional
+e a quarentena herdada do pico observado no combate.
+
+Amostras sequenciais de 60s, após 5s de warmup, Custódio fase 3 + 20 comuns +
+500 partículas, 1280×720 médio, GTX 1660 Ti, música ligada, sem cProfile:
+
+| SFX | Limite | Mediana ms | p95 ms | FPS médio | 1% low |
+| --- | --- | ---: | ---: | ---: | ---: |
+| OFF | 60Hz | 16,6644 | 16,7348 | 60,01 | 59,37 |
+| ON | 60Hz | 16,6653 | 16,7159 | 60,00 | 57,99 |
+| OFF | Livre | 3,4393 | 6,4992 | 248,79 | 108,89 |
+| ON | Livre | 3,5101 | 6,7743 | 241,36 | 102,14 |
+
+Nenhuma amostra minimizada nas quatro execuções. Delta da mediana livre:
++0,0708ms, dentro de ±0,5ms; limitada: +0,0009ms. O par OFF/ON usa a mesma
+tabela final do Custódio e isola a opção de efeitos. É uma medição local,
+sem provar equivalência causal ou eliminação de engasgos raros.
+Dados e hashes: `docs/qa/sfx-performance-2026-11-27.json`.
+
+No reteste de balanceamento o gravador ativo registrou 334,6945ms: cerca de
+313ms em renderFrame, sem GC no gatilho ou commit SQLite na pilha. Esse caso
+foi triado, mas a causa nativa permanece não identificada e a quarentena foi
+mantida. Os benchmarks leves não usam gravador. As duas modalidades não
+podem ser combinadas para afirmar que o pico foi resolvido.
