@@ -119,11 +119,15 @@ def test_light_clock_freezes_and_resumes_without_hot_root_state_changes():
     renderer._sync_light_clock(False)
     assert state==renderer.root.get_state()
     now[0]=101.5;renderer._sync_light_clock(True)
-    assert tuple(renderer.root.get_shader_input('light_clock').get_vector())[:3]==(100,1.5,1)
+    # get_vector exposes native storage owned by ShaderInput. Keep its owner
+    # alive while converting the returned reference to a Python tuple.
+    paused_input=renderer.root.get_shader_input('light_clock')
+    assert tuple(paused_input.get_vector())[:3]==(100,1.5,1)
     paused=renderer.root.get_state();now[0]=110.5;renderer._sync_light_clock(True)
     assert paused==renderer.root.get_state()
     renderer._sync_light_clock(False)
-    assert tuple(renderer.root.get_shader_input('light_clock').get_vector())[:3]==(109,0,0)
+    resumed_input=renderer.root.get_shader_input('light_clock')
+    assert tuple(resumed_input.get_vector())[:3]==(109,0,0)
 
 
 def test_unused_capacity_does_not_anchor_a_regional_batch_at_world_origin():

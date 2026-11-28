@@ -93,8 +93,13 @@
     },
     "coverage_frames_above50ms": 0
   },
+  "ci_first_attempt": {
+    "commit": "7b04d7edb832f3cca8e299a440a54ee3fb992562",
+    "run_url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/46141685612",
+    "result": "Windows827 passed; Linux/macOS826 passed,1 failed. Test read a native vector from a temporary ShaderInput. Owner lifetime now explicit in test and gallery helper. Production unchanged."
+  },
   "functional": {
-    "local_tests": "827 passed in23.65s",
+    "local_tests": "827 passed in 24.37s",
     "native_gallery_checks": 14,
     "attack_phase_sync_cases": 35,
     "attack_sync_passed": true,
@@ -334,7 +339,7 @@
     "tests/test_native_pstats.py": "3abae3a57b6bf1de671712a95f79f3a7ecd5e8604c84ae6e064c8dcc9d14f617",
     "tests/test_options.py": "6a04ffa060aa8d33046050d3a97d4fe4aca32998e33dc3abc581cb5bd8783c7f",
     "tests/test_parry.py": "ddee143b6b8af8cc86746a7715d297fb809cefbd0f1f1d7b5a2fe865a52c0aee",
-    "tests/test_particle_layer.py": "78fd8c8ca16051de92688530a4dbd1615e49c43328e4838ce0a12b504ab1ab69",
+    "tests/test_particle_layer.py": "d01c38fb07f44cbdbd6b2fb58c86f38d7c275ca28600b5b83d2c87a1d91dffb7",
     "tests/test_particles.py": "8fc5575fb47048b7adb24c435764e8d06fdbb381d837ccd0cbf8f20e34d488ac",
     "tests/test_pathfinding.py": "b83a44d6a9bb2b79351341d78b034a59f77424bd32ee1665153146d0ad007e07",
     "tests/test_pause_flow.py": "7fea210587b177e68f11fd65a8eb6ed1ba3d60e48cfbf3cfb4d91364fe4dbea5",
@@ -400,7 +405,7 @@
     "tools/verify_momentum.py": "9849b6058c54574f56683e1e82cfe58291df37ff5e0699467b2da9fe2c6e8ac5",
     "tools/verify_music.py": "dd8ce3fd15da8b91cab4044168eb371fc1abf2b29c8c705f70d9e674065cc814",
     "tools/verify_options_slots.py": "ecb01a75105fa06f7af1e2ba412c224d1a2e990d3b56d85f8e1647f6039d1a23",
-    "tools/verify_particles.py": "f7ca3c2f68a0004199027b7d353098f26fbb24f2374ac020a0f45a5d4de0888e",
+    "tools/verify_particles.py": "615f7dcee2753be865451e02624aead3c76a0f7fdae67f7a11ab4423d7502764",
     "tools/verify_sfx.py": "efca690567ad8d53790fcad46878f685f263e966ac9ee593b5b517f4194b458d",
     "tools/verify_shutdown.py": "9f9b4e537219f3acc80eb4c6b70faa3d73194573316e92671927b32842583611",
     "tools/verify_slots.py": "f4495a0adf792641d62d5308bc7c38ccd4fc9a6181050531c7be1752c589072a",
@@ -1928,6 +1933,21 @@
       "bytes": 994
     },
     {
+      "path": "artifacts/particles/tests-ci-fix.log",
+      "sha256": "9cfb58ac82b9428f1cabdad09dca3fdb2529f3ff5a740e88e47f1283c7a60ebf",
+      "bytes": 994
+    },
+    {
+      "path": "artifacts/particles/ci-first-linux.log",
+      "sha256": "79d57ef12cc97bf67a74a431c8f906fa83a12d2a07bfb3c986c436cd6b3d401a",
+      "bytes": 25043
+    },
+    {
+      "path": "artifacts/particles/ci-first-macos.log",
+      "sha256": "ecb93d8fb9d049ef04a2f8b2a9b7eb861bff64649120a1b068c99ab00b4fc117",
+      "bytes": 25736
+    },
+    {
       "path": "artifacts/particles/cpu-ci.json",
       "sha256": "cd668af41260fec43f808a304d58d3cac1b5c09b34b2ca720a26e8c987aee1b5",
       "bytes": 753
@@ -1961,6 +1981,11 @@
       "path": "artifacts/particles/source-final-code.zip",
       "sha256": "23f9705abf82aa48d6bd94560cd90586c59eaa26afd1c0eb3165bc7564d05f5d",
       "bytes": 18118202
+    },
+    {
+      "path": "artifacts/particles/source-ci-fix-code.zip",
+      "sha256": "b31aaa1684b04081c45236eb2f0b2a13720ac8ebf1e33d0e588ecd60b0b38137",
+      "bytes": 18118310
     },
     {
       "path": "artifacts/particles/comparison-final-gate.json",

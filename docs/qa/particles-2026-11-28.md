@@ -150,7 +150,7 @@ Dados brutos e os frames não correspondidos foram preservados.
 
 ## Verificação funcional
 
-**827 testes locais passaram em 23,65 s**, preservando os 807 do checkpoint.
+**827 testes locais passaram**, preservando os 807 do checkpoint.
 A galeria nativa
 percorreu cinco áreas, dez capturas de ambientação/combate e quatro transições
 de chefe. Todas preservaram snapshots, os90 passos de transição e conexão dos
@@ -163,6 +163,14 @@ separados. Uma falha da comparação não impede coletar o estresse; o job falha
 ao final mantendo os dois pareceres. O runner dedicado continua sem
 provisionamento nesta sessão.
 Nenhum playtest humano, escuta ou certificação de release foi acrescentado.
+
+O [primeiro CI da camada](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/46141685612)
+passou com 827 testes no Windows e falhou em um teste no Linux/macOS (826
+passaram). O teste lia `ShaderInput.get_vector()` de um dono temporário;
+a referência nativa podia ficar inválida antes da conversão em tupla.
+O teste e o helper da galeria agora mantêm o `ShaderInput` vivo. As asserções
+foram preservadas; nenhum arquivo de produção ou critério foi alterado por
+essa correção. Logs da falha e fonte anterior continuam no índice de evidências.
 
 [Índice de evidências e hashes](particles-2026-11-28.json). Relatórios locais
 em `artifacts/particles/`; nenhuma fixture usa o banco do usuário.

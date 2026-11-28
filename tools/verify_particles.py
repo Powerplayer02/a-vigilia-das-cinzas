@@ -22,7 +22,8 @@ from verify_animations import verify_dynamic_particle_buffers
 def verify_light_clock(game,app,position):
     renderer=game._renderer;root=renderer.root;clock=app._clock
     original_glow=renderer._fire_glow_value
-    original_clock=tuple(root.get_shader_input('light_clock').get_vector())[:3]
+    clock_input=root.get_shader_input('light_clock')
+    original_clock=tuple(clock_input.get_vector())[:3]
     mode,dt,now=clock.get_mode(),clock.get_dt(),clock.get_frame_time()
     try:
         root.set_shader_input('fire_glow',(position.x,position.y,position.z,4))
