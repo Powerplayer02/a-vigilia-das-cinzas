@@ -437,6 +437,7 @@ def main() -> None:
             sample_minimized = False
             injected_minimize = injected_restore = False
             measurement_start = 0.0
+            completed = False
             boss_moves = {}
             previous_boss_attack = None
             particle_min, particle_max = args.particles, 0
@@ -456,7 +457,7 @@ def main() -> None:
             app.taskMgr.add(observe_window, "benchmark-window-observer", sort=52)
 
             def benchmark(task):
-                nonlocal previous, measuring, measurement_start, previous_boss_attack, particle_min, particle_max, minimized_frames, minimized_seconds, sample_minimized, injected_minimize, injected_restore,unfocused_frames,blocking_frames
+                nonlocal previous, measuring, measurement_start, previous_boss_attack, particle_min, particle_max, minimized_frames, minimized_seconds, sample_minimized, injected_minimize, injected_restore,unfocused_frames,blocking_frames,completed
                 now = time.perf_counter()
                 elapsed = now - previous
                 previous = now
@@ -614,11 +615,14 @@ def main() -> None:
                         args.output.parent.mkdir(parents=True, exist_ok=True)
                         args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
                     print(json.dumps(result, ensure_ascii=False, indent=2))
+                    completed = True
                     app.userExit()
                 return task.cont
 
             app.taskMgr.add(benchmark, "stress-benchmark", sort=10)
             app.run()
+            if not completed:
+                raise RuntimeError("Benchmark interrompido antes de concluir a amostra; nenhum aceite foi produzido.")
         finally:
             if gpu_process is not None:
                 gpu_process.terminate()

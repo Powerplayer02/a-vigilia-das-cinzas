@@ -1,0 +1,131 @@
+{
+  "date": "2026-11-28",
+  "base_commit": "506c84e04a7fae888e98bae8172cea656a000d92",
+  "comparison_baseline": "8a245a4fce4aa1bd63adcf64f6d32e77ed789db2",
+  "status": "Current paired comparison passed; absolute historical gate open; optimized120s run interrupted without report",
+  "reports": [
+    {
+      "path": "artifacts/particles-opt-2026-11-28/base-capped.json",
+      "sha256": "cb90dffff0b885074a6d7c8ec4ca0e7ece6fd1638463e45e38702db3f1fdcd39",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 60.013,
+      "frames": 3598,
+      "median_frame_ms": 16.6667,
+      "p95_frame_ms": 16.7331,
+      "max_frame_ms": 24.813,
+      "fps": 59.95,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ]
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/base-uncapped.json",
+      "sha256": "6303d0756f37e59d85a6d7a11ffc3b30b19c5970c96a0700326addef1169f00e",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 60.003,
+      "frames": 8242,
+      "median_frame_ms": 6.83035,
+      "p95_frame_ms": 11.1181,
+      "max_frame_ms": 22.789,
+      "fps": 137.36,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ]
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/candidate-capped.json",
+      "sha256": "f703998ea45442e525a81498e011d5a8e776fa9992087254bbc0594e6c2e72d3",
+      "source_build_id": "5c767c5b110befb0",
+      "seconds": 60.005,
+      "frames": 3600,
+      "median_frame_ms": 16.6666,
+      "p95_frame_ms": 16.7215,
+      "max_frame_ms": 22.976,
+      "fps": 59.99,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ]
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/candidate-uncapped.json",
+      "sha256": "babcc7c5b1ad296c8f272beb185034c0fa9be9e382ac98138f1886fd4e65ba9c",
+      "source_build_id": "5c767c5b110befb0",
+      "seconds": 60.0,
+      "frames": 8162,
+      "median_frame_ms": 6.9693,
+      "p95_frame_ms": 11.1122,
+      "max_frame_ms": 19.671,
+      "fps": 136.03,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ]
+    }
+  ],
+  "comparison_gate": {
+    "passed": true,
+    "problems": [],
+    "uncapped_delta_median_ms": 0.1389,
+    "uncapped_delta_p95_ms": -0.0059,
+    "comparison_scope": "animation",
+    "note": "Local GPU comparison does not resolve historical stalls or human gameplay difficulty."
+  },
+  "production_files": {
+    "src/vigilia/engine/particles.py": "6ac162fdb4d199a0c0da2403965112e305c8937f11180512cb629aa8cc1d59f8",
+    "tools/benchmark.py": "8f6f1d654d12f4d1b0734c8f11d9bae35673a93fa44d78e7e70a16c0f94a28e0",
+    "tools/benchmark_particles.py": "a8178ba13c2fecdf18df259540f5f07af988ae9e5ad0099ce1a57d5a061e10b5"
+  },
+  "tests": "830 passed in24.26s",
+  "native_checks": 14,
+  "exact_simulation_parity_steps": 400,
+  "frozen_source": "artifacts/particles-opt-2026-11-28/phase5-frozen",
+  "evidence": [
+    {
+      "path": "artifacts/particles-opt-2026-11-28/comparison-gate.json",
+      "sha256": "ceb1485ab3ee28a4d628a87cb4b70cb6b7442e57698f31b73c483af3528b3756"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/kernel-before.json",
+      "sha256": "a2232fb886f076c6ba09a84ed2f8b29a4ed43f91d1ce1c2bb6da6ea5d732477c"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/kernel-prefix.json",
+      "sha256": "ab421e97c3dd6654c0cc42c658eaa2f0cc8749da2307cbdbf0c3581e7dd04b59"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/coverage.log",
+      "sha256": "9d623dcda8b914a59a714f6a839e0e0400162abcd86f21ca65740f75a043a87f"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/tests-phase5.log",
+      "sha256": "805b9e9322b2c9a54bde5bf2b9d54f9d1b71812bdcbd6eb703c53301602216aa"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/native/report.json",
+      "sha256": "54318131ab00c576fd7486a0c95a25f21792b4ed2e6188999e12a7a806b696e4"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/pool-parity.log",
+      "sha256": "39d6d9999e43f2c8b05cd81d6c7795005ba80086d8ae88ed996b5a0a8e0885e7"
+    },
+    {
+      "path": "artifacts/particles-opt-2026-11-28/abort-probe.log",
+      "sha256": "35661f836729e4498370e90593371b450bdbea11eed82fffe1f03bd355546344"
+    }
+  ]
+}

@@ -108,6 +108,7 @@ class ParticlePool:
         self.limit=capacity
         self.requested=self.emitted=self.dropped=0
         self.blend_revision=0
+        self._extent=0
 
     def set_limit(self,limit):
         """Fixture admission limit; never shrink underneath live particles."""
@@ -129,7 +130,9 @@ class ParticlePool:
             return False
         self.emitted+=number
         for _ in range(number):
-            particle = self.slots[self._free.pop()]
+            index=self._free.pop()
+            self._extent=max(self._extent,index+1)
+            particle = self.slots[index]
             if particle.additive!=additive:self.blend_revision+=1
             particle.alive = True
             particle.x, particle.y, particle.z = position.x, position.y, position.z
@@ -170,7 +173,8 @@ class ParticlePool:
     def update(self, dt: float, target: Vec3 = Vec3()) -> None:
         dt = max(0., dt)
         if dt==0:return
-        for index, particle in enumerate(self.slots):
+        for index in range(self._extent):
+            particle=self.slots[index]
             if not particle.alive:
                 continue
             particle.age += dt
@@ -194,6 +198,8 @@ class ParticlePool:
                 particle.x += particle.vx * dt
                 particle.y += particle.vy * dt
                 particle.z += particle.vz * dt
+        while self._extent and not self.slots[self._extent-1].alive:
+            self._extent-=1
 
 
 class ParticleEmitter:
@@ -269,11 +275,17 @@ class ParticleEmitter:
     def update(self, dt: float, target: Vec3 = Vec3()) -> None:
         self._last_target=target
         self.pool.update(dt, target)
+        if self.pool.active_count == 0:
+            self._last_blend_revision=-1
+            self.root.hide()
+            return
+        extent=self.pool._extent
         ring_count=0
-        self._dead.fill(True)
+        self._dead[:extent].fill(True)
         centers,colors=self._center_data,self._color_data
         blend_changed=self._last_blend_revision!=self.pool.blend_revision
-        for index, particle in enumerate(self.pool.slots):
+        for index in range(extent):
+            particle=self.pool.slots[index]
             offset=index*4
             if blend_changed:self._additive[index]=particle.additive
             if not particle.alive:
@@ -290,15 +302,11 @@ class ParticleEmitter:
             colors[offset+3]=(1-fraction)*particle.opacity
             if particle.motion=='ring':self._ring_indices[ring_count]=index;ring_count+=1
             self._shape_data[index]=particle.shape
-        if self.pool.active_count == 0:
-            self._last_blend_revision=-1
-            self.root.hide()
-            return
         self.root.show()
         # Degenerate unused quads must follow the active region, not anchor a
         # 2000-slot batch at world origin and defeat culling/depth sorting.
         self._target_coords[:]=(target.x,target.y,target.z)
-        np.copyto(self._centers[:,:3],self._target_coords,where=self._dead[:,None])
+        np.copyto(self._centers[:extent,:3],self._target_coords,where=self._dead[:extent,None])
         if self.camera is None:
             right, up = (1, 0, 0), (0, 0, 1)
         else:
@@ -308,16 +316,20 @@ class ParticleEmitter:
         np.multiply(self._corners[:,:1],self._right,out=self._offsets)
         np.multiply(self._corners[:,1:],self._up,out=self._up_offsets)
         np.add(self._offsets,self._up_offsets,out=self._offsets)
-        np.multiply(self._offsets[None,:,:],self._centers[:,None,3:4],out=self._vertices[:,:,:3])
-        np.add(self._vertices[:,:,:3],self._centers[:,None,:3],out=self._vertices[:,:,:3])
+        np.multiply(self._offsets[None,:,:],self._centers[:extent,None,3:4],out=self._vertices[:extent,:,:3])
+        np.add(self._vertices[:extent,:,:3],self._centers[:extent,None,:3],out=self._vertices[:extent,:,:3])
         # Ground rings use the XY plane; other effects billboard toward camera.
         for offset in range(ring_count):
             index=self._ring_indices[offset]
             np.multiply(self._corners,self._centers[index,3],out=self._vertices[index,:,:2])
             np.add(self._vertices[index,:,:2],self._centers[index,:2],out=self._vertices[index,:,:2])
             self._vertices[index,:,2]=self._centers[index,2]
-        self._vertices[:, :, 3:7] = self._colors[:, None, :]
-        self._vertices[:,:,9]=self._shapes[:,None]
+        self._vertices[:extent, :, 3:7] = self._colors[:extent, None, :]
+        self._vertices[:extent,:,9]=self._shapes[:extent,None]
+        # Retired/unused capacity stays degenerate and transparent. Only the
+        # occupied prefix needs billboard/color/shape evaluation.
+        self._vertices[extent:,:,:3]=self._target_coords
+        self._vertices[extent:,:,3:7]=0
         with memoryview(self.data.modify_array(0)) as buffer:
             buffer.cast('B')[:]=self._vertex_bytes
         if blend_changed:
@@ -331,9 +343,11 @@ class ParticleEmitter:
             self._last_blend_revision=self.pool.blend_revision
         # A conservative box from already evaluated centers avoids a second
         # native scan of8000 billboard vertices for each blend batch per frame.
-        np.min(self._centers[:,:3],axis=0,out=self._bounds_min)
-        np.max(self._centers[:,:3],axis=0,out=self._bounds_max)
-        margin=float(np.max(self._centers[:,3]))*math.sqrt(2)
+        np.min(self._centers[:extent,:3],axis=0,out=self._bounds_min)
+        np.max(self._centers[:extent,:3],axis=0,out=self._bounds_max)
+        np.minimum(self._bounds_min,self._target_coords,out=self._bounds_min)
+        np.maximum(self._bounds_max,self._target_coords,out=self._bounds_max)
+        margin=float(np.max(self._centers[:extent,3]))*math.sqrt(2)
         self._bound_start.set(*(float(value)-margin for value in self._bounds_min))
         self._bound_end.set(*(float(value)+margin for value in self._bounds_max))
         self._bounds.set_min_max(self._bound_start,self._bound_end)
@@ -356,6 +370,7 @@ class ParticleEmitter:
         free=self.pool._free.copy();rng=self.pool._rng.getstate()
         counters=self.pool.requested,self.pool.emitted,self.pool.dropped
         blend_revision=self.pool.blend_revision
+        extent=self.pool._extent
         target=getattr(self,'_last_target',None)
         try:
             self.pool.update(10)
@@ -368,5 +383,6 @@ class ParticleEmitter:
             self.pool.slots=slots;self.pool._free=free;self.pool._rng.setstate(rng)
             self.pool.requested,self.pool.emitted,self.pool.dropped=counters
             self.pool.blend_revision=blend_revision
+            self.pool._extent=extent
             if target is None:self.update(0)
             else:self.update(0,target)

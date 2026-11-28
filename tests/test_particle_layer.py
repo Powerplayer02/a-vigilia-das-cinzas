@@ -135,3 +135,42 @@ def test_unused_capacity_does_not_anchor_a_regional_batch_at_world_origin():
     target=Vec3(240,25,1)
     emitter.spawn('embers',target,count=500);emitter.update(0,target)
     assert emitter.root.get_bounds().get_center().x==pytest.approx(240,abs=1e-4)
+
+
+def test_sparse_survivor_and_reused_holes_keep_their_simulation():
+    pool=ParticlePool(MAX_PARTICLES)
+    pool.spawn('blood',Vec3(1,2,3),count=500)
+    pool.spawn('embers',Vec3(4,5,6),count=1)
+    survivor=pool.slots[500]
+    pool.update(.55)
+    assert pool.active_count==1 and survivor.alive
+    before=survivor.x,survivor.y,survivor.z
+    pool.spawn('blood',Vec3(),count=10)
+    pool.update(.01)
+    assert pool.active_count==11 and before!=(survivor.x,survivor.y,survivor.z)
+    pool.update(2)
+    assert pool.active_count==0 and pool._extent==0
+
+
+def test_retired_tail_has_no_visible_or_out_of_bounds_quads():
+    emitter=ParticleEmitter(NodePath('scene'),capacity=40)
+    target=Vec3(240,25,1)
+    emitter.spawn('blood',target,count=40)
+    emitter.pool.slots[0].lifetime=10
+    emitter.update(.6,target)
+    assert emitter.pool.active_count==1
+    assert (emitter._vertices[1:,:,6]==0).all()
+    assert (emitter._vertices[1:,:,:3]==(240,25,1)).all()
+    geometry=emitter.geometries[0];reader=GeomVertexReader(geometry.get_vertex_data(),'vertex')
+    while not reader.is_at_end():assert geometry.get_bounds().contains(reader.get_data3())
+
+
+def test_warmup_restores_occupied_prefix_and_subsequent_birth_order():
+    emitter=ParticleEmitter(NodePath('scene'),capacity=MAX_PARTICLES)
+    emitter.spawn('embers',Vec3(240,25,1),count=500)
+    before=emitter.pool._extent,emitter.pool._free.copy()
+    with emitter.warmup():pass
+    assert before==(emitter.pool._extent,emitter.pool._free)
+    emitter.spawn('blood',Vec3(),count=1)
+    emitter.update(.01)
+    assert emitter.pool.slots[500].alive and emitter.pool.slots[500].age==pytest.approx(.01)
