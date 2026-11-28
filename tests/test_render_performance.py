@@ -44,3 +44,8 @@ def test_animation_budget_does_not_reuse_the_smaller_hud_only_budget():
     data=reports();data['candidate_uncapped']['median_frame_ms']+=.75
     assert not module.validate(data)['passed']
     assert module.validate(data,hud_only=False)['passed']
+
+
+def test_focus_loss_cannot_pass_even_if_the_window_was_not_minimized():
+    data=reports();data['candidate_uncapped']['unfocused_frames']=1
+    assert not module.validate(data,hud_only=False)['passed']

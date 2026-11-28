@@ -10,6 +10,7 @@ def validate(reports, *, hud_only=True):
     for name in expected:
         report=reports[name]
         if (not report.get('valid_sample') or report.get('minimized_frames') != 0
+                or report.get('unfocused_frames',0)!=0
                 or not report.get('eligible_fps_baseline') or report.get('qa_diagnostics')
                 or report.get('window_type') != 'onscreen'):
             problems.append(name+': invalid, minimized or instrumented sample')

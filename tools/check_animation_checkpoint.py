@@ -9,6 +9,7 @@ def validate(report):
     problems=[];notes=[]
     if (not report.get('eligible_fps_baseline') or not report.get('valid_sample')
         or report.get('minimized_frames')!=0 or report.get('window_type')!='onscreen'
+        or report.get('unfocused_frames',0)!=0
         or report.get('seconds',0)<30 or report.get('warmup_seconds',0)<5
         or report.get('fps_cap')!=60 or report.get('pstats_connected')
         or report.get('gl_finish') or report.get('qa_diagnostics') or 'profile' in report):

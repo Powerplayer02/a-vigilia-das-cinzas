@@ -88,7 +88,6 @@ def main():
                 if identity not in actor_ids:
                     for node in gear:node.hide()
             app.camera.set_pos(0,10,3.5);app.camera.look_at(0,0,.3)
-            renderer.root.set_shader_input('eye_pos',app.camera.get_pos())
             renderer._box(renderer.root,'gallery-floor',Vec3(0,0,-.1),Vec3(12,8,.2),(.25,.29,.32,1))
             cases=['idle','walk','run','roll_left','roll_back','light_1:windup','light_1:active',
                 'heavy:active','parry','drink','wall_cling','slamming','phase','death_front',

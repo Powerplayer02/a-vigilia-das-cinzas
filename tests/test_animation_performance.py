@@ -30,7 +30,7 @@ def test_complete_native_coverage_can_pass():
     assert gate.validate(*reports())['passed']
 
 
-@pytest.mark.parametrize('field,value',(('minimized_frames',1),('pstats_connected',True),('gl_finish',True),('seconds',119)))
+@pytest.mark.parametrize('field,value',(('minimized_frames',1),('unfocused_frames',1),('pstats_connected',True),('gl_finish',True),('seconds',119)))
 def test_contaminated_or_short_coverage_cannot_pass(field,value):
     capped,uncapped,coverage=reports();coverage[field]=value
     assert not gate.validate(capped,uncapped,coverage)['passed']
@@ -54,3 +54,13 @@ def test_animation_cpu_nan_or_an_incomplete_measurement_cannot_pass():
         capped,uncapped,coverage=reports()
         coverage['animation_timing'].update(animation_total_mean_ms_per_render=value,render_frames=frames)
         assert not gate.validate(capped,uncapped,coverage)['passed']
+
+
+def test_particle_layer_requires_the_real_ceiling_and_separate_particle_cpu_counter():
+    capped,uncapped,coverage=reports()
+    coverage.update(particles_min_max=[2000,2000],particle_pool_capacity=2000,particle_admission_limit=2000)
+    coverage['animation_timing'].update(animation_total_median_ms_per_render=.8,
+        animation_total_p95_ms_per_render=1.7,direct_scopes={'particles':{'calls':1000}})
+    assert gate.validate(capped,uncapped,coverage,particle_layer=True)['passed']
+    coverage['particle_pool_capacity']=5000
+    assert not gate.validate(capped,uncapped,coverage,particle_layer=True)['passed']

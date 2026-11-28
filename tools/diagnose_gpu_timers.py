@@ -47,7 +47,7 @@ def summarize(directory):
     return summary
 
 
-def run(directory,seconds):
+def run(directory,seconds,particles=500):
     directory=directory.resolve()
     if directory.exists():raise ValueError('Use a new directory; diagnostic evidence is immutable')
     directory.mkdir(parents=True)
@@ -68,7 +68,7 @@ def run(directory,seconds):
             with (directory/'benchmark.log').open('w') as log:
                 process=subprocess.Popen([sys.executable,str(ROOT/'tools/benchmark.py'),'--seconds',str(seconds),
                     '--warmup-seconds','5','--final-boss','--enemies','20','--all-enemy-profiles',
-                    '--particles','500','--procedural-music','--procedural-sfx','--pstats-port',str(port),
+                    '--particles',str(particles),'--procedural-music','--procedural-sfx','--pstats-port',str(port),
                     '--pstats-max-rate','60','--output',str(directory/'benchmark.json')],
                     stdout=log,stderr=subprocess.STDOUT,creationflags=flags,cwd=ROOT)
                 if process.wait(timeout=seconds+120):raise RuntimeError('GPU diagnostic failed; inspect benchmark.log')
@@ -85,6 +85,7 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--directory',type=Path,required=True)
     parser.add_argument('--seconds',type=int,default=10)
+    parser.add_argument('--particles',type=int,choices=(500,2000),default=500)
     args=parser.parse_args()
     if args.seconds<1:parser.error('--seconds must be positive')
-    run(args.directory,args.seconds)
+    run(args.directory,args.seconds,args.particles)

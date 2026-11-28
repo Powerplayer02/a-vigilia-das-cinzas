@@ -38,7 +38,8 @@ from vigilia.engine.physics import BulletPhysicsAdapter
 from vigilia.engine.physics import BulletContactVolumes
 from vigilia.engine.render import ArenaRenderer
 from vigilia.engine.audio import AudioBackend, AudioEventRouter
-from vigilia.engine.particles import ParticleEmitter
+from vigilia.engine.particles import ParticleEmitter, MAX_PARTICLES
+from vigilia.engine.particle_scene import ParticleScene
 from vigilia.engine.polish import PresentationPolish
 from vigilia.entities.components import (
     LockOnTarget, BodyRef, MovementIntent, EnemyTag, NavAgentComponent, AIStateComponent,
@@ -160,7 +161,8 @@ class Game:
             assets.parent / ("data/audio/sfx.toml" if self._sfx_enabled else "data/audio/map.toml"))
         self._bus.subscribe(UIFeedbackEvent, self._on_ui_feedback)
         self._apply_audio_options()
-        self._particles = ParticleEmitter(app.render, camera=app.camera)
+        self._particles = ParticleEmitter(app.render, capacity=MAX_PARTICLES, camera=app.camera)
+        self._particle_scene = ParticleScene(self._particles)
         self._polish = PresentationPolish(app)
         self._footstep_distance = 0.
         self._footstep_position = SPAWN
@@ -212,8 +214,8 @@ class Game:
         self._bus.subscribe(ParrySucceeded, self._on_parry)
         self._bus.subscribe(StaggerTriggered, self._on_stagger)
         self._bus.subscribe(EntityDied, self._on_death)
-        self._bus.subscribe(DashStartedEvent, lambda event: self._sfx("dash", event.position))
-        self._bus.subscribe(SlideStartedEvent, lambda event: self._sfx("slide", event.position))
+        self._bus.subscribe(DashStartedEvent, lambda event: self._movement_effect('dash',event.position))
+        self._bus.subscribe(SlideStartedEvent, lambda event: self._movement_effect('slide',event.position))
         self._bus.subscribe(DashTrailEvent, lambda event: self._renderer.dash_trail(event.position))
         self._bus.subscribe(WallJumpStartedEvent, lambda event: self._sfx("wall_jump", event.position))
         self._bus.subscribe(WallClingStartedEvent, lambda event: self._sfx("wall_cling", event.position))
@@ -618,6 +620,7 @@ class Game:
         self._audio.update(dt)
         if getattr(self, "_music_director", None) is not None:
             self._music_director.update(dt)
+        if hasattr(self,'_particle_scene'):self._particle_scene.update(dt,position,paused=paused)
         self._particles.update(0 if paused else dt, position)
         self._presentation_footsteps(position, paused)
         if getattr(self, "_sfx_enabled", False):
@@ -837,7 +840,11 @@ class Game:
             if status and status[0].value == "bleed" and target is not None and not event.blocked and status[0] not in target.status.buildup:
                 self._sfx("status_bleed", position)
         self._sfx(sound, position)
+        impact_tag=self._world.get(Entity(event.target),EnemyTag)
+        metal=impact_tag is not None and impact_tag.profile_id in ('salt_guard','cinzeiro')
+        if event.damage_type=='fire':self._emit('smoke',position)
         self._emit("sparks" if event.blocked else "embers" if event.damage_type == "fire" else
+                   'sparks' if metal else
                    "arcane" if event.damage_type == "magic" else "blood", position)
         if event.attack_kind == "forge_grab" and hasattr(self, "_polish"):
             self._polish.shake(2, 3)
@@ -1441,6 +1448,8 @@ class Game:
         if getattr(self, "_sfx_enabled", False):
             self._sfx("boss_phase2" if event.phase == 2 else "boss_phase", position)
         self._emit("arcane" if event.boss_id == "abbess_of_the_tide" else "boss_phase", position)
+        if hasattr(self,'_particle_scene'):
+            self._particle_scene.phase(position,event.phase,water=event.boss_id=='abbess_of_the_tide')
         self._notify(self.localizer.t("boss." + self.boss.profile.id + ".phase" + str(self.boss.phase)))
 
     def _on_boss_defeated(self, event: BossDefeatedEvent) -> None:
@@ -1525,7 +1534,9 @@ class Game:
 
     def _on_slam_effect(self, event):
         self._sfx("slam", event.position)
-        self._renderer.slam_wave(event.position, event.radius)
+        # SlamImpactEvent carries the raycast contact point, not the body center.
+        self._emit('shockwave',event.position+Vec3(0,0,.04))
+        self._emit('dust',event.position+Vec3(0,0,.04))
 
     def _emit(self, preset, position):
         if hasattr(self, "_particles"):
@@ -1538,11 +1549,18 @@ class Game:
     def _on_level_effect(self, event):
         self._sfx("level_up", event.position)
         self._emit("level", event.position)
+        self._emit('level_wave',event.position-Vec3(0,0,.8))
+
+    def _movement_effect(self,sound,position):
+        self._sfx(sound,position)
+        self._emit('dust',position-Vec3(0,0,.85))
 
     def _bind_presentation_sources(self):
         if hasattr(self, "settings"):
             self._configure_agile(self.settings.options.config.ultrakill_style)
-        self._player.on_dodge = lambda: self._sfx("roll", self._transform.position)
+        self._player.on_dodge = lambda: self._movement_effect('roll',self._transform.position)
+        if hasattr(self,'_particle_scene'):
+            self._particle_scene.set_area(self.active_area,self._area_data.fires if self._area_data else BRAZIERS)
         for entity, (_, fighter) in self._world.query(Transform, Fighter):
             fighter.on_attack = lambda definition, identity=entity.id: self._on_attack_sound(identity, definition)
 
@@ -1653,6 +1671,8 @@ class Game:
         self._footstep_distance += distance
         if self._footstep_distance >= .85:
             self._footstep_distance %= .85
+            if hasattr(self,'_particle_scene'):
+                self._particle_scene.movement(position,water=self.active_area in ('pantano_das_cinzas','catedral_submersa'))
             if getattr(self, "_sfx_enabled", False):
                 surface = ("water" if self.active_area == "catedral_submersa" else
                     "mud" if self.active_area == "pantano_das_cinzas" else

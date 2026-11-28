@@ -68,8 +68,11 @@ class ArenaRenderer:
         if shader is None:
             shader = Shader.make(Shader.SL_GLSL, VERTEX, FRAGMENT)
         self.root.set_shader(shader)
-        self.root.set_shader_input("eye_pos", to_point(Vec3()))
         self.root.set_shader_input("masonry", 0.0)
+        self._fire_glow_value=(0,0,1,0)
+        self.root.set_shader_input('fire_glow',self._fire_glow_value)
+        self.root.set_shader_input('light_clock',(0,0,0))
+        self._light_offset=None;self._light_paused=False;self._light_pause_started=0.
         self.area_style((.17, .207, .25), (1., 1., 1.))
         self.shadows = ContactShadows(app.render, config.shadow_quality)
         self.apply_config(config)
@@ -84,6 +87,8 @@ class ArenaRenderer:
         self._tracers: list[tuple[NodePath, float]] = []
         self._combat_gear: dict[int, tuple[NodePath, NodePath, NodePath]] = {}
         self._gear_styles: dict[int, str] = {}
+        self._weapon_alignment={}
+        self._arm_alignment={}
         self._gates: dict[str, NodePath] = {}
         self._player = self.root.attach_new_node("vigia")
         self._rig = self._player.attach_new_node("pose")
@@ -302,6 +307,8 @@ class ArenaRenderer:
             flame = self._box(root, "fogo", Vec3(0, 0, .04), Vec3(width, width, height), tint)
             flame.set_hpr(yaw, 18, 18)
         self._flames.append(root)
+        if len(self._flames)==1:
+            self._set_fire_glow((position.x,position.y,position.z+.91,1))
 
     def target(self, identifier: int, position: Vec3) -> None:
         """Desenha o manequim e registra seu marcador de lock-on."""
@@ -656,6 +663,28 @@ class ArenaRenderer:
     def set_player_air_state(self, state):
         self._player_air_state = state
 
+    def _set_fire_glow(self,value):
+        if value!=self._fire_glow_value:
+            self._fire_glow_value=value
+            self.root.set_shader_input('fire_glow',value)
+
+    def _sync_light_clock(self,paused):
+        """Only pause/resume changes a scene input; normal time is engine-owned."""
+        now=self._app._clock.get_frame_time()
+        if self._light_offset is None:
+            self._light_offset=now-self._elapsed;self._light_paused=paused
+            if paused:self._light_pause_started=now
+            self.root.set_shader_input('light_clock',(self._light_offset,self._elapsed,int(paused)))
+        elif paused!=self._light_paused:
+            if paused:
+                self._light_pause_started=now
+                value=(self._light_offset,now-self._light_offset,1)
+            else:
+                self._light_offset+=now-self._light_pause_started
+                value=(self._light_offset,0,0)
+            self._light_paused=paused
+            self.root.set_shader_input('light_clock',value)
+
     def draw(self, camera: CameraPose, player: Vec3, yaw: float, speed: float,
              dodge: float, rolling: bool, locked: int | None, paused: bool, dt: float) -> None:
         """Atualiza câmera, animações de prévia e informações de controle."""
@@ -664,12 +693,12 @@ class ArenaRenderer:
         area_name = "F O R N A L H A   D O   V I G I A" if player.y >= 14 else "P Á T I O   D A   V I G Í L I A"
         if self._area_text.getText() != area_name:
             self._area_text.setText(area_name)
-        self.root.set_shader_input("eye_pos", to_point(camera.position))
         self._player.set_pos(to_point(player))
         self._player.set_h(-math.degrees(yaw))
         self._frame_dt=dt
 
         self._elapsed += dt
+        self._sync_light_clock(paused and dt<=0)
         if hasattr(self, '_slam_ring'):
             fraction = max(0., min(1., 1 - (self._slam_expiry - self._elapsed) / .3))
             self._slam_ring.set_scale(self._slam_radius * (.2 + .8 * fraction))
@@ -690,6 +719,11 @@ class ArenaRenderer:
         for index, flame in enumerate(self._flames):
             flame.set_h(self._elapsed * 65 + index * 27)
             flame.set_sz(1 + .13 * math.sin(self._elapsed * 9 + index))
+        if self._flames:
+            nearest=min(self._flames,key=lambda flame:(flame.get_pos()-to_point(player)).length_squared())
+            center=nearest.get_pos()
+            self._set_fire_glow((center.x,center.y,center.z,1))
+        else:self._set_fire_glow((0,0,1,0))
         if locked != self._locked:
             if self._locked is not None:
                 self._targets[self._locked].hide()

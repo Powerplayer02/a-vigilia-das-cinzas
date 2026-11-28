@@ -1,21 +1,21 @@
 # Fechamento da 1.0 — Etapa 5.5
 
-Estado em 27/11/2026: campanha OFF conduzida pelo agente concluída; fases 1
-e 2 de música e efeitos implementadas. Release ainda não certificada; avaliação humana e
-comparação ON/OFF dos chefes permanecem pendentes. As seções antigas abaixo
-preservam a cronologia, e a atualização atual está no fim deste documento.
-O acompanhamento atual da fase 4 está em
-[sincronia e preparo](docs/qa/animation-acceptance-2026-11-27.md): correção funcional
-concluída, medições de CPU/GPU pendentes por escolha explícita mais recente.
+Estado em 28/11/2026: fase 5 de partículas implementada para revisão, com
+827 testes locais. Checkpoint de CPU da fase 4 medido e aprovado com nota;
+comparação gráfica final reprovada pela mediana livre e alvo histórico.
+Estresse de 120 s/2.000 partículas sem frame acima de 50 ms. Release ainda
+não certificada, fase 6 não iniciada; avaliação humana e comparação ON/OFF
+dos chefes permanecem pendentes. As seções antigas preservam a cronologia.
+[Resultados atuais e falhas preservadas](docs/qa/particles-2026-11-28.md).
 
 | Verificação | Estado |
 | --- | --- |
-| Testes locais de regras e contratos | 700 passaram no Windows; os 466 anteriores preservados |
+| Testes locais de regras e contratos | 827 passaram no Windows; os 807 do checkpoint de CPU preservados |
 | Fechar a janela sem salvar | Corrigido e verificado por Alt+F4 real: zero commits no fechamento |
 | Checkpoint coberto por preto antes do commit | Verificado por leitura do frame apresentado |
 | SQLite | WAL, synchronous=NORMAL (1), estado anterior preservado após fechar |
-| Repositório | Privado: Powerplayer02/a-vigilia-das-cinzas |
-| CI remoto Linux/macOS/Windows | Aprovado: 700 testes em cada plataforma, [fase 2 de efeitos](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45909336947) |
+| Repositório | Powerplayer02/a-vigilia-das-cinzas |
+| CI remoto Linux/macOS/Windows | Checkpoint separado aprovado: [807 por plataforma](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/46133778907); [execuções da camada atual](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/workflows/tests.yml) |
 | Três desfechos a partir de saves anteriores ao chefe final | Aprovado: três fixtures versionadas, combate/epílogo/pós-créditos; repetido com Bullet/UI nativos |
 | Campanha com números de produção | Percurso principal e final Transformar concluídos por comandos do agente; não é avaliação humana |
 | Comparação controlada de desempenho entre fases do chefe final | Pendente; não bloqueia release |
@@ -365,3 +365,27 @@ de2–4ms. Mediana de frame16,6673ms, p9516,7813ms, zero minimizações.
 Essa referência não inclui os recursos de partículas da fase5.
 Tabelas/dano/timings preservados; sem certificação de release.
 [Relatório](docs/qa/animation-cpu-checkpoint-2026-11-28.md).
+
+### Fase 5 — implementação e medições, 28/11/2026
+
+Pool único com teto de 2.000 e 19 presets, LOD/reserva de combate, ambientação
+das cinco áreas, feedback de combate/mobilidade/Slam/almas/level up e preparo
+dos efeitos das fases tardias. Regras, dados de chefes e passo fixo preservados.
+827 testes locais passaram; galeria nativa com 14 verificações e 35 pares de
+sincronia aprovados. Banco do usuário preservado por hash.
+
+Controles finais sem foco perdido ou minimização: referência livre
+6,7988/11,9597 ms, candidata livre 8,0848/12,6205 ms (mediana/p95). Delta de
+mediana +1,2860 ms **reprova** ±1 ms. O alvo histórico 3,665/7,0191 ms também
+não foi atingido. O controle limitado separado teve mediana 16,6671 ms,
+passando em 16,7 ms, mas 59,49 FPS reprovaram o piso adicional de 59,5 do gate.
+
+Estresse final120,006 s, 2.000 partículas em todos os10.464 frames: máximo
+29,414 ms, zero>50 ms. Animação inclusiva2,1875/2,9498 ms, aceita com nota;
+partículas2,36425/3,2036 ms; passo fixo2,11145/2,9159 ms por passo.
+São tempos de parede na thread do jogo, sem medição exclusiva de CPU/GPU.
+
+Os gates foram executados e permaneceram reprovados. Não houve dispensa do
+critério, seleção da melhor amostra, certificação de release ou início da
+fase6. O pico histórico334,6945 ms continua sem causa estabelecida.
+[Relatório e índice de hashes](docs/qa/particles-2026-11-28.md).

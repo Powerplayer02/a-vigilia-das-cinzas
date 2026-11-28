@@ -85,6 +85,8 @@ class FrameProfile:
         if split_flip:
             game._app.graphicsEngine.set_auto_flip(False)
         self._wrap(game, "_fixed_step", "fixed_step")
+        self._wrap(game, 'frame', 'frame_update')
+        self._wrap(game._renderer, 'draw', 'scene_draw')
         self._wrap(game._physics, "step", "bullet_step")
         self._wrap(game, "_evaluate_poses", "pose")
         self._wrap(game._sync, "sync", "hitbox_sync")
@@ -276,7 +278,7 @@ def main() -> None:
     parser.add_argument('--pstats-max-rate',type=int,default=60)
     parser.add_argument("--shader-log", action="store_true")
     parser.add_argument("--ready-file", type=Path)
-    parser.add_argument("--particles", type=int, choices=(0, 500), default=0)
+    parser.add_argument("--particles", type=int, choices=(0, 500, 2000), default=0)
     parser.add_argument("--fps-cap", type=int, default=0)
     parser.add_argument("--seed", type=int, default=37, help="Fixed boss selection for comparable render controls")
     parser.add_argument("--procedural-music", action="store_true", help="Gera/pré-carrega a nova partitura antes da medição")
@@ -370,6 +372,9 @@ def main() -> None:
                     gpu_file = None
             game = Game(app, config, ROOT / "assets", save_path=Path(temporary) / "slot.sqlite3",
                         enemy_count=args.enemies, legacy_hud=args.legacy_hud)
+            if args.particles:
+                if hasattr(game,'_particle_scene'):game._particle_scene.enabled=False
+                if hasattr(game._particles.pool,'set_limit'):game._particles.pool.set_limit(args.particles)
             game._renderer.batch_statics = not args.unbatched
             app.start(game)
             if args.particles:
@@ -427,13 +432,14 @@ def main() -> None:
             samples: list[float] = []
             measuring = False
             minimized_frames = 0
+            unfocused_frames=blocking_frames=0
             minimized_seconds = 0.
             sample_minimized = False
             injected_minimize = injected_restore = False
             measurement_start = 0.0
             boss_moves = {}
             previous_boss_attack = None
-            particle_min, particle_max = 500, 0
+            particle_min, particle_max = args.particles, 0
             if args.pstats_port:
                 from panda3d.core import PStatCollector
                 measuring_collector=PStatCollector('QA measuring')
@@ -450,7 +456,7 @@ def main() -> None:
             app.taskMgr.add(observe_window, "benchmark-window-observer", sort=52)
 
             def benchmark(task):
-                nonlocal previous, measuring, measurement_start, previous_boss_attack, particle_min, particle_max, minimized_frames, minimized_seconds, sample_minimized, injected_minimize, injected_restore
+                nonlocal previous, measuring, measurement_start, previous_boss_attack, particle_min, particle_max, minimized_frames, minimized_seconds, sample_minimized, injected_minimize, injected_restore,unfocused_frames,blocking_frames
                 now = time.perf_counter()
                 elapsed = now - previous
                 previous = now
@@ -468,6 +474,9 @@ def main() -> None:
                 if profile is not None:
                     profile.begin_frame(elapsed)
                 if animation_timing:animation_timing.begin_render()
+                # The fixture holds block; native focus events clear input.
+                # Reassert the scripted command so focus cannot change combat.
+                game.keyboard('control',True)
                 game.frame(elapsed, (0, 0), (0, 0))
                 if animation_timing:animation_timing.end_render()
                 if (args.boss or args.tide_boss or args.final_boss) and game.boss.fighter.attack is not previous_boss_attack:
@@ -478,10 +487,10 @@ def main() -> None:
                 if profile is not None:
                     profile.end_frame()
                 if now - started >= args.warmup_seconds and not measuring:
-                    if app.mainWinMinimized:
+                    if app.mainWinMinimized or (args.window_type=='onscreen' and not app.win.get_properties().get_foreground()):
                         app.win.request_properties(restore_window)
                         if now - started > 15:
-                            raise RuntimeError("A janela está minimizada; benchmark não iniciado.")
+                            raise RuntimeError("A janela precisa estar visível e selecionada; benchmark não iniciado.")
                         return task.cont
                     gc.collect()
                     if args.freeze_gc:
@@ -503,6 +512,8 @@ def main() -> None:
                         profile.measuring = True
                     return task.cont
                 if measuring:
+                    if args.window_type=='onscreen' and not app.win.get_properties().get_foreground():unfocused_frames+=1
+                    blocking_frames+=int(game._fighter.blocking)
                     if previous_minimized:
                         minimized_frames += 1
                         minimized_seconds += elapsed
@@ -518,6 +529,7 @@ def main() -> None:
                         states[state.mode.value] = states.get(state.mode.value, 0) + 1
                     result = {
                         "renderer": app.win.get_gsg().get_driver_renderer(),
+                        "camera_to_player_distance":(game._transform.position-Vec3(*app.camera.get_pos())).length(),
                         "window_type": args.window_type,
                         "qa_diagnostics": args.qa_diagnostics,
                         "source_build_id": qa.build_id if qa else source_id,
@@ -530,10 +542,13 @@ def main() -> None:
                         "gpu_timer_supported":app.win.get_gsg().get_supports_timer_query(),
                         "gpu_timer_queries_active":app.win.get_gsg().get_timer_queries_active(),
                         "animation_warmups":getattr(game,'presentation_warmups',[]),
-                        "valid_sample": minimized_frames == 0,
+                        "valid_sample": minimized_frames == 0 and unfocused_frames==0,
                         "minimized_frames": minimized_frames,
+                        "unfocused_frames":unfocused_frames,
+                        "blocking_frames":blocking_frames,
+                        "scripted_input":'Block held every frame; native focus resets cannot alter the command',
                         "excluded_samples": dict(count=minimized_frames, total_ms=round(minimized_seconds * 1000, 3), reason="window_minimized"),
-                        "exclusion_policy": "Raw timings retained; any minimized sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
+                        "exclusion_policy": "Raw timings retained; any minimized or unfocused sample invalidates the run for FPS comparisons. Durations are full measured frame intervals.",
                         "timing_note": "render_and_swap spans igLoop, including any minimization sleep; PStats separates engine collectors",
                         "scenario": "final_boss_20" if args.final_boss else "tide_boss_20" if args.tide_boss else "forge_boss" if args.boss else "patio_20" if args.enemies == 20 else "patio",
                         "hud": "legacy" if args.legacy_hud else "full",
@@ -555,6 +570,8 @@ def main() -> None:
                         "diagnostic_minimization_injected": args.diagnostic_minimize_at is not None,
                         "audio_track": game._audio.track_id,
                         "particles_requested": args.particles,
+                        "particle_pool_capacity":len(game._particles.pool.slots),
+                        "particle_admission_limit":getattr(game._particles.pool,'limit',len(game._particles.pool.slots)),
                         "particles_min_max": [particle_min, particle_max],
                         "gc_mode": "disabled" if args.disable_gc else "frozen" if args.freeze_gc else "normal",
                         "enemies": args.enemies,

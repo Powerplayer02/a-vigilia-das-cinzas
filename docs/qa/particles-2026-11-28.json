@@ -1,0 +1,2018 @@
+{
+  "date": "2026-11-28",
+  "status": "Phase5 implementation published for review; graphics acceptance FAILED, phase6 not started",
+  "cpu_checkpoint_commit": "8a245a4fce4aa1bd63adcf64f6d32e77ed789db2",
+  "cpu_checkpoint_ci": {
+    "commit": "8a245a4fce4aa1bd63adcf64f6d32e77ed789db2",
+    "run_url": "https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/46133778907",
+    "jobs": [
+      {
+        "id": 140944477015,
+        "name": "Tests (ubuntu-latest)",
+        "conclusion": "success",
+        "tests": [
+          "2026-11-28T10:09:22.3355775Z 807 passed in 6.66s"
+        ]
+      },
+      {
+        "id": 140944477276,
+        "name": "Tests (macos-latest)",
+        "conclusion": "success",
+        "tests": [
+          "2026-11-28T10:09:44.3805880Z 807 passed in 17.90s"
+        ]
+      },
+      {
+        "id": 140944477343,
+        "name": "Tests (windows-latest)",
+        "conclusion": "success",
+        "tests": [
+          "2026-11-28T10:10:14.7990203Z 807 passed in 30.33s\r"
+        ]
+      }
+    ]
+  },
+  "baseline_verification": {
+    "commit": "8a245a4fce4aa1bd63adcf64f6d32e77ed789db2",
+    "tracked_production_files": 173,
+    "differences": [],
+    "normalization": "CRLF/LF only; harness intentionally copied from candidate"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.13.14",
+    "dependencies": {
+      "panda3d": "1.10.16",
+      "pygame": "2.6.1",
+      "numpy": "2.5.5"
+    }
+  },
+  "protocol": {
+    "controls": "60 seconds,5 seconds warmup,500 particles; final same-harness uncapped pair; capped control recorded separately before focus hardening",
+    "coverage": "120 seconds,2000 active particles,all six real enemy families,all catalog poses,three final-boss phases",
+    "instrumentation": "Direct wall-clock counters on game thread, no PStats/cProfile/glFinish; not exclusive CPU or GPU time",
+    "focus": "Block reasserted every frame. Zero unfocused/minimized frames required. All raw intervals retained.",
+    "limitation": "Synthetic catalog-pose stress and elevated-HP combat fixture, not human playtest or difficulty certification"
+  },
+  "final_results": {
+    "uncapped_delta_median_ms": 1.286,
+    "uncapped_delta_p95_ms": 0.6608,
+    "comparison_gate": {
+      "passed": false,
+      "problems": [
+        "Candidate does not maintain the capped 60Hz budget",
+        "Uncapped median/p95 outside +/-1.0ms of baseline"
+      ],
+      "uncapped_delta_median_ms": 1.286,
+      "uncapped_delta_p95_ms": 0.6608,
+      "comparison_scope": "animation",
+      "note": "Local GPU comparison does not resolve historical stalls or human gameplay difficulty."
+    },
+    "coverage_gate": {
+      "passed": false,
+      "problems": [
+        "uncapped: median/p95 outside +/-1ms of accepted baseline"
+      ],
+      "notes": [
+        "Animation median between2 and4ms; accepted with note"
+      ],
+      "note": "Catalog-pose stress over production combat, not proof that each action was played through inputs. Historical stall remains open."
+    },
+    "capped_median_ms": 16.6671,
+    "capped_mean_fps": 59.49,
+    "capped_note": "Median passes16.7ms; shared legacy gate also requires59.5 mean FPS and the59.49 run fails that extra check. Not silently relaxed.",
+    "historical_baseline_ms": {
+      "median": 3.665,
+      "p95": 7.0191,
+      "tolerance": 1.0
+    },
+    "historical_note": "Absolute historical threshold not met. Historical phase3 source rerun today also misses p95; neither environment nor particles alone established as cause.",
+    "phase3_current_control": {
+      "median_ms": 4.4256,
+      "p95_ms": 9.9675
+    },
+    "coverage_frames_above50ms": 0
+  },
+  "functional": {
+    "local_tests": "827 passed in23.65s",
+    "native_gallery_checks": 14,
+    "attack_phase_sync_cases": 35,
+    "attack_sync_passed": true,
+    "fixed_step_ast_unchanged": true,
+    "combat_model_core_data_unchanged": true,
+    "user_save_sha256": "f0b24f3a502357b263055447fe0c4942efe55a66fd4e78ec826ed5974cc198c6"
+  },
+  "source_files": {
+    "assets/audio/README.txt": "8f9b416c157f95ca50913a2b52ba6d914c19545c16f82b890c7e1a6c6bd31c91",
+    "assets/audio/music/boss_phase1.wav": "a403446ae10238288418c07c71118b678a825e7f33a1e48894d6610c10843704",
+    "assets/audio/music/boss_phase2.wav": "300b11c5e02d0261eaf8adad2d42385c78607a2f489ce01f1dc63973d02fdb8e",
+    "assets/audio/music/cathedral_ambient.wav": "bc91f1ffda2061521e8bdf79f3619a24fa2c30be8db709ca9fa28b7ccf6f2698",
+    "assets/audio/music/cinder_boss_phase1.wav": "5717b17cfaadf2d88f433d806a51a6cb777c3a11bd91027094d1b687c5b64d12",
+    "assets/audio/music/cinder_boss_phase2.wav": "8c06b54ddfa01d670f5e69bf4738e4cd521e9cf1277fa13e8bcd57bb394d22a7",
+    "assets/audio/music/cinder_boss_phase3.wav": "300b11c5e02d0261eaf8adad2d42385c78607a2f489ce01f1dc63973d02fdb8e",
+    "assets/audio/music/forge_ambient.wav": "39648645bd031393f9c326876b651359577b93e04b54262b1328f789134f9ced",
+    "assets/audio/music/furnace_ambient.wav": "65e52043df3ee538e5e6f7156d181c74674f7af88f3cc7851aef95b42f0270af",
+    "assets/audio/music/marsh_ambient.wav": "35ddc756c45d7e5d05c627caf7797114e77d6795ebacb2d1c48bb0752a706f4d",
+    "assets/audio/music/menu_theme.wav": "3ae3b9a160c6719afc93b47164779e6dc1a663cbfe0133df1cac0c436b15ee50",
+    "assets/audio/music/patio_ambient.wav": "a5b72f50beee2cf6b2bace623c159b5a34ad6e60630f0c298700bdc3dc2e4bde",
+    "assets/audio/music/ruins_ambient.wav": "ef0465e9a197c01ec06439485ab8f2d8096108f7e89cba946bee9a79e4493806",
+    "assets/audio/music/tide_boss_phase1.wav": "5616185fe218d71a4abefaf143746f09b0508a4a3dd3acdd2b238a777138f48b",
+    "assets/audio/music/tide_boss_phase2.wav": "c04a3fc6116d6e9ef2f1a576931707adc1c8975c2ac9a5ab2ecc8ff15dd18c9e",
+    "assets/audio/sfx/backstab.wav": "58f1306923efb04f010806f88ec341b20e4867b77269fe3b45980c354a4f1ba6",
+    "assets/audio/sfx/bonfire_rest.wav": "e3ff2beab494b8d80c2431a08b896d4cc1572fae8e6be7ba32d44b39728778f1",
+    "assets/audio/sfx/boss_death.wav": "b12dc0d6ff1ef18008be4703321bf4b774efc7c70e9e509b43aace05f3f97e2d",
+    "assets/audio/sfx/boss_roar.wav": "bfb8be81f4f4ee4f6d620a0c51d9362715bf2f5b1781c0694bcf09982a07f70f",
+    "assets/audio/sfx/dash.wav": "11708485b65c109e61a8659fba0c27d4d6f2f8032203b7253e9183f2420ac6c1",
+    "assets/audio/sfx/death_enemy.wav": "a14e7e4ca3ba6d92587993dcf0ab2674d213896dfbe2355c474fa5e35984566d",
+    "assets/audio/sfx/death_player.wav": "91d7d3348994383fdca6b9a497c9ff554d30db63a57d2fc5d6ee33f4c5a482a5",
+    "assets/audio/sfx/drink.wav": "196608f2b4c4251c14ef27416eac25b14cf6b8eb0f6432b0b3436b5852ebda30",
+    "assets/audio/sfx/fog_wall_enter.wav": "70db6a74585e8651831901e355a6bf3af1ad73e98a8d775f12be24f85b35fa06",
+    "assets/audio/sfx/footstep_heavy.wav": "157a5930ecfa5f2e70842ffec34be6066e5c119162e8ac195ef2a95ed49cf51a",
+    "assets/audio/sfx/footstep_light.wav": "92503b1087ef5c66b8845e5706fa976055ec420b927abbdedff3c3f607910530",
+    "assets/audio/sfx/hit_block.wav": "f178f7fe4016055b1d14239c6816c3207fa43a51bc739fcd2e0574e4cc3a444e",
+    "assets/audio/sfx/hit_flesh.wav": "83c08f27fadfe852691284a6a95d07b16b1cde364f3106aae4dd9c05f6debd9b",
+    "assets/audio/sfx/level_up.wav": "c53feaf0bba281f56fb77d7f9d950562811efc91be8c4fd2499a889b3079a6d2",
+    "assets/audio/sfx/parry.wav": "28af6c561a20265b616b16616f00135fbb451d4ce02caa8c691e051899faadd2",
+    "assets/audio/sfx/parry_spark.wav": "55a05c57e09fafacd8da472a1841d4c0fd14d2f5fffc85d3e7fa53abfb74b9d4",
+    "assets/audio/sfx/riposte.wav": "f3eae48dfd28f5b677fabba59a2316486bf3aba0e8ae5307597101cc14167afc",
+    "assets/audio/sfx/roll.wav": "7e692821cc52d19c95feecbe731249212755cab5d73cd3bbf1a1f06c4fba9469",
+    "assets/audio/sfx/slam.wav": "637e53dd3f3608210a3c3750c124e105d8fd5dc057c59c7b8e2dccda8c389dac",
+    "assets/audio/sfx/slide.wav": "c95dad122b5163cb614cc52115183af4a1eecfb5e4958a48ecbeb9d5c2c51ebf",
+    "assets/audio/sfx/soul_collect.wav": "f877f2352301422647ec25db6d94a00625d878f42112441b703b6fcfa492d3b5",
+    "assets/audio/sfx/swing_heavy.wav": "a29e5a15feeba2eadd01162a5c05106fe3d057a4a22e800bcf7c6b56b4fae821",
+    "assets/audio/sfx/swing_light.wav": "71f2d54625693f04a595201e76c75274fef4c93cfe6265b2b88527334cedfa1b",
+    "assets/audio/sfx/ui_ping.wav": "ee689cbe88ecf82ced908a7f538a71984e88e3cbe79d19f76a59a04b89700c23",
+    "assets/audio/sfx/wall_jump.wav": "600e66cdbe2e1ff363ed68cc2cce98e90f49ecc876dc187a3df9ac8e22eaa48c",
+    "assets/fonts/OFL.txt": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+    "assets/fonts/ui.ttf": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+    "assets/shaders/stone.frag": "a492698ebbacb5897ce4759b39a9835277532356613b22ecd4197b0ea069d3f8",
+    "assets/shaders/stone.vert": "4bdfc9a1ba61d608a338757dd7c2e1df6689799c8539a5769b09f93e08cd62e2",
+    "assets/ui_atlas/atlas.json": "b9257b4f3613b384a05fe686af24a850e0cb6a9bee25530245aa62a759b1ac57",
+    "assets/ui_atlas/atlas.png": "ca13b61b1118558dc15c62793261536c24653dd360a45b772e2f3fb35e1173f5",
+    "data/areas/catedral_submersa.toml": "9f703d856866535897ceae88b1cb6ee308f2b856059c59a3c2531ee2001fddc9",
+    "data/areas/forno_da_vigilia.toml": "c7cac96909a60b57a2bed3e0934abb9c20a2f8f6af662e28b7e39c53d9d8182a",
+    "data/areas/pantano_das_cinzas.toml": "7dcc34d699c0c26dff56c4771177a851eaf9ab7b071e742370302426efb8f326",
+    "data/areas/ruinas_subterraneas.toml": "3395dfe846617a4f1ae2aba8ed85326d9f59a5dda72aeecc0774c5c0270ad7f9",
+    "data/audio/map.toml": "439724f1c31356f2aa2a644307b7fba529149f77b2373f106bf6bd9c6f862355",
+    "data/audio/sfx.toml": "c54a43cb939088a8e4b9cdc2c3c4dbf8adbbf0ec034c8c6b5fbc0621f02079cb",
+    "data/balance_templates/playthrough.md": "790af4eee57749991ae63f9a675823a95e16d0baa5c1d81df4f12653afca4e46",
+    "data/bosses/custodian.toml": "8208c7a2283856ec5b8635650fc09f08690a0a9e46b5afaf6160b58294515d23",
+    "data/bosses/tide.toml": "7d6e17726af2ed50a2cf24d80523a56c54639d4fdbbdaf7e12d5182b8bf8bda6",
+    "data/bosses/warden.toml": "e09b92c25fcec92d36bfc741475d2530766d219916372293f9317d2f55384e1a",
+    "data/classes/assassin.toml": "29954cd591abc298896be66d1c35039d2f7a2a03767fb02e331bf3b799bcc275",
+    "data/classes/cleric.toml": "d0ce7e77e56e147b9cea989ade27100b6db709c629b1fb2be383de2cc0681981",
+    "data/classes/knight.toml": "26a1daa3b595e5a2662493fac6bdb290751e988fbb275c6288d0fc76420a1461",
+    "data/classes/mage.toml": "3551d293eed3ff49ad4fec9d218e0d50939a5e80fd47a17ccc9841e0f06ff16b",
+    "data/classes/warrior.toml": "c1e355eed6f9d18331c7a166327313d433c17964784d5a437a9832bb4de68a6f",
+    "data/config.toml": "9e9ec9e7aa45f2a4142a686d47236e5592f8cf12f0a3597827134440c6841309",
+    "data/locale/en_US.toml": "8e925efeb449fd9eaaf82d9307e01ae5963ca29b14fdaf0b0fdcf7af55c71f5c",
+    "data/locale/pt_BR.toml": "b9160e5d56499152f122cd9dae2c51947b805d9259af7f83e08d33a57bdae807",
+    "data/palette.toml": "c4afaae5277f44f01c72761a170d0478a2d2801b74057c844553082a7b0accea",
+    "main.py": "b814d2676e490636d759f27434f7e590f71e95d14d57864dc86de2e4f0407205",
+    "pyproject.toml": "fabd54580c87770c9a6955d2ea26b003e5c65b79791ccdb58313875d52a311ec",
+    "requirements.txt": "a3854f059d69531debfb585d00f002123968298cd8343b3e7a46dd80a8d24736",
+    "src/vigilia/__init__.py": "a8d11369da273fa282dbb2a2d707845c22cdd90a7da2bb0356a17aac09c475b4",
+    "src/vigilia/ai/ai_system.py": "c187fa30c337cbadd2160119470d620d76ad9629e6f10c5b7fcdf9709dbfc48c",
+    "src/vigilia/ai/behaviors.py": "544ac5cca73bb14b2f3e378c9069cdc0a3192a579dd211abdf7d1b74909b3e1d",
+    "src/vigilia/ai/bosses.py": "3fb10196bcb3e820127423960f22391782e0252b9b0572a014e8f69d802421db",
+    "src/vigilia/ai/enemy_profiles.py": "f3bf9137710c71e9f35c7c5b08ad12bd62aedc5c2261653125be3de83283c50d",
+    "src/vigilia/ai/fsm.py": "4b6387db59de5c8bef2e8da6c3019edd154add3a5f9d876abdeb73ada675daac",
+    "src/vigilia/ai/pathfinding.py": "215b0a2f87fbb759466ed745dbcc50cecb2990535adceccd7daad168106babb9",
+    "src/vigilia/combat/attack.py": "43b61393cf54d5e578586c2ba0663db77a5986d83eca0865284ab8cd505d8825",
+    "src/vigilia/combat/damage.py": "c53e01d0a2e4127e1ab5b844f30331d1695f7cbfe1268ae4f226f5f3634bbc33",
+    "src/vigilia/combat/events.py": "a09cb3ed075bfbdf470afd9350dca72de841787d490d0fabf7ee8e5ed847c013",
+    "src/vigilia/combat/fighter.py": "3f29e20ac789d2b7e4fd906422d0258d9326ba6ed433269e301b558d08419760",
+    "src/vigilia/combat/hitbox.py": "d32590bcf81217d4a426790df570ae9bbb7f4173b8b39513c1b360bc030829f0",
+    "src/vigilia/combat/orchestrator.py": "cfb74a191af86406c03bc8de5b6b6261b5e86dc5f862fcc9fe8582834c1d9070",
+    "src/vigilia/combat/parry.py": "15143442f926d53284813acad9da045c7a9ded5fff7940cce4836ebcc6edd0d7",
+    "src/vigilia/combat/status.py": "ba69aa344cd98f866e259c402889c53e0d5c40ddcedb23d18cf61e34dc70230a",
+    "src/vigilia/core/animation.py": "f0c49cfbc1257e4ef712b7923621e0710d106f9c3702daa2e0d969e0bab4af07",
+    "src/vigilia/core/app_state.py": "319d284182ce45c8c42d6e717fe5d37e593d06d49eb2a3ecb5446001f539d597",
+    "src/vigilia/core/config.py": "f9ee1e6a837cc304cb1520a0a0cf7cc8136fd722ca0bda0516d0ebff6ada1072",
+    "src/vigilia/core/events.py": "9241417505eb0e0b8cd99b015bd2d97949c55373e97f4c41b2ab6d7825b42be4",
+    "src/vigilia/core/flight_recorder.py": "d43f2dba90be80d0aa6a4bef3d3c348cc8613902bfdd1776b52a92e099758045",
+    "src/vigilia/core/locale.py": "e7b35846a703c62726722548af4bc87d155530cc20e31d5dfe24757388c2d311",
+    "src/vigilia/core/log.py": "8bd5470e6417b1428d5f174462b6dc8d34a6678f1905a9f8b5ae70c227c7f3b3",
+    "src/vigilia/core/mathx.py": "b50e5f0d6d369951f4dafd4882d3988810962214f8542b03e39a8af270514c68",
+    "src/vigilia/core/navigation.py": "4be9c6b83f76f551a69b42dee8a4ae616c46f50ced05f880e36a00c8d9085bb4",
+    "src/vigilia/core/palette.py": "5ee2cbdaa43fb110297321d6d7cb8ba024a4744a2c025a4fb3af0e425f56f865",
+    "src/vigilia/core/protocols.py": "322010cec35a0d689f8caec45c71143b626d7d417fc58202c536333061364610",
+    "src/vigilia/core/settings.py": "57c0daaea6ac77f33d0ea9610a9eace2b77d8eb95e13101326fe3ef9397f419a",
+    "src/vigilia/core/timing.py": "c27bfe5fc89b6cbb20b62057153da20fe67f3a09c67c207a36b227eff959ffe5",
+    "src/vigilia/core/types.py": "e1868ebc3af3e13f9e4465ae80c4e071e86946271f969be6be28db8e92dd8f5c",
+    "src/vigilia/core/views.py": "27f985528fcd6e4a257584f719d27253bfdaa13b60423f98e3a024631e9e1782",
+    "src/vigilia/engine/animation.py": "4c1a49726b3febfa180941dfb0461d6876751f592a744fd1dd0ac0a6257be447",
+    "src/vigilia/engine/app.py": "8c5032cbaacea645761fa41c140b93e2386706a3e26d6e3eeb33e8d0569897fb",
+    "src/vigilia/engine/audio.py": "b434cbb9ab9de16296bbae32f4626d36cd7b43941f26d4fbd0b3c06a829479e0",
+    "src/vigilia/engine/camera.py": "3ba3d916b2d7435ac015881e67be75dbadaa291406888f640f81e45cb4ab72f7",
+    "src/vigilia/engine/config.py": "63ccc55a443717e567b64252ab5ec84b67e4018081ea28810e2f09c165e1817f",
+    "src/vigilia/engine/diagnostics.py": "993f6356b9735ffad69d21f52c27b097b62e507a2171003cfa6cf9af2f601fa1",
+    "src/vigilia/engine/input.py": "6d690ed8299c4c09ec08ad72ef18569788f8a99c9e8eb6ce48cef8e2b5d753af",
+    "src/vigilia/engine/music.py": "3c40c9190fcb680a94368958268d8a5dc5c75f3e8a2ae0b979fbd601dabd9183",
+    "src/vigilia/engine/music_synthesis.py": "4ee34640989e3242e2dd6f5c25477ed8edb017d21ae133a672da65eede7b81b2",
+    "src/vigilia/engine/particle_scene.py": "22a75cf0a7abb5cf948f6f6a21768b5bbf349d89f74e9517086c671fafe11181",
+    "src/vigilia/engine/particles.py": "c2846030030d2892ee280a4fdd1c6ba0aeb120fd6a263468184a8c5c473124a3",
+    "src/vigilia/engine/physics.py": "033721a084753a484be66f2df66e5d8a2ce1f3da2afac7cb19b00e26c6008eaf",
+    "src/vigilia/engine/polish.py": "e8a4c04e46e5814c67a89f64030bf18b578f25bb2bd88e6a90eb4231da12c1db",
+    "src/vigilia/engine/prewarm.py": "f0fe59253d12fef7e473c3072cd0ec1bd9f417b1d7b57880375f734d660fae00",
+    "src/vigilia/engine/render.py": "e12e9ae5b20ff5fe634ad35054300367ff6a4115255ec4df657179ef7417bdac",
+    "src/vigilia/engine/sfx_synthesis.py": "787a48036a8300c940d087ed1c980c345638225ae06fad711b51463ef1087217",
+    "src/vigilia/engine/shader_fallback.py": "23080f4c916b327a9d72e06bb8f8eff2190a4940ab5d3550b4fbe6250d1ca4f9",
+    "src/vigilia/engine/shadows.py": "5ecfc32300abb7eaaa47f1755493a1046a6abf823513a5e4910a322ba70ff106",
+    "src/vigilia/engine/sprite_atlas.py": "6c1fc659f2455462426affa34f3ecd17e1ed9428a6f2cb263c57c1846293b750",
+    "src/vigilia/engine/ui.py": "cbd4bdc945d643e48063c543e3c627fac46f9361bf55f4282811e697fcf425b3",
+    "src/vigilia/entities/archetypes.py": "2c784cabd5f24274df3a2b387b5e3f82a4c833a6caf98dfe24454d8419762918",
+    "src/vigilia/entities/components.py": "98e9002b918ac7fcb46db520ddf2d59853eaff821157d53930988dc7cd3da690",
+    "src/vigilia/entities/ecs.py": "12467e9c3442cfc9e6e73b857b74d00e1b34dead8c84cd74748e22415f42ef61",
+    "src/vigilia/entities/systems.py": "933b9ed9f841e1e61fee4d98ba9dc026ba8ac4a4bb9f3cbf65ebec36d444db48",
+    "src/vigilia/game.py": "4fb61e52bbc40f71999d592d53cc76009e001f1e39b83711b20cd7728f9be8eb",
+    "src/vigilia/model/areas.py": "4d44fbb598643033f87227d6500bc994a6da398603bea8861e0a19bc833210e1",
+    "src/vigilia/model/attacks.py": "26ab512adaa741249c3c6ed676d131eed444bab941afd4b62ed648581996d26a",
+    "src/vigilia/model/bosses.py": "243e51583a785e37c8373d50ef5011b15efdcd13d3c360c176c7ecc57fe0a55a",
+    "src/vigilia/model/characters.py": "00d9ee393959679618cbbd183325fc5029bdc17d04f64341d1b4be3d38fcefb0",
+    "src/vigilia/model/classes.py": "75013ff1471100fa24905e51f643131614a10c0439645b3c948fcc24cbcde6e1",
+    "src/vigilia/model/endings.py": "cd47fcd14304ab327d6010e3a87708cc8a82922a415d27e4cfb52d676419f6da",
+    "src/vigilia/model/enemies.py": "1a82a0fc4c9628c11675d2fbc8bb92931db15ec6cdacc2531da6275a96ecaa74",
+    "src/vigilia/model/inventory.py": "96ec672c55307c4415a645d3e33b3d16f0e2d7b5cf7d40341d977c97c89a0453",
+    "src/vigilia/model/items.py": "d33184e97ce5278e459b6379be9feb113b9641f06f6bc6f40f8f9876bf312446",
+    "src/vigilia/model/progression.py": "bd70f02c03f55700d46fd0e49994f41b80fc797cdea7aaa1dcd77f2368238f50",
+    "src/vigilia/model/snapshots.py": "9c8b50b126d95a360dbb9dfd895d8a3591d27f272f9d36aa6b6ee066619d63f3",
+    "src/vigilia/model/spells.py": "56fcf2fba665fac74567f823d1af03f7d506956774c338ab41cb26e6b12b0988",
+    "src/vigilia/model/stats.py": "9c7afa95603f40b30cb4bdc072995976956b109db3ca03aee2e2a62061013073",
+    "src/vigilia/model/world_state.py": "e20366ac2abfbdffd22671280fab8da5683259e99d9a81d116b369b23281803a",
+    "src/vigilia/player/advanced_movement.py": "bb56a0f85d9582a84821b456e8855709315c5eb0f58acc4dc87973f5bf7e5806",
+    "src/vigilia/player/controller.py": "859ca0834aeaf1fdcddb6549a41cf72c9b45e2bc911f916964d44f2fb940615d",
+    "src/vigilia/player/events.py": "2100e0d6abf74dc32480d7ed96393c40a84e42e14c7415ad91c04db4df113bd1",
+    "src/vigilia/player/lock_on.py": "d74244b211b16f4e3ee85b29a1892cf97d1f65149feb83c3698dbb1aa1bbd9f2",
+    "src/vigilia/player/movesets.py": "93a689de40248f2230c0dfed80d0d021513866d53d8f48b7f8ec23fc9bcc71ed",
+    "src/vigilia/player/state_machine.py": "f4b062d00f4ef5e901c098da67d1689858b18995b2128d461f83722daf899ea1",
+    "src/vigilia/save/database.py": "3387fdbb619558fc88ef3d24d35987bc307b4921779144a8c65cc62dae25bd4b",
+    "src/vigilia/save/locks.py": "177ea0abed951362e8db8c2d05a763efce21cb88152f7e141b3be96e75e60878",
+    "src/vigilia/save/migrations/__init__.py": "5436cae9a6bb79cc35c389bfb38d973faf178e3e6390c70a46ae70ccae409866",
+    "src/vigilia/save/migrations/v2_multi_slot.py": "7786c688fbebdbad7925eb45915af34c27c84a0531703959d7726ae1b7b72d8f",
+    "src/vigilia/save/migrations/v3_slot_headers.py": "8fd8497bf39fb136c7cada6e8253c160b214121ec5c69d93cd8ae9e8ace42eb7",
+    "src/vigilia/save/repositories.py": "d0194ef7fc2efb6ca04f77f41912b5c2bace07c27b27fef955e003c45d475ad4",
+    "src/vigilia/save/serializers.py": "8835a838ff1760f07584d150c2adb90f08e56c97dd9faaf0ca758f5f21384ce6",
+    "src/vigilia/save/service.py": "cf28bdf7947c4df290aa66999de74659e5242c547481e0a0e4fc9af4a0e301fa",
+    "src/vigilia/ui/__init__.py": "1f44f5dd61e1a6fb9eb20a41d95b99b1dd7ca408fd8a58196c98afa2fa74c873",
+    "src/vigilia/ui/character_creation.py": "febf8cfae105712988e5006f9c41103edc041d38acbf7769597282fe6377aeee",
+    "src/vigilia/ui/dialog.py": "9fd62598253760ae04984cb7ef02ce009d4e1378cf1853cf9212eb600457b189",
+    "src/vigilia/ui/ending_ui.py": "1aea281ce42f3bf0ab1bc0e3b0817540790e8e469e776ccac67f4e6fcc6c3672",
+    "src/vigilia/ui/front_router.py": "1e4550a09841a5587e33baf7e68f513cdf73ec081ad733b400c0c062255f2a6d",
+    "src/vigilia/ui/hud.py": "43b883cae570df03170ff2d8b66482fb113bec908a6f91338c83f05c3db242eb",
+    "src/vigilia/ui/inventory_ui.py": "eb4a689a96ef2356a3149644f8d0432ce15346914f20289464f7a749299a919f",
+    "src/vigilia/ui/level_up_ui.py": "8500a2db915a99402bd475b588a596fa3b3227af70fab793f53e260408d1b8e8",
+    "src/vigilia/ui/main_menu.py": "705c4e0e50cf93adf68d1db3ccf61b0dc56af12457f174c76d2da26f7b246266",
+    "src/vigilia/ui/map_view.py": "19c7ddb969235acc8ad331440150c81b62fec8c82df3bfb171c61efa26696b4f",
+    "src/vigilia/ui/menu_router.py": "a17be3ba1a0ce212073be46c424cd26b3b335cf5d15ff7c03e009634e155eb53",
+    "src/vigilia/ui/options_ui.py": "3570619321320178ec4adcf46575038719607cc0705eae6508be5ef0f69f89f5",
+    "src/vigilia/ui/pause_menu.py": "4958b9b2cad4d10441939743c9e5b06245bba9af6d64ebba6a3c7b793fd923f8",
+    "src/vigilia/ui/slot_select.py": "ae15843fb03eb9738dddb5f290268ec05990150a20a3e6ddf66472f00b22e81d",
+    "src/vigilia/ui/status_ui.py": "ece6bbaa32d8b27b921a3ecdaf0681217065d0194d52af391c82c4d161bce02c",
+    "src/vigilia/ui/text_render.py": "9ecd71d0ce2c8759214a893211cd3d5f6d99af340c472a9a7236c7cb7a4f1999",
+    "src/vigilia/ui/widgets.py": "d1f839a50cf7e8f51bd26869a1f43f4d2f98101cf1852223b4f82496d52857fd",
+    "src/vigilia/world/area.py": "a739ad761f2510c315abb6cc0bc25ac1670c262c32f4ee60976f7c0d4f857f2f",
+    "src/vigilia/world/arena.py": "cfc83be03601cea2e67f03f5e7b1afa7269be4c0bf54679778bca720d35e87f2",
+    "src/vigilia/world/bonfire.py": "4005271d808be157e1e8c2ee1a287a9e088c4e1d372afb6756998f25f424d4f9",
+    "src/vigilia/world/fog_wall.py": "f4151acd51d0782f801a94bc50ebfb50dc709178b279f015c12b77db0cbdd2ba",
+    "src/vigilia/world/map_data.py": "b6ecdcaca5dad68b4590f368077868604a37bdabb12dd567eaed315ffde55081",
+    "src/vigilia/world/shortcut.py": "209776ecfa107ce782a8f9c8fbed1883c610764b79b48012d0e065e548d60f14",
+    "tests/advanced_fakes.py": "b0c3eddaa99fb4635c7ebc9b57e4f76ea96d6dc187b49889aaa39de9556e5f1b",
+    "tests/boss_fakes.py": "026c1c5e00a9a521062bc2b5ae01c7f9ca40e7e753f20815b6a1996b3dca3070",
+    "tests/combat_fakes.py": "35aa505202b73d584d8fe4c5606c1d19578ab12a91f041af24af33ab5347589e",
+    "tests/fixtures/combat_pose_before_optimization.json": "95090b03ccb381e1b00d92de54921ba6b0602c05e79c0d32436792ef36d44922",
+    "tests/fixtures/saves/ending_a_preboss.db": "314645564d511cb3712679ba9a9229908eda50883abca3daf1cfb7f777e065f6",
+    "tests/fixtures/saves/ending_b_preboss.db": "c11ccdd5d75eb1daca8c63175433c42566b4fe49a0a773b500e62802bd2460f7",
+    "tests/fixtures/saves/ending_c_preboss.db": "1b5633df3e569d9b1399100066a41a133e548557b8bf294ca100e61fb6cb3e8f",
+    "tests/fixtures/saves/endings.json": "cc84f05776b5ed788d9260c4ba0d68aa7d73b974dde3cf52b2cbb3d6a414c493",
+    "tests/fixtures/saves/provenance.json": "9cde0793d6eacc491e25959725c907cca08604fc3d24dc3a559134626cd260f8",
+    "tests/migration_crash_worker.py": "afa150399525df33b3ff436289c181b1105aa598ca9e06abe0a6d2bb3925a40d",
+    "tests/save_fixtures.py": "3896d1f111d784a55001e3706d7dadfc20fe3cf266e4d77274a00938ad888c20",
+    "tests/test_agile_mode.py": "6cc3f80cfa6bb45563901e2ecc662950525650e7c2d7db3552d570da4c93067e",
+    "tests/test_ai_system.py": "9bf17f877dfec65681a9abc74cabafc333f228aefbcc3bd9e4d976786d4bf211",
+    "tests/test_animation.py": "90002ce91368299bd13c38e13cd0de0cc1e394ae4e43dc900f6e7535d674049c",
+    "tests/test_animation_checkpoint.py": "fd6b4cab0d15a0f3b10411ddc2ec0eb56112f2eeee76b9b3bda88e8a34a053b8",
+    "tests/test_animation_performance.py": "9687a675c0257eb59a5529a693a77169dd8edf461e77edfc3ca26ce3b8df4fc7",
+    "tests/test_animation_timing.py": "591d61191981d0832ccb8b679447ff41c52304df16a4b04ccc3e2fd8038c94b6",
+    "tests/test_animation_workload.py": "dc290ea43937b737f1c0e87c03424cd113214871f243c30ff4b6781538327730",
+    "tests/test_app_state.py": "1ebfd63a5ccbd820c47244397eac30efcdb286dc26a9cf88964a45d8cc2e909c",
+    "tests/test_architecture.py": "f32eb8853f9b53d336f850d0a4bbc6f6fea3e9906046f1409781be6c025262cd",
+    "tests/test_attack_visual_sync.py": "a19672eef2e406eec642046b432ed869f5a4fac9349724ea01b792fc1709e004",
+    "tests/test_audio.py": "fb5aaf62ae915c3069bf4410e3033fb91b03d097ab195793700368d646aa142e",
+    "tests/test_bonfire_gameplay.py": "928fffa117ebd3e8fe825a58ed54b76a30741e40c6eac81c7b4b6c76ddc468f0",
+    "tests/test_boss.py": "c2b485d221dc9eaf6cd6a2aa4f021d5a096399460e55d202d4f564c31f8dd187",
+    "tests/test_campaign.py": "80f352ef8228fa69f42c3a0639f7291e135f9a35540769cd341db14f989d017f",
+    "tests/test_character_creation.py": "7433347fffe891dd51669616ab6392dcba2aaf3596a14271d34011b015bceee5",
+    "tests/test_character_creation_ui.py": "41cf91afc592bb1999365bf4e902258497ae8cdbe622693b58bc9130f8f89595",
+    "tests/test_classes.py": "d3ae40dd5d5bb9de9dee4046c8d35a023ec298b9950cfad9129110f8c27aebf0",
+    "tests/test_combat_hitbox_kind.py": "dda0a7a55d7d9e33ff59e93b4c4dce184077d16fdc7d99cda261ae06caf2205d",
+    "tests/test_coyote_buffer.py": "6929d5eabd718189138df2179369e007cceb1fd6ca6a80e74133152efbc76397",
+    "tests/test_damage.py": "e0b5b3c9f23735e710b0f3f65945be6acbf541a06a1a34434143260b98d73485",
+    "tests/test_dash.py": "de16a86cbe2ccc8366018e51501deb98592eb1e1aabf450297b849ce791db3ab",
+    "tests/test_endings.py": "b3949dbcb769757dec0d2edd4f8a0f4375b9e6656d0a3a4f50374bb83ed8e093",
+    "tests/test_final_campaign.py": "c6001017b0520fbcff7791f704f39e03961fb9a52f0632258c5a2d30bb2be523",
+    "tests/test_fog_wall.py": "3c758c018675fa1be53c8c371d3fd5122bd1fd50b0e6ab58bd0889cab10b2dc9",
+    "tests/test_frame_recorder.py": "43c13724e7fd3a94a02de59bc6222edc58b1a5a22d0ddf18b63abda4217766ea",
+    "tests/test_fsm.py": "0ed21e830a3aa0733b68706c92a14414e6a7c245f76e036fa621ee956709c922",
+    "tests/test_game_load.py": "28a401a0b1b2ea743240e87ad370177341899a236c3dfde1d323536dcd99ca31",
+    "tests/test_game_sfx_feedback.py": "610dc87474a8a2a26f2fc38907326422e4f177a946ec59c448693f56211d20ed",
+    "tests/test_gpu_timer_report.py": "6b9a96b0be93000a2e17757d62bbe2f896a848758c0e11087e0350a4d5fb5cb0",
+    "tests/test_hitbox_sync.py": "3a88f78f92fb2d8ddc9669b349769188e5f3d2069f460cdc7c824f2f99190a92",
+    "tests/test_hud.py": "2e8d962e4495e1fe035a32ebae62ed0657947b52173bcb8c04d9c4a41b720ca3",
+    "tests/test_input.py": "f308c792716860ff35cbadd62e6a400e7633e01b68f226214bfa870ad9891622",
+    "tests/test_inventory.py": "7adcc9f20648adbb27ea14e3f13fcb1c73d4e89fb218f02e1f83b5227013cfa3",
+    "tests/test_inventory_ui.py": "6a81bcab345298c9707315ec488df949f80f5bd5bdc48bf508853631b71107c5",
+    "tests/test_level_up_ui.py": "eb16a1530177a63f3c7b85f5aebc07ee1fcecf1e64fb8d7e2f0b434081d572f5",
+    "tests/test_lock_on.py": "f806d257e2a8dace765e1be9a272c29cf09013fba646038313b9b7aa33821cf3",
+    "tests/test_logging.py": "fa5a37258aba662f87b4f557f598974bd05f1a01e96ec07963a2758dd50a883e",
+    "tests/test_map_data.py": "645424961912c4cff5dadb9418c34eb10c5d6fc6d007afd06961abedefa43061",
+    "tests/test_map_view.py": "1b19318244b32a10fc9ca7f7e84f16d78dfb56f148dcedd9b5ef95028ab8584b",
+    "tests/test_migration_crash.py": "84b902468cd924749f506483ebccf2fdf257ce45acbebc22570950faad2cd348",
+    "tests/test_momentum.py": "e9b5c466de55df549389840b52fd9aa66f577e49a3fd00ce09466d714df56289",
+    "tests/test_multislot.py": "533ce3e992a1a90cd654cbb33385b4c155f5b18bc634a71cea08101db7764021",
+    "tests/test_music_transitions.py": "91b2152af76b63ec1f79ad6758b7b209e2209e1c319ccd4f2ee0f9dc2e89a977",
+    "tests/test_native_pstats.py": "3abae3a57b6bf1de671712a95f79f3a7ecd5e8604c84ae6e064c8dcc9d14f617",
+    "tests/test_options.py": "6a04ffa060aa8d33046050d3a97d4fe4aca32998e33dc3abc581cb5bd8783c7f",
+    "tests/test_parry.py": "ddee143b6b8af8cc86746a7715d297fb809cefbd0f1f1d7b5a2fe865a52c0aee",
+    "tests/test_particle_layer.py": "78fd8c8ca16051de92688530a4dbd1615e49c43328e4838ce0a12b504ab1ab69",
+    "tests/test_particles.py": "8fc5575fb47048b7adb24c435764e8d06fdbb381d837ccd0cbf8f20e34d488ac",
+    "tests/test_pathfinding.py": "b83a44d6a9bb2b79351341d78b034a59f77424bd32ee1665153146d0ad007e07",
+    "tests/test_pause_flow.py": "7fea210587b177e68f11fd65a8eb6ed1ba3d60e48cfbf3cfb4d91364fe4dbea5",
+    "tests/test_physics.py": "8ebded38262c91d66f2efadcf2a79a35152ec6a06f28543029f35544f3cc78fe",
+    "tests/test_player_combat.py": "ab2f796c75512c00cc22b0c08ad187ff92c828fd5d51c04ec1a62aefa475a046",
+    "tests/test_polish.py": "c54cfe343f25780419d4207a19efb1a4df9c07ff7a152fad65ecc8b3780924e7",
+    "tests/test_pose_optimization.py": "f6d3707ff6505310af5e150a5134a267fe1ef1e36f1b3c3297b457a94066a323",
+    "tests/test_prewarm.py": "271f65b8d4912818a32e554be000cb5e45d87974ffbf9bedd2b79ac492a7414f",
+    "tests/test_progression.py": "53bd502944b20f803bf85e9edca54784eb131cee3b96ce45d1133af399ec52ce",
+    "tests/test_qa_diagnostics.py": "15116c3e2a7da2251b5667ab7164efd46fb32710ed6b3f324b9ecbe872a73578",
+    "tests/test_render_performance.py": "608586553ae7600481ced58e56294a934fcdfe888d1d9668c24f3bc0104d99e9",
+    "tests/test_save.py": "e432f779f83d4a366383c721d77ef76700e220b5ca182a4f8e711e5589be162e",
+    "tests/test_save_migration.py": "0f907240ff395fbd1fbf29419518db264cc53f9bf544eae1eeadb5fb9573412e",
+    "tests/test_save_multi_slot.py": "f0cd6d72d927a22174aa8e3403ca6f38a48fdf54a58ac6c0ef165c73c7b743b1",
+    "tests/test_save_scheduling.py": "ad0457df31855b6b583034cdc5fb39aebb3bb086524e09cce05e3d08980795f2",
+    "tests/test_sfx_priority.py": "e2358c3d9a7045520a798d2bb63ad6bb39b8708912e95e107c9a05dee89d0345",
+    "tests/test_slam.py": "cdcffaa5e8621a99595a5eda4acc3dd8033b6eeeb380686c8dfbe38c5124fcb9",
+    "tests/test_slide.py": "6e4614ea92b50ed0c245a03188fac7a63eef76d9867360b34060d1daa8fc5b0f",
+    "tests/test_slot_deletion.py": "8258e1275a81e77265dc3c8aacab6be9c001ff0f8c211352074b4a0701365120",
+    "tests/test_slot_select.py": "f1d38ed5b21d36b1152f45730677715c02412cba332a1246c8bbc394d8c7d779",
+    "tests/test_spawns.py": "733a1a67cf7d9bcfe527d86d7c14b3c4d69b2a9fa0d4507ea2b2e2c7a0840b4b",
+    "tests/test_spells.py": "58162234430dd4e5ca6822f8dfa48f6bdf08d479d79e79775177af025cf6acf9",
+    "tests/test_sprite_atlas.py": "1bbad5195fc044d8b3aeb2bc80ed7668853f89151e1f558a36d674888e20ad27",
+    "tests/test_ui_widgets.py": "f7ae32eb2df3aa7f2457f70753bbcb2bf6ff62bc53ebe12be06e1b2fced9612b",
+    "tests/test_vertical_motion.py": "dcf6c02c159c3f700e27337d4ce4a6a58388581ca8a55caeede4d1276a989688",
+    "tests/test_wall_jump.py": "4d1dafca8f3e53e78ee2f23241720c41cacba9d69271b20cce0c9162c2de215c",
+    "tests/test_world_state.py": "c88a4faff88054815ac0990528a538e13e3f0af021c3b66aef2620964db0bb47",
+    "tests/ui_fakes.py": "cf294136d988f4df63ab77975b054dc26120e47776b3fd8c5f110632ca26f184",
+    "tools/animation_timing.py": "af9776cee838a319ac82cabcc74ec0896dc03e9c95a911b6dc316f1e183fba71",
+    "tools/animation_workload.py": "779d98b4961ed208781dcfc6bb236daeaf94c955737f35b6a26509e699e305f2",
+    "tools/balance_actions.py": "7a6ff9a130bd8cce8ced992621e794b7ab1a9444cd458dfb6004a9e0cfc67b5b",
+    "tools/balance_command.py": "142f76c44372fa71ad738f99dbb6e56d4c9a80211f5909930a3794c74c3681c3",
+    "tools/benchmark.py": "2a916f9505e29f7ddaca5b07a8a53bd5103b80b1d54f3bf75c63bdc025097802",
+    "tools/benchmark_frozen.py": "3402c5d877595db32ddd7f71dafbc3d9f727a4f2550550bf1feac3a8e1fc8d33",
+    "tools/benchmark_headers.py": "b7265d9e9dd7ef8d12e68fddea6683d6295e63cba9fde04f5c2a1a1d2957ac48",
+    "tools/benchmark_paths.py": "345677d9f7a0c2a8ee41cd067a5a05bcd83a2a52474473f6c925a869da58ccbb",
+    "tools/check_animation_checkpoint.py": "c6397d42eca5a0a17a3e93eb9e83995d63eeece9941dffc873eaad3923934b26",
+    "tools/check_animation_performance.py": "49a15080d2e77dc59c6621022d1c03fc175d6a31ccc336104d4ffc648f0533b3",
+    "tools/check_render_performance.py": "3d0bf84b15744a08f4dedc013d0d97e99324effe201212c11df545305e05b761",
+    "tools/diagnose_custodian.py": "5ba9ae2ce9f92ce336bad83dc3de9cd5a63995ee34886903c8f69728c17acaec",
+    "tools/diagnose_gpu_timers.py": "13d26f00435981524075eabfa73a3ef4ab97fa61811c50550a85caae92b51e55",
+    "tools/frame_recorder.py": "9edeb1703c929b6d50e18aa4fbd10805e5f0a11fc8d0b8bbf6c5b458c93b8806",
+    "tools/music_gen.py": "0714d33b6d17b8b62295558eb5adedcb010cae5ed0e2862661f5269c30639dc7",
+    "tools/native_pstats.py": "c4ead288357a9765494f74edba837035610b631bdfe705a52e26b0bacc4df6d2",
+    "tools/native_trace.py": "7d3498e330c2549230e42571a5f50dd6a65051ca00066183e0e84f776234bab9",
+    "tools/play_balance.py": "73f68216bd33ae7e2bdbbe1c30b82ff5a076590e40a15a68f7d5bba7a3713305",
+    "tools/report_54.py": "637556c25d93da9ae8d54cf6bef661fc3a0c38529f28609f5788b53e37e2a64d",
+    "tools/report_spikes.py": "474158ced346e40211b389539a6bedfb35c913777a421cc261437c74795a4597",
+    "tools/sfx_gen.py": "e2ec82f74a93399c68aeecdce2b6035a1974ae84436ec193c256d8f6672fdd6b",
+    "tools/sprite_gen.py": "8363ae69c8d189f6985659983288796c455dab9d55203ddc40d8374709653dc0",
+    "tools/synthesize_audio.py": "34f6bb4ed9b73d67a768f31076f39ccc18152cd84d3f7e41cbb06144077aa0e3",
+    "tools/verify_agile.py": "e1bee9e5e41598a02b44d25b16198aca4f6e4b84e53ae19f9b680d40ca3a7a84",
+    "tools/verify_animations.py": "be952396cb07642782492c1e5d068ad1ce2a4c9cc7d4e5653c322dffcbc36d51",
+    "tools/verify_attack_sync.py": "c5ed29329482d8d21fe04733054394decc3f55391b2c21e355ae6b74614e7948",
+    "tools/verify_boss.py": "2f195955adfc073ff3aed14dfaebd4895ec6ecbc56ca1f4a4fa1d6e96ed1da2d",
+    "tools/verify_campaign.py": "05bf5a8b52fac6e0433162507bde6eeee375c03a2cb3d19058e38ab960dafb2a",
+    "tools/verify_classes.py": "1b02cc24eeb5bdbdf1dfbc18f7bc3202b8c161433cea8b16c7ebd243498b26d2",
+    "tools/verify_effects.py": "3996cb618a956c018ec4ce20d151dbf118b6649c92ad962f14a23918740eface",
+    "tools/verify_endings.py": "05afa2ba9299b68c6a17521cdd7b5378b60c77e9902858c3efb4825d1cbf21b6",
+    "tools/verify_final_campaign.py": "68ec3f1e9bfcfb948fa2ad27cef9def1af56c78691bff0f14892186718173f71",
+    "tools/verify_frontend.py": "b4374d65ac1a96eefd9961a03d17a800879086eaed9fab5fb706ddb3a50e3fdf",
+    "tools/verify_launcher.py": "b152ab647dd463f5062bf2ce4d9d1b425406e165af277d14f707f897b72c1846",
+    "tools/verify_momentum.py": "9849b6058c54574f56683e1e82cfe58291df37ff5e0699467b2da9fe2c6e8ac5",
+    "tools/verify_music.py": "dd8ce3fd15da8b91cab4044168eb371fc1abf2b29c8c705f70d9e674065cc814",
+    "tools/verify_options_slots.py": "ecb01a75105fa06f7af1e2ba412c224d1a2e990d3b56d85f8e1647f6039d1a23",
+    "tools/verify_particles.py": "f7ca3c2f68a0004199027b7d353098f26fbb24f2374ac020a0f45a5d4de0888e",
+    "tools/verify_sfx.py": "efca690567ad8d53790fcad46878f685f263e966ac9ee593b5b517f4194b458d",
+    "tools/verify_shutdown.py": "9f9b4e537219f3acc80eb4c6b70faa3d73194573316e92671927b32842583611",
+    "tools/verify_slots.py": "f4495a0adf792641d62d5308bc7c38ccd4fc9a6181050531c7be1752c589072a",
+    "tools/verify_sprites.py": "9f9b9f25806939f53e4c587e93c4d7dfaa238072505ffd9a9592bed8e2a52cc6",
+    "tools/verify_ui.py": "9ded3f3607a9249632d074697b3a2eab3acd029d4657db0726aa922281f57cdc",
+    "tools/verify_vertical_movement.py": "e96bfa06fff0f129b2ee3123472f56facc6abd646ebe67578a2e7c5d8dc7694a",
+    "tools/verify_window.py": "ce5e1ba52a44fc3fec7e2b19840574a8bde059acbeea68ea3d2a6fdc8c926dc2"
+  },
+  "reports": [
+    {
+      "path": "artifacts/particles/base-direct-only.json",
+      "sha256": "d24c40c98e2e75aed65256efdca49f304eccd71b311a676b8e9b1e4860f013d8",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 10.008,
+      "frames": 1450,
+      "median_frame_ms": 5.75855,
+      "p95_frame_ms": 10.9176,
+      "max_frame_ms": 14.277,
+      "fps": 144.89,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 902,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.6446522759355942,
+        "animation_total_median_ms_per_render": 0.3237500000068394,
+        "animation_total_p95_ms_per_render": 1.3078999954814208,
+        "animation_total_max_ms_per_render": 1.8671000025278772,
+        "animation_inclusive_median_ms_per_render": 1.0435999997753242,
+        "animation_inclusive_p95_ms_per_render": 2.4835000003804453
+      },
+      "direct_scopes": {
+        "particles": {
+          "calls": 1450,
+          "median_ms": 0.7730999996056198,
+          "p95_ms": 1.0589000003164983
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 2.0275499996387225,
+          "p95_ms": 2.7361000002201763
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/base-shipped-uncapped.json",
+      "sha256": "d3dcfb9b8495762c866ab4f8ef691584681b02c878a533fe6e43a4a7d685cbba",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 60.001,
+      "frames": 8915,
+      "median_frame_ms": 5.6734,
+      "p95_frame_ms": 10.7315,
+      "max_frame_ms": 21.821,
+      "fps": 148.58,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 4414,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/baseline-capped.json",
+      "sha256": "9b636f14e0ed1f111d6d59b3cadd79332d181d5f614a8050297adc906e3e1cce",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 60.008,
+      "frames": 3600,
+      "median_frame_ms": 16.667,
+      "p95_frame_ms": 16.7467,
+      "max_frame_ms": 22.402,
+      "fps": 59.99,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/baseline-direct-diagnostic.json",
+      "sha256": "38a4c7a6c7d97d8361d677c338a79e91134e3721ec7d0887897f4a59d1778e78",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 10.006,
+      "frames": 1283,
+      "median_frame_ms": 7.4405,
+      "p95_frame_ms": 12.0057,
+      "max_frame_ms": 14.907,
+      "fps": 128.22,
+      "eligible_fps_baseline": false,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.6971879968965305,
+        "animation_total_median_ms_per_render": 0.47340000128315296,
+        "animation_total_p95_ms_per_render": 1.2193000002298504,
+        "animation_total_max_ms_per_render": 1.6964999981610163,
+        "animation_inclusive_median_ms_per_render": 1.637000000300759,
+        "animation_inclusive_p95_ms_per_render": 2.324600000065402
+      },
+      "direct_scopes": {
+        "particles": {
+          "calls": 1283,
+          "median_ms": 0.8006000002751534,
+          "p95_ms": 1.237699999819597
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 2.0051499998317013,
+          "p95_ms": 2.527699999973265
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/baseline-uncapped.json",
+      "sha256": "604e06e9a34f8d80eaddccd9eed835221c129777d8aec50dd5e492a3640243a7",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 60.008,
+      "frames": 8857,
+      "median_frame_ms": 6.2259,
+      "p95_frame_ms": 10.3828,
+      "max_frame_ms": 22.344,
+      "fps": 147.6,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-bounds-diagnostic.json",
+      "sha256": "297665ebb1823c3154106d92d115f953492808d4f5f910f041ea48a2a48f77b4",
+      "source_build_id": "6f67d502ea187d92",
+      "seconds": 10.002,
+      "frames": 1051,
+      "median_frame_ms": 9.2331,
+      "p95_frame_ms": 13.5582,
+      "max_frame_ms": 28.606,
+      "fps": 105.08,
+      "eligible_fps_baseline": false,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.8216144624157312,
+        "animation_total_median_ms_per_render": 1.0391000007530238,
+        "animation_total_p95_ms_per_render": 1.3143000007858063,
+        "animation_total_max_ms_per_render": 2.576300000782794,
+        "animation_inclusive_median_ms_per_render": 2.031299999998737,
+        "animation_inclusive_p95_ms_per_render": 2.521999999999025
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 1051,
+          "median_ms": 0.0015999999050109182,
+          "p95_ms": 0.004199999921183917
+        },
+        "particles": {
+          "calls": 1051,
+          "median_ms": 1.2538000000859029,
+          "p95_ms": 1.921599999832324
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 2.112449999913224,
+          "p95_ms": 2.9924999998911517
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-capped.json",
+      "sha256": "162265a8b221a264cdcb71278439c1564009cf1f4403f1d7048f1768815d687d",
+      "source_build_id": "eaab5a8d6fa504fe",
+      "seconds": 60.002,
+      "frames": 3597,
+      "median_frame_ms": 16.6663,
+      "p95_frame_ms": 16.7249,
+      "max_frame_ms": 31.902,
+      "fps": 59.95,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-clock-diagnostic.json",
+      "sha256": "ee079040a49905b7bf8f1d6e6810564ff3f0d4d6c695417ccd70bde05b4335b8",
+      "source_build_id": "8b136ab1c3378a6b",
+      "seconds": 10.01,
+      "frames": 1276,
+      "median_frame_ms": 7.38115,
+      "p95_frame_ms": 11.9425,
+      "max_frame_ms": 17.305,
+      "fps": 127.47,
+      "eligible_fps_baseline": false,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.6869229623111934,
+        "animation_total_median_ms_per_render": 0.3920500014373829,
+        "animation_total_p95_ms_per_render": 1.2412000014592195,
+        "animation_total_max_ms_per_render": 1.9565999996302708,
+        "animation_inclusive_median_ms_per_render": 1.2812500001473381,
+        "animation_inclusive_p95_ms_per_render": 2.429399999527959
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 1276,
+          "median_ms": 0.0015999999050109182,
+          "p95_ms": 0.003000000106112566
+        },
+        "particles": {
+          "calls": 1276,
+          "median_ms": 1.2225999998918269,
+          "p95_ms": 1.5503999998145446
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 2.008500000101776,
+          "p95_ms": 2.458800000113115
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-coverage.json",
+      "sha256": "35e11fbe137d88567ba6a11c5c4d8f29980a8898d96e07fa4bf0e55043ce1210",
+      "source_build_id": "eaab5a8d6fa504fe",
+      "seconds": 120.009,
+      "frames": 9683,
+      "median_frame_ms": 12.4204,
+      "p95_frame_ms": 16.2489,
+      "max_frame_ms": 32.362,
+      "fps": 80.69,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        2000,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 1.0237232159534528,
+        "animation_total_median_ms_per_render": 1.0853000007955416,
+        "animation_total_p95_ms_per_render": 1.4463999984855036,
+        "animation_total_max_ms_per_render": 6.38989999970363,
+        "animation_inclusive_median_ms_per_render": 2.2669999998470303,
+        "animation_inclusive_p95_ms_per_render": 3.0130000000099244
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 9683,
+          "median_ms": 0.0015999999050109182,
+          "p95_ms": 0.0027999999474559445
+        },
+        "particles": {
+          "calls": 9683,
+          "median_ms": 2.2996000000148342,
+          "p95_ms": 3.266700000040146
+        },
+        "fixed_step": {
+          "calls": 7200,
+          "median_ms": 2.1397000000433763,
+          "p95_ms": 3.059799999846291
+        }
+      },
+      "role_clip_counts": {
+        "player": 99,
+        "cinzeiro": 99,
+        "rancor": 99,
+        "bestario": 99,
+        "salt_guard": 99,
+        "ossuary_acolyte": 99,
+        "bog_ghoul": 99,
+        "boss:last_ember_custodian": 297
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-direct-only.json",
+      "sha256": "66acc28b5c70adb432c091e5b3a345c83c6dac17dcd7962487b425955310afff",
+      "source_build_id": "83ff070f9d6e52f9",
+      "seconds": 10.0,
+      "frames": 1417,
+      "median_frame_ms": 5.8472,
+      "p95_frame_ms": 10.83,
+      "max_frame_ms": 19.093,
+      "fps": 141.7,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 872,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.6255769231232471,
+        "animation_total_median_ms_per_render": 0.31180000223685056,
+        "animation_total_p95_ms_per_render": 1.216399998156703,
+        "animation_total_max_ms_per_render": 1.935599996613746,
+        "animation_inclusive_median_ms_per_render": 0.9949999994205427,
+        "animation_inclusive_p95_ms_per_render": 2.3518999996667844
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 1417,
+          "median_ms": 0.0012999998943996616,
+          "p95_ms": 0.002099999619531445
+        },
+        "particles": {
+          "calls": 1417,
+          "median_ms": 1.2257000007593888,
+          "p95_ms": 1.5133000006244401
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 1.909200000227429,
+          "p95_ms": 2.4609000001873937
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-final-capped.json",
+      "sha256": "d663d5c3be1bcd5ba4e2bc3a7a4ff1fd8c7539c2e50f9975d5ea2d647d83aecc",
+      "source_build_id": "dfb365db8ba88f1d",
+      "seconds": 60.013,
+      "frames": 3592,
+      "median_frame_ms": 16.6666,
+      "p95_frame_ms": 16.7609,
+      "max_frame_ms": 29.948,
+      "fps": 59.85,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-final-coverage.json",
+      "sha256": "e1b6468da890d819a3b08e9fe046c025869f5bc211c0279c9e424489275fadd5",
+      "source_build_id": "dfb365db8ba88f1d",
+      "seconds": 120.008,
+      "frames": 9373,
+      "median_frame_ms": 12.4581,
+      "p95_frame_ms": 17.7993,
+      "max_frame_ms": 44.528,
+      "fps": 78.1,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        2000,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 1.094080614522515,
+        "animation_total_median_ms_per_render": 1.118500000302447,
+        "animation_total_p95_ms_per_render": 1.6373000003113702,
+        "animation_total_max_ms_per_render": 5.875999999261694,
+        "animation_inclusive_median_ms_per_render": 2.340099999855738,
+        "animation_inclusive_p95_ms_per_render": 3.3444000005147245
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 9373,
+          "median_ms": 0.001500000053056283,
+          "p95_ms": 0.003000000106112566
+        },
+        "particles": {
+          "calls": 9373,
+          "median_ms": 2.3320000000239816,
+          "p95_ms": 3.56690000035087
+        },
+        "fixed_step": {
+          "calls": 7200,
+          "median_ms": 2.291300000024421,
+          "p95_ms": 3.62379999978657
+        }
+      },
+      "role_clip_counts": {
+        "player": 99,
+        "cinzeiro": 99,
+        "rancor": 99,
+        "bestario": 99,
+        "salt_guard": 99,
+        "ossuary_acolyte": 99,
+        "bog_ghoul": 99,
+        "boss:last_ember_custodian": 297
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-final-uncapped.json",
+      "sha256": "cd8a5bff5dc18e7289953b98e346f0c67ecd106e07c51fc2ebc3f6769417527e",
+      "source_build_id": "dfb365db8ba88f1d",
+      "seconds": 60.001,
+      "frames": 6722,
+      "median_frame_ms": 9.0554,
+      "p95_frame_ms": 13.7994,
+      "max_frame_ms": 37.912,
+      "fps": 112.03,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-pta-diagnostic.json",
+      "sha256": "c30c446ef552a81c4e14fa68b606f09277c04f41dacad5c2b49950b30f7e5b8e",
+      "source_build_id": "aff8d679af1552be",
+      "seconds": 10.008,
+      "frames": 964,
+      "median_frame_ms": 10.0241,
+      "p95_frame_ms": 15.443,
+      "max_frame_ms": 38.645,
+      "fps": 96.32,
+      "eligible_fps_baseline": false,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.8976810166082995,
+        "animation_total_median_ms_per_render": 1.0620999996717728,
+        "animation_total_p95_ms_per_render": 1.5678000017942395,
+        "animation_total_max_ms_per_render": 5.698300001768075,
+        "animation_inclusive_median_ms_per_render": 2.0666499995058984,
+        "animation_inclusive_p95_ms_per_render": 3.3179000001837267
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 964,
+          "median_ms": 0.0015999999050109182,
+          "p95_ms": 0.004600000011123484
+        },
+        "particles": {
+          "calls": 964,
+          "median_ms": 1.2742500000513246,
+          "p95_ms": 2.2443000002567715
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 2.0950999999058695,
+          "p95_ms": 2.9772000002594723
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-pta-eye-diagnostic.json",
+      "sha256": "c165be4421430457e00455bc58ebf5128fcf15dd757f947817d103e385d1d7a2",
+      "source_build_id": "dfb365db8ba88f1d",
+      "seconds": 10.008,
+      "frames": 1227,
+      "median_frame_ms": 7.3629,
+      "p95_frame_ms": 12.1302,
+      "max_frame_ms": 15.405,
+      "fps": 122.6,
+      "eligible_fps_baseline": false,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.7248237979047968,
+        "animation_total_median_ms_per_render": 0.4187999988971569,
+        "animation_total_p95_ms_per_render": 1.3593999988188443,
+        "animation_total_max_ms_per_render": 2.0267000004423608,
+        "animation_inclusive_median_ms_per_render": 1.325600000200211,
+        "animation_inclusive_p95_ms_per_render": 2.697100000204955
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 1227,
+          "median_ms": 0.0016999997569655534,
+          "p95_ms": 0.0027999999474559445
+        },
+        "particles": {
+          "calls": 1227,
+          "median_ms": 1.2236000002303626,
+          "p95_ms": 1.5628000001015607
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 2.0348000002741173,
+          "p95_ms": 2.7512000001479464
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-regional-bounds-diagnostic.json",
+      "sha256": "b36de823ae224bf9a823986f058e243a6ecfe81e154d8af48412954eeebf3c9c",
+      "source_build_id": "83ff070f9d6e52f9",
+      "seconds": 10.009,
+      "frames": 1231,
+      "median_frame_ms": 7.5486,
+      "p95_frame_ms": 12.4091,
+      "max_frame_ms": 30.225,
+      "fps": 122.98,
+      "eligible_fps_baseline": false,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 45.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.716791145382126,
+        "animation_total_median_ms_per_render": 0.37330000168367405,
+        "animation_total_p95_ms_per_render": 1.3745000014750985,
+        "animation_total_max_ms_per_render": 4.094600001280924,
+        "animation_inclusive_median_ms_per_render": 1.223400000071706,
+        "animation_inclusive_p95_ms_per_render": 2.72430000040913
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 1231,
+          "median_ms": 0.001500000053056283,
+          "p95_ms": 0.002599999788799323
+        },
+        "particles": {
+          "calls": 1231,
+          "median_ms": 1.2517999998635787,
+          "p95_ms": 1.7712000003484718
+        },
+        "fixed_step": {
+          "calls": 600,
+          "median_ms": 1.9466000003376394,
+          "p95_ms": 2.8682999995908176
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-shipped-capped.json",
+      "sha256": "c9ed3ed1f28c9d42d65814a8f4f40b8446e056f52df7ea75ed7e674bf1e2cf1b",
+      "source_build_id": "83ff070f9d6e52f9",
+      "seconds": 60.016,
+      "frames": 3600,
+      "median_frame_ms": 16.6659,
+      "p95_frame_ms": 16.7406,
+      "max_frame_ms": 26.328,
+      "fps": 59.98,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 1758,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-shipped-coverage.json",
+      "sha256": "2b164b52cba392ec7a3f81cdd6bc009d5744ba2767c440e4839eba6484333e09",
+      "source_build_id": "83ff070f9d6e52f9",
+      "seconds": 120.007,
+      "frames": 10509,
+      "median_frame_ms": 11.3812,
+      "p95_frame_ms": 15.0657,
+      "max_frame_ms": 40.914,
+      "fps": 87.57,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 5389,
+      "blocking_frames": 3630,
+      "particles_min_max": [
+        2000,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": false,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.9777924160324576,
+        "animation_total_median_ms_per_render": 1.059400001395261,
+        "animation_total_p95_ms_per_render": 1.3732999977946747,
+        "animation_total_max_ms_per_render": 3.5312999998495798,
+        "animation_inclusive_median_ms_per_render": 2.1960000003673485,
+        "animation_inclusive_p95_ms_per_render": 2.8231000005689566
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 10509,
+          "median_ms": 0.001499999598308932,
+          "p95_ms": 0.002499999936844688
+        },
+        "particles": {
+          "calls": 10509,
+          "median_ms": 2.349099999264581,
+          "p95_ms": 3.0729000000064843
+        },
+        "fixed_step": {
+          "calls": 7200,
+          "median_ms": 2.134300000307121,
+          "p95_ms": 2.963300000374147
+        }
+      },
+      "role_clip_counts": {
+        "player": 99,
+        "cinzeiro": 99,
+        "rancor": 99,
+        "bestario": 99,
+        "salt_guard": 99,
+        "ossuary_acolyte": 99,
+        "bog_ghoul": 99,
+        "boss:last_ember_custodian": 297
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-shipped-uncapped.json",
+      "sha256": "523a7b7eea008a7e45fcdfa22d5672fe0c684a141ca985b36edeb12ea27d4093",
+      "source_build_id": "83ff070f9d6e52f9",
+      "seconds": 60.008,
+      "frames": 8070,
+      "median_frame_ms": 6.46415,
+      "p95_frame_ms": 11.4506,
+      "max_frame_ms": 21.621,
+      "fps": 134.48,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 3963,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-smoke-optimized.json",
+      "sha256": "e2185643adaa5aa640029f011872b518d6c3ef40c98cc44bf55f70fc2c68dfae",
+      "source_build_id": "eaab5a8d6fa504fe",
+      "seconds": 3.015,
+      "frames": 170,
+      "median_frame_ms": 16.70995,
+      "p95_frame_ms": 22.6718,
+      "max_frame_ms": 29.615,
+      "fps": 56.38,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        2000,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 1.4635800000271904,
+        "animation_total_median_ms_per_render": 1.3266499996689163,
+        "animation_total_p95_ms_per_render": 2.304600000343271,
+        "animation_total_max_ms_per_render": 3.4772999995311693,
+        "animation_inclusive_median_ms_per_render": 2.8122499999199135,
+        "animation_inclusive_p95_ms_per_render": 5.008899999893401
+      },
+      "direct_scopes": {
+        "fixed_step": {
+          "calls": 181,
+          "median_ms": 2.2902000000613043,
+          "p95_ms": 4.890700000032666
+        },
+        "particle_emitters": {
+          "calls": 170,
+          "median_ms": 0.0014999998256826075,
+          "p95_ms": 0.004399999852466863
+        },
+        "particles": {
+          "calls": 170,
+          "median_ms": 2.382949999855555,
+          "p95_ms": 4.068300000199088
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-smoke.json",
+      "sha256": "cd41c7ab12d89aa930c15b3bb961445dc8fcaeb711620496c203c8fd2cdfce16",
+      "source_build_id": "55d6a42d02d1bd66",
+      "seconds": 3.001,
+      "frames": 163,
+      "median_frame_ms": 17.8034,
+      "p95_frame_ms": 22.0734,
+      "max_frame_ms": 30.053,
+      "fps": 54.32,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 1.4181723925976202,
+        "animation_total_median_ms_per_render": 1.2380000001712688,
+        "animation_total_p95_ms_per_render": 2.1956999996746163,
+        "animation_total_max_ms_per_render": 3.849599999853126,
+        "animation_inclusive_median_ms_per_render": 2.6691000000482745,
+        "animation_inclusive_p95_ms_per_render": 4.711999999926775
+      },
+      "direct_scopes": {
+        "fixed_step": {
+          "calls": 180,
+          "median_ms": 2.3050500000181273,
+          "p95_ms": 4.436299999952098
+        },
+        "particle_emitters": {
+          "calls": 163,
+          "median_ms": 0.0016000000186977559,
+          "p95_ms": 0.004300000000512227
+        },
+        "particles": {
+          "calls": 163,
+          "median_ms": 4.366699999991397,
+          "p95_ms": 7.044800000016949
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/candidate-uncapped-retest.json",
+      "sha256": "63fc97ccd0f1f2202c83286ec4116a5ef3d0279881f8cb8626714a18d04126cb",
+      "source_build_id": "eaab5a8d6fa504fe",
+      "seconds": 60.002,
+      "frames": 6450,
+      "median_frame_ms": 9.03795,
+      "p95_frame_ms": 13.8396,
+      "max_frame_ms": 33.156,
+      "fps": 107.5,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/candidate-uncapped.json",
+      "sha256": "49e73478fe4b3cafae988b4bb02236d92a2a7e91a9488ff8bae98ee4fd010245",
+      "source_build_id": "eaab5a8d6fa504fe",
+      "seconds": 60.118,
+      "frames": 2713,
+      "median_frame_ms": 9.1967,
+      "p95_frame_ms": 120.1837,
+      "max_frame_ms": 132.854,
+      "fps": 45.13,
+      "eligible_fps_baseline": true,
+      "valid_sample": false,
+      "minimized_frames": 328,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": false,
+      "frames_above_50_ms": 328
+    },
+    {
+      "path": "artifacts/particles/focused-base-uncapped.json",
+      "sha256": "e32d3d5df74864101d1b89227c85f538dcbb8563f00e9665401ca00b66542a2e",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 60.009,
+      "frames": 8012,
+      "median_frame_ms": 6.7988,
+      "p95_frame_ms": 11.9597,
+      "max_frame_ms": 22.903,
+      "fps": 133.51,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 3936,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.6870050673985192,
+        "animation_total_median_ms_per_render": 0.3959499990742188,
+        "animation_total_p95_ms_per_render": 1.2765999981638743,
+        "animation_total_max_ms_per_render": 2.849599997716723,
+        "animation_inclusive_median_ms_per_render": 1.291999999921245,
+        "animation_inclusive_p95_ms_per_render": 2.451600000313192
+      },
+      "direct_scopes": {
+        "particles": {
+          "calls": 8012,
+          "median_ms": 0.838800000565243,
+          "p95_ms": 1.2279000002308749
+        },
+        "fixed_step": {
+          "calls": 3600,
+          "median_ms": 2.0128500000282656,
+          "p95_ms": 2.5864999997793348
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/focused-candidate-uncapped.json",
+      "sha256": "3ce19dbcf1933083072ebae549963466ee8c20b10b8f1826c34e778cdb65a3bf",
+      "source_build_id": "2bd835ad82b2f925",
+      "seconds": 60.009,
+      "frames": 7313,
+      "median_frame_ms": 8.0848,
+      "p95_frame_ms": 12.6205,
+      "max_frame_ms": 22.856,
+      "fps": 121.86,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 3600,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.7393292492843899,
+        "animation_total_median_ms_per_render": 0.40979999630508246,
+        "animation_total_p95_ms_per_render": 1.4062000009289477,
+        "animation_total_max_ms_per_render": 2.7389999904698925,
+        "animation_inclusive_median_ms_per_render": 1.3080999997328036,
+        "animation_inclusive_p95_ms_per_render": 2.7745999987018877
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 7313,
+          "median_ms": 0.001499999598308932,
+          "p95_ms": 0.0024000000848900527
+        },
+        "particles": {
+          "calls": 7313,
+          "median_ms": 1.3429999999061693,
+          "p95_ms": 1.8010000003414461
+        },
+        "fixed_step": {
+          "calls": 3600,
+          "median_ms": 2.07410000029995,
+          "p95_ms": 2.9988999995111953
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/focused-coverage.json",
+      "sha256": "3ae19c9a26d93d44b21c064836fc2a47ee05da04e6ed32ca2749b389f3270ad1",
+      "source_build_id": "2bd835ad82b2f925",
+      "seconds": 120.006,
+      "frames": 10464,
+      "median_frame_ms": 11.5253,
+      "p95_frame_ms": 15.2597,
+      "max_frame_ms": 29.414,
+      "fps": 87.2,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 3680,
+      "particles_min_max": [
+        2000,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.9803992450545298,
+        "animation_total_median_ms_per_render": 1.053700001193647,
+        "animation_total_p95_ms_per_render": 1.4014999978826381,
+        "animation_total_max_ms_per_render": 2.5950999988708645,
+        "animation_inclusive_median_ms_per_render": 2.187499999308784,
+        "animation_inclusive_p95_ms_per_render": 2.949800000351388
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 10464,
+          "median_ms": 0.0013999997463542968,
+          "p95_ms": 0.002200000380980782
+        },
+        "particles": {
+          "calls": 10464,
+          "median_ms": 2.3642500000278233,
+          "p95_ms": 3.203600000233564
+        },
+        "fixed_step": {
+          "calls": 7200,
+          "median_ms": 2.1114499995746883,
+          "p95_ms": 2.9158999996070634
+        }
+      },
+      "role_clip_counts": {
+        "player": 99,
+        "cinzeiro": 99,
+        "rancor": 99,
+        "bestario": 99,
+        "salt_guard": 99,
+        "ossuary_acolyte": 99,
+        "bog_ghoul": 99,
+        "boss:last_ember_custodian": 297
+      }
+    },
+    {
+      "path": "artifacts/particles/phase3-current-uncapped.json",
+      "sha256": "7ee7e8379363d31384e81c080e0531048a0ec6837f9d93ee921431c31d5b3ab9",
+      "source_build_id": "8eacb704cd2fc5c1",
+      "seconds": 60.001,
+      "frames": 10830,
+      "median_frame_ms": 4.4256,
+      "p95_frame_ms": 9.9675,
+      "max_frame_ms": 23.998,
+      "fps": 180.5,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 500,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0
+    },
+    {
+      "path": "artifacts/particles/phase4-checkpoint.json",
+      "sha256": "689809559bcb3ba6acb4c85f41d3483cc434b2ecbb40c3f0061cc5411f0cb22e",
+      "source_build_id": "6e4f7367b4174cde",
+      "seconds": 30.006,
+      "frames": 1620,
+      "median_frame_ms": 16.67965,
+      "p95_frame_ms": 28.0903,
+      "max_frame_ms": 88.794,
+      "fps": 53.99,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "animation_direct_timing": true,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 17,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 2.1646831481464064,
+        "animation_total_median_ms_per_render": 1.7848500000354761,
+        "animation_total_p95_ms_per_render": 4.232499999943684,
+        "animation_total_max_ms_per_render": 19.11199999983637
+      },
+      "direct_scopes": {
+        "fixed_step": {
+          "calls": 1800,
+          "median_ms": 2.9732500000250184,
+          "p95_ms": 6.001699999956145
+        },
+        "particles": {
+          "calls": 1620,
+          "median_ms": 0.893999999988182,
+          "p95_ms": 1.7789999999990869
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/phase4-optimized-checkpoint.json",
+      "sha256": "126b0c90b886359035e305885c10698e4f08b1138d7e67b7d49f07ae789fc4f3",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 30.001,
+      "frames": 1795,
+      "median_frame_ms": 16.6673,
+      "p95_frame_ms": 16.7813,
+      "max_frame_ms": 43.349,
+      "fps": 59.83,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "animation_direct_timing": true,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 1.18137704735116,
+        "animation_total_median_ms_per_render": 1.1346999996248996,
+        "animation_total_p95_ms_per_render": 1.4885999997886756,
+        "animation_total_max_ms_per_render": 3.0884999999898355,
+        "animation_inclusive_median_ms_per_render": 2.3123999999370426,
+        "animation_inclusive_p95_ms_per_render": 3.0441999999766267
+      },
+      "direct_scopes": {
+        "fixed_step": {
+          "calls": 1800,
+          "median_ms": 2.158549999933257,
+          "p95_ms": 2.950899999973444
+        },
+        "particles": {
+          "calls": 1795,
+          "median_ms": 0.8201000000553904,
+          "p95_ms": 1.1409999999614229
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/release-capped.json",
+      "sha256": "4353df97cf5b74853ec613d935b69596ac2180f98aa963b21722f035fb370b40",
+      "source_build_id": "2bd835ad82b2f925",
+      "seconds": 60.01,
+      "frames": 3570,
+      "median_frame_ms": 16.6671,
+      "p95_frame_ms": 16.7641,
+      "max_frame_ms": 62.168,
+      "fps": 59.49,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 0,
+      "blocking_frames": 1747,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 60,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": true,
+      "frames_above_50_ms": 1
+    },
+    {
+      "path": "artifacts/particles/release-coverage.json",
+      "sha256": "b26d361280e3d3caa7f076e0a22ddbda9991d78cc44bc503ae417ebe7041011e",
+      "source_build_id": "2bd835ad82b2f925",
+      "seconds": 120.002,
+      "frames": 10722,
+      "median_frame_ms": 11.1245,
+      "p95_frame_ms": 14.7262,
+      "max_frame_ms": 29.526,
+      "fps": 89.35,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 9613,
+      "blocking_frames": 3782,
+      "particles_min_max": [
+        2000,
+        2000
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 2000,
+      "animation_direct_timing": true,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": false,
+      "frames_above_50_ms": 0,
+      "animation_timing": {
+        "animation_total_mean_ms_per_render": 0.9520106043783729,
+        "animation_total_median_ms_per_render": 1.0327499981030996,
+        "animation_total_p95_ms_per_render": 1.2957999988429947,
+        "animation_total_max_ms_per_render": 3.3687000004647416,
+        "animation_inclusive_median_ms_per_render": 2.120850000210339,
+        "animation_inclusive_p95_ms_per_render": 2.729900000304042
+      },
+      "direct_scopes": {
+        "particle_emitters": {
+          "calls": 10722,
+          "median_ms": 0.001499999598308932,
+          "p95_ms": 0.002600000698294025
+        },
+        "particles": {
+          "calls": 10722,
+          "median_ms": 2.3257499997271225,
+          "p95_ms": 3.024199999345001
+        },
+        "fixed_step": {
+          "calls": 7200,
+          "median_ms": 2.06019999950513,
+          "p95_ms": 2.624199999445409
+        }
+      },
+      "role_clip_counts": {
+        "player": 99,
+        "cinzeiro": 99,
+        "rancor": 99,
+        "bestario": 99,
+        "salt_guard": 99,
+        "ossuary_acolyte": 99,
+        "bog_ghoul": 99,
+        "boss:last_ember_custodian": 297
+      }
+    },
+    {
+      "path": "artifacts/particles/release-uncapped.json",
+      "sha256": "5d6453053b5b0ff96076b42d85eba4c9ea5a7d501d1b38748ad1d70f66e74886",
+      "source_build_id": "2bd835ad82b2f925",
+      "seconds": 60.005,
+      "frames": 7294,
+      "median_frame_ms": 7.9032,
+      "p95_frame_ms": 13.0001,
+      "max_frame_ms": 50.434,
+      "fps": 121.56,
+      "eligible_fps_baseline": true,
+      "valid_sample": true,
+      "minimized_frames": 0,
+      "unfocused_frames": 3192,
+      "blocking_frames": 3609,
+      "particles_min_max": [
+        500,
+        500
+      ],
+      "particle_pool_capacity": 2000,
+      "particle_admission_limit": 500,
+      "animation_direct_timing": false,
+      "fps_cap": 0,
+      "warmup_seconds": 5.0,
+      "resolution": [
+        1280,
+        720
+      ],
+      "renderer": "NVIDIA GeForce GTX 1660 Ti/PCIe/SSE2",
+      "benchmark_seed": 37,
+      "passes_current_window_quality": false,
+      "frames_above_50_ms": 1
+    }
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/particles/tests-final.log",
+      "sha256": "29505813be806ba446588c8fe282f6403cf5fd9432453c467d69c74ef9c62207",
+      "bytes": 994
+    },
+    {
+      "path": "artifacts/particles/cpu-ci.json",
+      "sha256": "cd668af41260fec43f808a304d58d3cac1b5c09b34b2ca720a26e8c987aee1b5",
+      "bytes": 753
+    },
+    {
+      "path": "artifacts/particles/baseline-production-parity.json",
+      "sha256": "1048af45844f5ae85aeaae42f1d501880611a5fd3546f8dd18727590c9dbb379",
+      "bytes": 201
+    },
+    {
+      "path": "artifacts/particles/gallery-shipped/report.json",
+      "sha256": "d66e8ec9fdffcb55bfe8e5844e77bc6d7237403c27ec3ebf2fd0a6a62572d527",
+      "bytes": 4908
+    },
+    {
+      "path": "artifacts/particles/attack-sync-shipped.json",
+      "sha256": "d34d1a2ec0c0d108cd9de72bec9312f93e8a06f1071c226ef24183e3f7686bfb",
+      "bytes": 1855011
+    },
+    {
+      "path": "artifacts/particles/source-before-shader-clock-fix.zip",
+      "sha256": "ae864b02358ca8d505dc3cda589f53546afe54af5eccbc9a6d8d114d5bb2087c",
+      "bytes": 18482892
+    },
+    {
+      "path": "artifacts/particles/source-measured-shader-clock.zip",
+      "sha256": "46569e4aee8e3c362583e93a6d0d32497621737ab9a10162824b691d79c4396f",
+      "bytes": 18484184
+    },
+    {
+      "path": "artifacts/particles/source-final-code.zip",
+      "sha256": "23f9705abf82aa48d6bd94560cd90586c59eaa26afd1c0eb3165bc7564d05f5d",
+      "bytes": 18118202
+    },
+    {
+      "path": "artifacts/particles/comparison-final-gate.json",
+      "sha256": "fe9572737e7dc69e6b42ccf2fdc376546785558fa4928b3ac0a370def2f968ff",
+      "bytes": 313
+    },
+    {
+      "path": "artifacts/particles/comparison-gate.json",
+      "sha256": "b84dfad3ee1ec082567aac50032f80ecf7f38bd2c0703d506d7383ada9207732",
+      "bytes": 385
+    },
+    {
+      "path": "artifacts/particles/comparison-shipped-gate.json",
+      "sha256": "2eba3958c74ec529a3a4132b66e94e07bd191998253da39f42a3abd89714f665",
+      "bytes": 252
+    },
+    {
+      "path": "artifacts/particles/coverage-final-gate.json",
+      "sha256": "6f53a4e196024ecba42cc8ef0c7fc19590f3c5b7bfa2b9f89b4e94073341c805",
+      "bytes": 333
+    },
+    {
+      "path": "artifacts/particles/coverage-gate.json",
+      "sha256": "24b2cda8c91c072a5bc1bdcd845f757f37ad2df27565e9cd19696582a2629773",
+      "bytes": 395
+    },
+    {
+      "path": "artifacts/particles/coverage-shipped-gate.json",
+      "sha256": "6f53a4e196024ecba42cc8ef0c7fc19590f3c5b7bfa2b9f89b4e94073341c805",
+      "bytes": 333
+    },
+    {
+      "path": "artifacts/particles/focused-comparison-gate.json",
+      "sha256": "533ac49d5942fb2718e19e68192cbc1ac2cd63112101704b5b1e1773f39006e6",
+      "bytes": 371
+    },
+    {
+      "path": "artifacts/particles/focused-coverage-gate.json",
+      "sha256": "6f53a4e196024ecba42cc8ef0c7fc19590f3c5b7bfa2b9f89b4e94073341c805",
+      "bytes": 333
+    },
+    {
+      "path": "artifacts/particles/phase4-checkpoint-gate.json",
+      "sha256": "f73b80d707217fab027fe0bac7875c878838d20e43d6dfe5c8604c4bd63c2045",
+      "bytes": 203
+    },
+    {
+      "path": "artifacts/particles/phase4-optimized-checkpoint-gate.json",
+      "sha256": "bfe91d4f052155689a940cfba4b31ffea7efddade8f7740fc761c7d379faa5b3",
+      "bytes": 241
+    }
+  ],
+  "gpu_ci": "Interactive self-hosted workflow prepared, not provisioned or run; common three-OS CI is not GPU acceptance",
+  "investigation": "Historical334.6945ms spike remains unexplained. Separate timer query capture had203 GPU frames,9 exact Main matches,194 unmatched; no causal conclusion."
+}

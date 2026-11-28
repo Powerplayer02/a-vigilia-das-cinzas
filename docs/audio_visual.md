@@ -1,9 +1,10 @@
 # Camada audiovisual — fase 1: música
 
-As fases1/2 cobrem música/SFX e a fase3 cobre atlas/UI. A fase4 tem
-implementação para revisão e validação final de GPU adiada pelo usuário.
-Revisão atual: [sincronia corrigida e preparo](qa/animation-acceptance-2026-11-27.md).
-As seções anteriores preservam o histórico de cada entrega.
+As fases 1/2 cobrem música/SFX e a fase 3 cobre atlas/UI. A fase 4 tem
+sincronia corrigida e checkpoint de CPU medido. A fase 5 acrescenta partículas
+e foi medida: estresse aprovado, comparação livre reprovada. Revisão atual:
+[partículas, medições e limites](qa/particles-2026-11-28.md).
+As seções abaixo preservam o histórico de cada entrega.
 
 ## Partitura original
 
@@ -348,3 +349,28 @@ não soma duas vezes o custo da apresentação externa. O diagnóstico de GPU
 usa `pstats-gpu-timing`, glFinish OFF, separado dos controles de FPS.
 Esses números aguardam execução por decisão do usuário, assim como o aceite
 de desempenho e a liberação da fase 5. [Protocolo atual](qa/animation-acceptance-2026-11-27.md).
+
+## Fase 5 — partículas e ambientação, 28/11/2026
+
+A liberação posterior permitiu implementar e medir a camada de partículas.
+Há 19 presets num único pool de até 2.000, com dois lotes alpha/aditivo e
+shader analítico compartilhado. O LOD reduz pedidos distantes e a ambientação
+reserva espaço para combate. Cinco áreas, fogueiras, dano, mobilidade,
+Slam, almas, level up e transições reutilizam esses recursos.
+
+As formas e estados de blend são expostos no loading, incluindo os usados
+pelas fases tardias. Transições só preparam recursos existentes. RNG visual,
+snapshot, timers e partículas anteriores são restaurados. Pausa congela a
+simulação e a luz; não se emitem segundos acumulados depois de um stall.
+
+Buffers e scratch são reutilizados; índices só mudam com o blend. A névoa
+usa a matriz de vista do motor e a luz usa o relógio GLSL com pausa/retomada,
+sem reinstalar inputs na raiz por frame. Não há atlas ou variante por preset.
+O shader fonte e o fallback seguem o mesmo contrato.
+
+827 testes locais, 14 verificações nativas e os 35 casos de sincronia passaram.
+O estresse de 120 s/2.000 partículas ficou abaixo de 50 ms em todos os frames.
+A comparação livre final excedeu o orçamento de mediana em relação à fonte
+anterior; o alvo histórico também não foi atingido. A camada está publicada
+para revisão, sem aceite gráfico ou início da fase 6.
+[Medições, falhas e evidências](qa/particles-2026-11-28.md).

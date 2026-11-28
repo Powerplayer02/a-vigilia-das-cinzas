@@ -1,13 +1,16 @@
 # A Vigília das Cinzas
 
-Fase 4 disponível para revisão: animações procedurais do jogador, seis tipos de
-inimigo e três chefes, com preparação no carregamento e nas transições de fase.
-A sincronia dos ataques foi corrigida e verificada em 35 combinações de
-ataque/fase. O preparo usa `premunge_scene` e `prepare_scene` no Panda3D 1.10.16.
-O checkpoint de CPU/cap 60 foi medido: poses/view/mixer em 1,135/1,489 ms
-(mediana/p95), total com arma/apresentação em 2,312/3,044 ms, aceito com nota;
-mediana de frame 16,667 ms. Uncapped e spikes ficam na comparação da fase 5,
-conforme a régua atual. [Medição e evidências](docs/qa/animation-cpu-checkpoint-2026-11-28.md).
+Fase 5 disponível para revisão: 19 efeitos de partículas para combate, cinco
+áreas e transições dos chefes, num único pool com teto de 2.000. Animações e
+armas mantêm a sincronia verificada em 35 combinações de ataque/fase; recursos
+visuais são preparados no carregamento e nas transições.
+
+827 testes locais passaram. O estresse de 120 s com 2.000 partículas ficou sem
+perda de foco, minimização ou frame acima de 50 ms (máximo 29,414 ms). O aceite
+gráfico continua **reprovado**: a comparação livre final aumentou a mediana em
+1,286 ms, acima do limite de 1 ms, e o alvo histórico também não foi atingido.
+Fase 6 não iniciada. [Resultados e limites](docs/qa/particles-2026-11-28.md) ·
+[Checkpoint anterior de CPU](docs/qa/animation-cpu-checkpoint-2026-11-28.md).
 
 Interface da fase 3: atlas original com 36 símbolos e molduras, cores em
 `data/palette.toml`, uma fonte compartilhada e escala de HUD até 150%.
@@ -709,7 +712,7 @@ Os bloqueios menores de log conhecidos eram 75–110 ms no `stderr.write` síncr
 
 ## Plataforma e próximas etapas
 
-O repositório privado é [Powerplayer02/a-vigilia-das-cinzas](https://github.com/Powerplayer02/a-vigilia-das-cinzas). O **GitHub Actions** configura Python 3.13 em Ubuntu, Windows e macOS, com SDL de áudio em modo dummy e `pytest tests/ -m "not integration"`, sem abrir janela ou criar contexto OpenGL. Os testes incluem o contrato de arquitetura. Isso valida regras e contratos nas três plataformas; a janela, o áudio e o desempenho gráfico exigem QA nativo separado. Os resultados remotos são registrados em [RELEASE_STATUS.md](RELEASE_STATUS.md).
+O repositório é [Powerplayer02/a-vigilia-das-cinzas](https://github.com/Powerplayer02/a-vigilia-das-cinzas). O **GitHub Actions** configura Python 3.13 em Ubuntu, Windows e macOS, com SDL de áudio em modo dummy e `pytest tests/ -m "not integration"`, sem abrir janela ou criar contexto OpenGL. Os testes incluem o contrato de arquitetura. Isso valida regras e contratos nas três plataformas; a janela, o áudio e o desempenho gráfico exigem QA nativo separado. Os resultados remotos são registrados em [RELEASE_STATUS.md](RELEASE_STATUS.md).
 
 Na [primeira execução remota](https://github.com/Powerplayer02/a-vigilia-das-cinzas/actions/runs/45512808835), **306 testes passaram em cada um dos três sistemas**.
 

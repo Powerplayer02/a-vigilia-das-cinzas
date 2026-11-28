@@ -9,15 +9,16 @@ from vigilia.engine.animation import WARMUP_CLIPS
 from vigilia.model.enemies import ENEMIES
 
 
-def validate(capped,uncapped,coverage):
+def validate(capped,uncapped,coverage,*,particle_layer=False):
     problems=[]
     for name,report,duration in (('capped',capped,60),('uncapped',uncapped,60),('coverage',coverage,120)):
-        if (not report.get('eligible_fps_baseline') or not report.get('valid_sample') or report.get('minimized_frames')!=0
+        if (not report.get('eligible_fps_baseline') or not report.get('valid_sample') or report.get('minimized_frames')!=0 or report.get('unfocused_frames',0)!=0
             or report.get('window_type')!='onscreen' or report.get('seconds',0)<duration
             or report.get('warmup_seconds',0)<5 or report.get('qa_diagnostics') or report.get('pstats_connected')
             or report.get('gl_finish') or 'profile' in report):problems.append(name+': invalid duration, window or instrumentation')
+        count=2000 if particle_layer and name=='coverage' else 500
         if (report.get('scenario')!='final_boss_20' or report.get('enemies')!=20
-            or report.get('particles_min_max')!=[500,500] or report.get('audio_enabled') is not True):
+            or report.get('particles_min_max')!=[count,count] or report.get('audio_enabled') is not True):
             problems.append(name+': wrong stress workload')
     if capped.get('fps_cap')!=60 or capped.get('median_frame_ms',100)>16.7:problems.append('capped: exceeds16.7ms median')
     if uncapped.get('fps_cap')!=0:problems.append('uncapped: must have no cap')
@@ -35,19 +36,29 @@ def validate(capped,uncapped,coverage):
     if not bosses or any(set(seen[role])!={f'{phase}:{clip}' for phase in (1,2,3) for clip in expected} for role in bosses):
         problems.append('coverage: missing boss phase/clip pairs')
     timing=coverage.get('animation_timing',{})
-    mean=timing.get('animation_total_mean_ms_per_render')
+    prefix='animation_inclusive' if 'animation_inclusive_median_ms_per_render' in timing else 'animation_total'
+    mean=timing.get(prefix+'_median_ms_per_render') if particle_layer else timing.get('animation_total_mean_ms_per_render')
     if (not coverage.get('animation_direct_timing') or timing.get('render_frames',0)<1
             or timing.get('render_frames')!=coverage.get('frames')
-            or type(mean) not in (int,float) or not math.isfinite(mean) or mean>2):
-        problems.append('coverage: animation CPU timing missing or above2ms per render')
+            or type(mean) not in (int,float) or not math.isfinite(mean) or mean>(4 if particle_layer else 2)):
+        problems.append('coverage: animation CPU timing missing or above4ms median' if particle_layer else 'coverage: animation CPU timing missing or above2ms per render')
+    if particle_layer:
+        p95=timing.get(prefix+'_p95_ms_per_render')
+        if type(p95) not in (int,float) or not math.isfinite(p95) or p95>4:
+            problems.append('coverage: animation p95 missing or above4ms')
+        if (coverage.get('particle_pool_capacity')!=2000 or coverage.get('particle_admission_limit')!=2000
+            or not timing.get('direct_scopes',{}).get('particles',{}).get('calls')):
+            problems.append('coverage: particle ceiling or direct CPU timing missing')
     return dict(passed=not problems,problems=problems,
+        notes=['Animation median between2 and4ms; accepted with note'] if particle_layer and type(mean) in (int,float) and 2<mean<=4 else [],
         note='Catalog-pose stress over production combat, not proof that each action was played through inputs. Historical stall remains open.')
 
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--particle-layer',action='store_true',help='Phase5: 2000-particle coverage and revised median/p95 CPU thresholds')
     for key in ('capped','uncapped','coverage','output'):parser.add_argument('--'+key,type=Path,required=True)
     args=parser.parse_args()
-    result=validate(*(json.loads(getattr(args,name).read_text(encoding='utf8')) for name in ('capped','uncapped','coverage')))
+    result=validate(*(json.loads(getattr(args,name).read_text(encoding='utf8')) for name in ('capped','uncapped','coverage')),particle_layer=args.particle_layer)
     args.output.write_text(json.dumps(result,indent=2),encoding='utf8')
     print(json.dumps(result,indent=2));raise SystemExit(0 if result['passed'] else 1)

@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       baseline_ref:
-        description: Revision before the animation layer
+        description: CPU-optimized animation checkpoint before phase5 particles
         required: true
-        default: 6d0797098111fb694963b5f423a388072ae816ab
+        default: 8a245a4fce4aa1bd63adcf64f6d32e77ed789db2
   workflow_call:
     inputs:
       baseline_ref:
@@ -33,7 +33,15 @@ jobs:
       - run: python -m pip install -r candidate/requirements.txt
       - name: Use the same seeded harness for both production revisions
         shell: pwsh
-        run: Copy-Item -LiteralPath candidate/tools/benchmark.py -Destination baseline/tools/benchmark.py
+        run: |
+          Copy-Item -LiteralPath candidate/tools/benchmark.py -Destination baseline/tools/benchmark.py
+          Copy-Item -LiteralPath candidate/tools/animation_timing.py -Destination baseline/tools/animation_timing.py
+      - name: Phase4 direct CPU and capped checkpoint before particle comparison
+        shell: pwsh
+        run: |
+          python baseline/tools/benchmark.py --seconds 30 --warmup-seconds 5 --final-boss --all-enemy-profiles --particles 500 --procedural-music --procedural-sfx --fps-cap 60 --animation-timing --output perf/phase4-checkpoint.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python candidate/tools/check_animation_checkpoint.py --report perf/phase4-checkpoint.json --output perf/phase4-checkpoint-gate.json
       - name: Four sequential native 60s controls (5s warmup)
         shell: pwsh
         run: |
@@ -46,13 +54,21 @@ jobs:
           python candidate/tools/benchmark.py --seconds 60 --warmup-seconds 5 --final-boss --particles 500 --procedural-music --procedural-sfx --output perf/candidate-uncapped.json
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Reject minimized samples and frame-time regressions
+        id: comparison
+        continue-on-error: true
         run: python candidate/tools/check_render_performance.py --animation --baseline-capped perf/baseline-capped.json --candidate-capped perf/candidate-capped.json --baseline-uncapped perf/baseline-uncapped.json --candidate-uncapped perf/candidate-uncapped.json --output perf/gate.json
-      - name: 120s catalog poses, all six enemy families and direct CPU timings
-        run: python candidate/tools/benchmark.py --seconds 120 --warmup-seconds 5 --final-boss --enemies 20 --all-enemy-profiles --particles 500 --procedural-music --procedural-sfx --animation-coverage --animation-timing --output perf/animation-coverage.json
+      - name: 120s catalog poses, all six enemy families and2000 particles
+        run: python candidate/tools/benchmark.py --seconds 120 --warmup-seconds 5 --final-boss --enemies 20 --all-enemy-profiles --particles 2000 --procedural-music --procedural-sfx --animation-coverage --animation-timing --output perf/animation-coverage.json
       - name: Require every pose, all boss phases and no frame above50ms
-        run: python candidate/tools/check_animation_performance.py --capped perf/candidate-capped.json --uncapped perf/candidate-uncapped.json --coverage perf/animation-coverage.json --output perf/animation-gate.json
+        id: coverage_gate
+        continue-on-error: true
+        run: python candidate/tools/check_animation_performance.py --particle-layer --capped perf/candidate-capped.json --uncapped perf/candidate-uncapped.json --coverage perf/animation-coverage.json --output perf/animation-gate.json
       - name: Native asynchronous GPU timer queries (separate diagnostic)
-        run: python candidate/tools/diagnose_gpu_timers.py --seconds 10 --directory perf/gpu-timer-queries
+        run: python candidate/tools/diagnose_gpu_timers.py --seconds 10 --particles 2000 --directory perf/gpu-timer-queries
+      - name: Fail after collecting both acceptance reports
+        if: always() && (steps.comparison.outcome == 'failure' || steps.coverage_gate.outcome == 'failure')
+        shell: pwsh
+        run: exit 1
       - name: Preserve GPU measurements even on failure
         if: always()
         uses: actions/upload-artifact@v7.0.2

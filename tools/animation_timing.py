@@ -13,7 +13,8 @@ class AnimationTiming:
             (game,'_animation_view','view'),(game._renderer,'animate_actor','mixer_transform'),
             (game._renderer,'combat_pose','weapon_pose'),(game,'_draw_combat','presentation'),
             (game,'_fixed_step','fixed_step'),(getattr(game,'_particles',None),'update','particles'),
-            (getattr(game,'_particle_scene',None),'update','particle_emitters')):
+            (getattr(game,'_particle_scene',None),'update','particle_emitters'),
+            (game,'frame','frame_update'),(game._renderer,'draw','scene_draw')):
             if hasattr(owner,name):self.wrap(owner,name,label)
 
     def wrap(self,owner,name,label):
