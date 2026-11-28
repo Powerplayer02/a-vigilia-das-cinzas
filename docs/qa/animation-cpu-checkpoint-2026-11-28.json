@@ -1,0 +1,204 @@
+{
+  "date": "2026-11-28",
+  "base_commit": "88d2d99177dda6108a7be0142b8712e4c329e779",
+  "status": "Phase4 CPU/capped checkpoint passed with inclusive-cost note; uncapped/spikes assigned to phase5",
+  "workload": "Native visible,1280x720,30s/5s warmup,cap60,Custodian3,20 enemies/six families,500 particles,audio ON",
+  "first_attempt_preserved": true,
+  "reference_parity_cases": 300,
+  "golden_pose_cases": 15,
+  "local_tests": "807 passed in27.95s",
+  "checkpoints": [
+    {
+      "path": "artifacts/particles/phase4-checkpoint.json",
+      "sha256": "689809559bcb3ba6acb4c85f41d3483cc434b2ecbb40c3f0061cc5411f0cb22e",
+      "source_build_id": "6e4f7367b4174cde",
+      "seconds": 30.006,
+      "frames": 1620,
+      "median_frame_ms": 16.67965,
+      "p95_frame_ms": 28.0903,
+      "minimized_frames": 0,
+      "pstats_connected": false,
+      "gl_finish": false,
+      "gpu_timer_queries_active": false,
+      "enemy_profile_ids": [
+        "bestario",
+        "bog_ghoul",
+        "cinzeiro",
+        "ossuary_acolyte",
+        "rancor",
+        "salt_guard"
+      ],
+      "animation_timing": {
+        "instrument": "perf_counter, no PStats/cProfile; direct wall time on the game thread",
+        "scope": "Authoritative logical pose + AnimationView + mixer/native transform application; excludes weapon sync and GPU submission",
+        "render_frames": 1620,
+        "animation_total_mean_ms_per_render": 2.1646831481464064,
+        "animation_total_median_ms_per_render": 1.7848500000354761,
+        "animation_total_p95_ms_per_render": 4.232499999943684,
+        "animation_total_max_ms_per_render": 19.11199999983637,
+        "stages": {
+          "authoritative_pose": {
+            "calls": 1800,
+            "mean_ms_per_call": 1.2224727777778652,
+            "total_ms_per_render": 1.3583030864198502,
+            "max_ms": 7.943600000032802
+          },
+          "fixed_step": {
+            "calls": 1800,
+            "mean_ms_per_call": 3.427702666667598,
+            "total_ms_per_render": 3.808558518519553,
+            "max_ms": 20.078100000034738
+          },
+          "particles": {
+            "calls": 1620,
+            "mean_ms_per_call": 1.010529197530712,
+            "total_ms_per_render": 1.010529197530712,
+            "max_ms": 6.720900000004804
+          },
+          "view": {
+            "calls": 35640,
+            "mean_ms_per_call": 0.008904758698113227,
+            "total_ms_per_render": 0.195904691358491,
+            "max_ms": 1.1107000000265543
+          },
+          "mixer_transform": {
+            "calls": 35640,
+            "mean_ms_per_call": 0.027748880471275692,
+            "total_ms_per_render": 0.6104753703680652,
+            "max_ms": 0.8446999999591753
+          },
+          "weapon_pose": {
+            "calls": 35640,
+            "mean_ms_per_call": 0.0511948092033488,
+            "total_ms_per_render": 1.1262858024736735,
+            "max_ms": 5.301500000030046
+          },
+          "presentation": {
+            "calls": 1620,
+            "mean_ms_per_call": 2.2800595061733793,
+            "total_ms_per_render": 2.2800595061733793,
+            "max_ms": 16.754999999989195
+          }
+        }
+      },
+      "direct_scopes": {
+        "fixed_step": {
+          "calls": 1800,
+          "median_ms": 2.9732500000250184,
+          "p95_ms": 6.001699999956145
+        },
+        "particles": {
+          "calls": 1620,
+          "median_ms": 0.893999999988182,
+          "p95_ms": 1.7789999999990869
+        }
+      }
+    },
+    {
+      "path": "artifacts/particles/phase4-optimized-checkpoint.json",
+      "sha256": "126b0c90b886359035e305885c10698e4f08b1138d7e67b7d49f07ae789fc4f3",
+      "source_build_id": "c040c1317c82a595",
+      "seconds": 30.001,
+      "frames": 1795,
+      "median_frame_ms": 16.6673,
+      "p95_frame_ms": 16.7813,
+      "minimized_frames": 0,
+      "pstats_connected": false,
+      "gl_finish": false,
+      "gpu_timer_queries_active": false,
+      "enemy_profile_ids": [
+        "bestario",
+        "bog_ghoul",
+        "cinzeiro",
+        "ossuary_acolyte",
+        "rancor",
+        "salt_guard"
+      ],
+      "animation_timing": {
+        "instrument": "perf_counter, no PStats/cProfile; direct wall time on the game thread",
+        "scope": "Authoritative logical pose + AnimationView + mixer/native transform application; excludes weapon sync and GPU submission",
+        "render_frames": 1795,
+        "animation_total_mean_ms_per_render": 1.18137704735116,
+        "animation_total_median_ms_per_render": 1.1346999996248996,
+        "animation_total_p95_ms_per_render": 1.4885999997886756,
+        "animation_total_max_ms_per_render": 3.0884999999898355,
+        "inclusive_scope": "Authoritative pose + entire combat presentation including weapon sync/feedback; conservative upper bound, without nested double counting",
+        "animation_inclusive_median_ms_per_render": 2.3123999999370426,
+        "animation_inclusive_p95_ms_per_render": 3.0441999999766267,
+        "stages": {
+          "authoritative_pose": {
+            "calls": 1800,
+            "mean_ms_per_call": 0.505752777776378,
+            "total_ms_per_render": 0.5071615598871756,
+            "max_ms": 1.1496999999280888
+          },
+          "fixed_step": {
+            "calls": 1800,
+            "mean_ms_per_call": 2.255680166666328,
+            "total_ms_per_render": 2.2619633983283514,
+            "max_ms": 5.785900000091715
+          },
+          "particles": {
+            "calls": 1795,
+            "mean_ms_per_call": 0.8595166573810822,
+            "total_ms_per_render": 0.8595166573810822,
+            "max_ms": 2.752200000031735
+          },
+          "view": {
+            "calls": 39490,
+            "mean_ms_per_call": 0.007579455558679445,
+            "total_ms_per_render": 0.1667480222909478,
+            "max_ms": 0.25540000001456065
+          },
+          "mixer_transform": {
+            "calls": 39490,
+            "mean_ms_per_call": 0.023066702962410753,
+            "total_ms_per_render": 0.5074674651730365,
+            "max_ms": 0.45110000007753115
+          },
+          "weapon_pose": {
+            "calls": 39490,
+            "mean_ms_per_call": 0.042731954925377104,
+            "total_ms_per_render": 0.9401030083582963,
+            "max_ms": 0.7173000000193497
+          },
+          "presentation": {
+            "calls": 1795,
+            "mean_ms_per_call": 1.903523064068719,
+            "total_ms_per_render": 1.903523064068719,
+            "max_ms": 5.6184999999686625
+          }
+        }
+      },
+      "direct_scopes": {
+        "fixed_step": {
+          "calls": 1800,
+          "median_ms": 2.158549999933257,
+          "p95_ms": 2.950899999973444
+        },
+        "particles": {
+          "calls": 1795,
+          "median_ms": 0.8201000000553904,
+          "p95_ms": 1.1409999999614229
+        }
+      }
+    }
+  ],
+  "gate": {
+    "passed": true,
+    "problems": [],
+    "notes": [
+      "Animation median between2 and4ms; accepted with note per revised protocol"
+    ],
+    "scope": "Phase4 direct CPU/capped checkpoint only; uncapped and120s spikes remain for phase5"
+  },
+  "optimization_sources": {
+    "src/vigilia/combat/hitbox.py": "d32590bcf81217d4a426790df570ae9bbb7f4173b8b39513c1b360bc030829f0",
+    "src/vigilia/engine/render.py": "c61ead7f4c01de1a5bdd3f164ccc08fc75c09d5ac3bcf6b8f034ae258db0bc1e"
+  },
+  "limitations": [
+    "Wall time on game thread, including scheduling; not exclusive CPU time or GPU timers",
+    "Capped16.7ms criterion uses median; p95 retained",
+    "No phase5 particle resources in this reference; no claim to fix historical stall or human legibility"
+  ]
+}

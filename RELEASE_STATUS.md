@@ -351,3 +351,17 @@ com glFinish desligado; seu caminho completo ainda precisa ser executado.
 O CI comum não substitui o aceite da GPU. A fase 5 não foi iniciada.
 Critérios, comandos e evidências atuais:
 [revisão de aceite](docs/qa/animation-acceptance-2026-11-27.md).
+
+### Checkpoint da fase 4 — 28/11/2026
+
+O parecer seguinte liberou o início da fase 5 e transferiu uncapped/spikes
+para essa comparação. O checkpoint de 30 s foi executado sem outro jogo,
+PStats ou glFinish, na fonte da fase 4 com 20 comuns/6 famílias/chefe fase3,
+500 partículas, cap60 e áudio. A primeira amostra falhou no p95 de animação
+(4,2325ms) e foi preservada. Após reduzir vetores temporários e transforms
+redundantes, o reteste passou: poses/views/mixer1,1347/1,4886ms; incluindo
+arma/apresentação2,3124/3,0442ms (mediana/p95), aceito com nota conforme a régua
+de2–4ms. Mediana de frame16,6673ms, p9516,7813ms, zero minimizações.
+Essa referência não inclui os recursos de partículas da fase5.
+Tabelas/dano/timings preservados; sem certificação de release.
+[Relatório](docs/qa/animation-cpu-checkpoint-2026-11-28.md).

@@ -244,6 +244,8 @@ class ArenaRenderer:
         self._static_shapes.clear()
 
     def clear_scene(self):
+        if hasattr(self,'_weapon_alignment'):self._weapon_alignment.clear()
+        if hasattr(self,'_arm_alignment'):self._arm_alignment.clear()
         self.statics.remove_node()
         self.statics = self.root.attach_new_node("architecture")
         self._static_shapes.clear()
@@ -346,6 +348,7 @@ class ArenaRenderer:
             shield = self._box(self.root, "guarda", Vec3(), Vec3(.43, .12, .57), (.45, .16, .12, 1))
             self._combat_gear[identifier] = weapon, head, shield
         weapon, head, shield = self._combat_gear[identifier]
+        if not hasattr(self,'_weapon_alignment'):self._weapon_alignment={}
         self.shadows.pose(identifier, bones["body_center"], alive, 1.8 if "forge" in weapon_style else 1.)
         if self._gear_styles.get(identifier) != weapon_style:
             self._gear_styles[identifier] = weapon_style
@@ -359,9 +362,12 @@ class ArenaRenderer:
             weapon.show()
             shield.show()
             grip, tip = bones["grip"], bones["blade_tip"]
-            weapon.set_pos(to_point(grip.lerp(tip, .5)))
-            weapon.look_at(to_point(tip))
-            weapon.set_scale(1, (tip - grip).length(), 1)
+            alignment=grip,tip
+            if self._weapon_alignment.get(identifier)!=alignment:
+                self._weapon_alignment[identifier]=alignment
+                weapon.set_pos(to_point(grip.lerp(tip, .5)))
+                weapon.look_at(to_point(tip))
+                weapon.set_scale(1, (tip - grip).length(), 1)
             head.show() if axe or ranged or weapon_style in ("staff", "mace") else head.hide()
             shield.set_pos(to_point(bones["shield"]))
             if identifier in self._enemies or not shield_equipped:
@@ -493,10 +499,14 @@ class ArenaRenderer:
         flask.hide();self._animation_props[identifier]=flask
 
     def _align_arm(self,limb,target):
+        if not hasattr(self,'_arm_alignment'):self._arm_alignment={}
+        before=limb.get_transform(self.root)
+        if self._arm_alignment.get(limb)==(target,before):return
         limb.set_scale(1)
         distance=limb.get_relative_point(self.root,to_point(target)).length()
         limb.look_at(self.root,to_point(target));limb.set_p(limb,90)
         limb.set_sz(max(.35,min(2.,distance/.5)))
+        self._arm_alignment[limb]=(target,limb.get_transform(self.root))
 
     def _free_arms(self,identifier):
         mixer=self._animation_mixers.get(identifier)

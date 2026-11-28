@@ -4,9 +4,10 @@ Fase 4 disponível para revisão: animações procedurais do jogador, seis tipos
 inimigo e três chefes, com preparação no carregamento e nas transições de fase.
 A sincronia dos ataques foi corrigida e verificada em 35 combinações de
 ataque/fase. O preparo usa `premunge_scene` e `prepare_scene` no Panda3D 1.10.16.
-Conforme a escolha mais recente, “Faça a sincronia e o preparo; GPU depois”,
-as medições finais e o aceite de desempenho continuam pendentes.
-[Correção, evidências e protocolo atual](docs/qa/animation-acceptance-2026-11-27.md).
+O checkpoint de CPU/cap 60 foi medido: poses/view/mixer em 1,135/1,489 ms
+(mediana/p95), total com arma/apresentação em 2,312/3,044 ms, aceito com nota;
+mediana de frame 16,667 ms. Uncapped e spikes ficam na comparação da fase 5,
+conforme a régua atual. [Medição e evidências](docs/qa/animation-cpu-checkpoint-2026-11-28.md).
 
 Interface da fase 3: atlas original com 36 símbolos e molduras, cores em
 `data/palette.toml`, uma fonte compartilhada e escala de HUD até 150%.
